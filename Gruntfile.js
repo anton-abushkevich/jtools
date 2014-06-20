@@ -35,6 +35,7 @@ module.exports = function(grunt) {
                             '<script src="js/dnd.js"></script>' +
 							'<script src="js/ajax.js"></script>' +
 							'<script src="js/keyboard.js"></script>' +
+                            '<script src="js/handwriting.js"></script>' +
 							'<script src="js/recognition.js"></script>' +
 							'<script src="js/slider.js"></script>',
                         css:
@@ -87,13 +88,15 @@ module.exports = function(grunt) {
 				files: [
 					{expand: true, cwd: 'src/assets/', src: ['**'], dest: 'build/development/'},
 					{expand: true, cwd: 'src/data/', src: ['**'], dest: 'build/development/data/'},
-					{expand: true, cwd: 'src/js/', src: ['**'], dest: 'build/development/js/'}
+					{expand: true, cwd: 'src/js/', src: ['**'], dest: 'build/development/js/'},
+                    {expand: true, cwd: 'src/lib/', src: ['**'], dest: 'build/development/lib/'}
 				]
 			},
 			pro: {
 				files: [
 					{expand: true, cwd: 'src/data/', src: ['**'], dest: 'build/release/'},
-					{expand: true, cwd: 'src/assets/', src: ['**'], dest: 'build/release/'}
+					{expand: true, cwd: 'src/assets/', src: ['**'], dest: 'build/release/'},
+                    {expand: true, cwd: 'src/lib/', src: ['**'], dest: 'build/release/lib/'}
 				]
 			}			
 		}		

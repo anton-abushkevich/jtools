@@ -47,8 +47,9 @@ function onLoad() {
         } else {
             sendRequest("recognition.html", function(html) {
                 createPanel("recog", html);
-                JTOOLS.recognition = new Recognition();
                 new Sliders();
+                JTOOLS.recognition = new Recognition();
+                JTOOLS.handwriting = new Handwriting();
             });
             this.classList.add("on");
         }

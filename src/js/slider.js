@@ -98,7 +98,10 @@ function Sliders() {
 		} else {
 			setValue(min);
 		}
-		
+
+        slit.addEventListener ("mousewheel", mouseScroll, false);
+        slit.addEventListener ("DOMMouseScroll", mouseScroll, false);
+
 		slit.onmousedown = start;
 		
 		function start(e) {					
@@ -173,6 +176,22 @@ function Sliders() {
 				target.style[prop] = value;
 			}
 		}
+        function mouseScroll(e) {
+            var rolled = 0;
+            if ('wheelDelta' in e) {
+                rolled = e.wheelDelta;
+            } else {
+                rolled = -e.detail;
+            }
+
+            if(rolled > 0) {
+                valueUp();
+            } else {
+                valueDown();
+            }
+            e.preventDefault();
+            return false;
+        }
 	}
 	
 	function init() {

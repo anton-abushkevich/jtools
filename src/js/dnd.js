@@ -1,4 +1,4 @@
-var DRAG_TAGS_IGNORE = ["textarea", "button", "canvas", "input"];
+var DRAG_TAGS_IGNORE = ["textarea", "button", "canvas", "input", "rect"];
 
 function setDraggable(elem) {
     elem.onmousedown = startDrag;
