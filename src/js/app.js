@@ -88,3 +88,26 @@ function onLoad() {
     }
 }
 
+/** text - message text,
+ *  type - message type ("error", "info", "success")
+ */
+function message(text, type) {
+    var mDiv = document.getElementById("message");
+
+    if (!mDiv) {
+        mDiv = document.createElement("div");
+        mDiv.setAttribute("id", "message");
+        document.body.insertBefore(mDiv, null);
+    }
+
+    if (!type) {
+        type = "info";
+    }
+
+    mDiv.innerHTML = "<div class=\"" + type + "\">" + text + "</div>";
+    mDiv.style.display = "block";
+    mDiv.onclick = function () {
+        mDiv.style.display = "none";
+    }
+}
+
