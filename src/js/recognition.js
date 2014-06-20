@@ -11,8 +11,8 @@ function Recognition() {
         var data = localStorage.getItem("recog"),
             version = localStorage.getItem("recog_version");
 
-        if(data !== null) {
-            if(version != VERSION) {
+        if (data !== null) {
+            if (version != VERSION) {
                 downloadData();
             } else {
                 doInit(JSON.parse(data));
@@ -22,7 +22,7 @@ function Recognition() {
         }
 
         function downloadData() {
-            sendRequest("data/recog-" + VERSION + ".json", function(data) {
+            sendRequest("data/recog-" + VERSION + ".json", function (data) {
                 localStorage.setItem("recog", data);
                 localStorage.setItem("recog_version", VERSION);
                 doInit(JSON.parse(data));
@@ -31,11 +31,11 @@ function Recognition() {
     }
 
     function doInit(recog) {
-        for(var k in recog) {
+        for (var k in recog) {
             var kanji = new Kanji(k, recog[k]);
 
             var sub = kanjis[kanji.strokes.length];
-            if(!sub) {
+            if (!sub) {
                 sub = {};
                 kanjis[kanji.strokes.length] = sub;
             }
@@ -47,13 +47,13 @@ function Recognition() {
         this.symbol = symbol;
         this.strokes = [];
 
-        if(strokesRecogData) {
+        if (strokesRecogData) {
             parseRecogData(strokesRecogData, this.strokes);
         }
 
         function parseRecogData(strokesRecogData, strokes) {
             var rnd = Math.floor(Math.random() * 10 + 1);
-            for(var i = 0; i < rnd; i++) {
+            for (var i = 0; i < rnd; i++) {
                 strokes[i] = i + rnd;
             }
         }

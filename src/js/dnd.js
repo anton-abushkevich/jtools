@@ -6,7 +6,7 @@ function setDraggable(elem) {
 }
 
 function startDrag(e) {
-    if(DRAG_TAGS_IGNORE.indexOf(e.target.tagName.toLowerCase()) > -1 || e.target.classList.contains("no-drag")) {
+    if (DRAG_TAGS_IGNORE.indexOf(e.target.tagName.toLowerCase()) > -1 || e.target.classList.contains("no-drag")) {
         return;
     }
 
@@ -31,7 +31,7 @@ function stopDrag() {
 
 function move(e) {
     var nowDragged = document.nowDragged;
-    if(!nowDragged) {
+    if (!nowDragged) {
         stopDrag();
         return;
     }

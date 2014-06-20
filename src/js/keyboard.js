@@ -22,9 +22,9 @@ function Keyboard() {
 
             "kya": "きゃ", "kyu": "きゅ", "kyo": "きょ",
             "gya": "ぎゃ", "gyu": "ぎゅ", "gyo": "ぎょ",
-            "sya": "しゃ", "syu": "しゅ", "syo": "しょ","sha": "しゃ", "shu": "しゅ", "sho": "しょ",
+            "sya": "しゃ", "syu": "しゅ", "syo": "しょ", "sha": "しゃ", "shu": "しゅ", "sho": "しょ",
             "ja": "じゃ", "ju": "じゅ", "jo": "じょ", "jya": "じゃ", "jyu": "じゅ", "jyo": "じょ",
-            "tya": "ちゃ", "tyu": "ちゅ", "tyo": "ちょ","cha": "ちゃ", "chu": "ちゅ", "cho": "ちょ",
+            "tya": "ちゃ", "tyu": "ちゅ", "tyo": "ちょ", "cha": "ちゃ", "chu": "ちゅ", "cho": "ちょ",
             "nya": "にゃ", "nyu": "にゅ", "nyo": "にょ",
             "hya": "ひゃ", "hyu": "ひゅ", "hyo": "ひょ",
             "bya": "びゃ", "byu": "びゅ", "byo": "びょ",
@@ -66,7 +66,7 @@ function Keyboard() {
             "мя": "みゃ", "мю": "みゅ", "мё": "みょ",
             "ря": "りゃ", "рю": "りゅ", "рё": "りょ",
 
-            ":" : "う", // удлиннение
+            ":": "う", // удлиннение
 
             "кк": "っк", "гг": "っг", "сс": "っс", "тт": "っт", "дд": "っд", "хх": "っх", "фф": "っф", "бб": "っб", "пп": "っп",
 
@@ -118,7 +118,7 @@ function Keyboard() {
         var s = str.selectionStart,
             e = str.selectionEnd,
             value = str.value;
-        if(s !== undefined && s !== value.length) {
+        if (s !== undefined && s !== value.length) {
             var strBefore = value.substring(0, s),
                 strAfter = value.substring(e, value.length),
                 strToChange = convertString(value.substring(s, e), from, to);
@@ -130,7 +130,7 @@ function Keyboard() {
 
     function convertString(str, from, to) {
         var changedStr = "";
-        for(var i = 0; i < str.length; i++) {
+        for (var i = 0; i < str.length; i++) {
             var symbFrom = str.charAt(i),
                 elem = querySelectorWrapper("button[" + from + "=" + symbFrom + "].symb");
             changedStr += elem ? elem.getAttribute(to) : symbFrom;
@@ -141,7 +141,7 @@ function Keyboard() {
             var elem;
             try {
                 elem = document.querySelector(query);
-            } catch(err) {
+            } catch (err) {
                 // do nothing. selector is invalid. elem will remain undefined
             }
             return elem;
@@ -153,20 +153,20 @@ function Keyboard() {
             len = symbs.length,
             selectedButton = document.getElementsByClassName("aux selected");
 
-        if(selectedButton[0]) {
-            if(selectedButton[0] === this) return; 	// nothing to change, if already active button clicked
+        if (selectedButton[0]) {
+            if (selectedButton[0] === this) return; 	// nothing to change, if already active button clicked
             selectedButton[0].className = "aux";
         }
 
-        if(this.id === "katakana") {
+        if (this.id === "katakana") {
             chooseKatakanaOutput();
         } else {
             chooseHiraganaOutput();
         }
 
         this.className = "aux selected";
-        for(var i = 0; i < len; i++) {
-            if(!symbs[i].onclick) {
+        for (var i = 0; i < len; i++) {
+            if (!symbs[i].onclick) {
                 symbs[i].onclick = addSymbolClick;
             }
             symbs[i].innerHTML = symbs[i].getAttribute(this.id) || symbs[i].getAttribute("default");
@@ -182,12 +182,12 @@ function Keyboard() {
     }
 
     function addSymbol(symb) {
-        if(!symb) return;
+        if (!symb) return;
 
         var s = str.selectionStart,
             e = str.selectionEnd;
-        if(s !== undefined) {
-            if(s === str.value.length) {
+        if (s !== undefined) {
+            if (s === str.value.length) {
                 str.value += symb;
             } else {
                 str.value = str.value.slice(0, s) + symb + str.value.slice(e);
@@ -206,9 +206,9 @@ function Keyboard() {
     function backspace() {
         var s = str.selectionStart,
             e = str.selectionEnd;
-        if(s !== undefined) {
-            if(s === e) {
-                if(s > 0) {
+        if (s !== undefined) {
+            if (s === e) {
+                if (s > 0) {
                     str.value = str.value.slice(0, s - 1) + str.value.slice(e);
                     str.selectionEnd = str.selectionStart = s - 1;
                 }
@@ -237,29 +237,29 @@ function Keyboard() {
             mora1 = moraMap[letter3],
             mora, symbQ;
 
-        if(mora3) {
+        if (mora3) {
             mora = mora3;
             symbQ = 3;
-        } else if(mora2) {
+        } else if (mora2) {
             mora = mora2;
             symbQ = 2;
-        } else if(mora1) {
+        } else if (mora1) {
             mora = mora1;
             symbQ = 1;
 
-            if(letter2.toLowerCase() === "n" || letter2.toLowerCase() === "н") { // special case:
+            if (letter2.toLowerCase() === "n" || letter2.toLowerCase() === "н") { // special case:
                 processN();						// process ん in case of one-symbol convertion: space, comma, dot
             }
 
-        } else if(letter2.toLowerCase() === "n" || letter2.toLowerCase() === "н") { // special case
+        } else if (letter2.toLowerCase() === "n" || letter2.toLowerCase() === "н") { // special case
             processN();
         }
 
-        if(mora) {
-            if((str.value.charAt(s - 1) !== letter3) !== caps) {
+        if (mora) {
+            if ((str.value.charAt(s - 1) !== letter3) !== caps) {
                 mora = convertString(mora, "hiragana", "katakana");
             }
-            if(s <= symbQ) {
+            if (s <= symbQ) {
                 str.value = mora + str.value.slice(s);
                 str.selectionStart = str.selectionEnd = mora.length;
             } else {
@@ -270,7 +270,7 @@ function Keyboard() {
 
         function processN() {
             var moraN = "ん";
-            if((str.value.charAt(s - 2) !== letter2) !== caps) {
+            if ((str.value.charAt(s - 2) !== letter2) !== caps) {
                 moraN = "ン";
             }
             str.value = str.value.slice(0, s - 2) + moraN + str.value.slice(s - 1);
@@ -284,19 +284,19 @@ function Keyboard() {
     function message(text, type) {
         var mDiv = document.getElementById("message");
 
-        if(!mDiv) {
+        if (!mDiv) {
             mDiv = document.createElement("div");
             mDiv.setAttribute("id", "message");
             document.body.insertBefore(mDiv, null);
         }
 
-        if(!type) {
+        if (!type) {
             type = "info";
         }
 
         mDiv.innerHTML = "<div class=\"" + type + "\">" + text + "</div>";
         mDiv.style.display = "block";
-        mDiv.onclick = function() {
+        mDiv.onclick = function () {
             mDiv.style.display = "none";
         }
     }
@@ -307,8 +307,8 @@ function Keyboard() {
         // selected kanji and its index. see mouse scroll event handler
         var kanji, index;
 
-        document.addEventListener("click", function(e) {
-            if(e.button == 0 || e.button == 1) {
+        document.addEventListener("click", function (e) {
+            if (e.button == 0 || e.button == 1) {
                 addSymbol(kanji);
                 clear();
                 e.preventDefault();
@@ -317,20 +317,20 @@ function Keyboard() {
         });
 
         // mousewheel - select a kanji to paste
-        document.addEventListener ("DOMMouseScroll", function(e) {
+        document.addEventListener("DOMMouseScroll", function (e) {
             var kanjis = document.getElementsByClassName("w-kanji");
 
-            if(kanjis.length > 0) {
-                if(kanji == undefined) {
+            if (kanjis.length > 0) {
+                if (kanji == undefined) {
                     index = 0;
                     selectKanji();
                     kanji = kanjis[0].innerHTML;
                 } else {
-                    index += e.detail < 0 ? -1 : 1 ;
-                    if(index >= kanjis.length) {
+                    index += e.detail < 0 ? -1 : 1;
+                    if (index >= kanjis.length) {
                         index = 0;
                     }
-                    if(index < 0) {
+                    if (index < 0) {
                         index = kanjis.length - 1;
                     }
                     selectKanji();
@@ -342,14 +342,14 @@ function Keyboard() {
             return false;
 
             function selectKanji() {
-                for(var i = 0; i < kanjis.length; i++) {
+                for (var i = 0; i < kanjis.length; i++) {
                     kanjis[i].className = "w-kanji" + (i == index ? " selected" : "");
                 }
             }
         }, false);
 
-        document.addEventListener ("DOMNodeInserted", function(e) {
-            if(kanji && e.relatedNode.id == "rikaichan-window") {
+        document.addEventListener("DOMNodeInserted", function (e) {
+            if (kanji && e.relatedNode.id == "rikaichan-window") {
                 clear();
             }
         });

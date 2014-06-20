@@ -3,21 +3,21 @@
 <%= css %>
 <title>J-Tools</title>
 <body>
-	<div id="debug"></div>
-	<div id="container"></div>
-    <div id="footer">
-        <a class="pull-left trigger trigger-kb">Keyboard</a>
-        <a class="pull-left trigger trigger-recog">Recognition</a>
-        <span class="pull-right copyright">&copy; aas <%= year %></span>
-    </div>
-    <noscript>
-        <div id="message" style="display: block">
-            <div class="error">
-                This page requires Javascript to be enabled!<br><br>
-                <a href="http://www.enable-javascript.com" target="_blank">How to enable JavaScript</a>
-            </div>
+<div id="debug"></div>
+<div id="container"></div>
+<div id="footer">
+    <a class="pull-left trigger trigger-kb">Keyboard</a>
+    <a class="pull-left trigger trigger-recog">Recognition</a>
+    <span class="pull-right copyright">&copy; aas <%= year %></span>
+</div>
+<noscript>
+    <div id="message" style="display: block">
+        <div class="error">
+            This page requires Javascript to be enabled!<br><br>
+            <a href="http://www.enable-javascript.com" target="_blank">How to enable JavaScript</a>
         </div>
-    </noscript>
-    <script src="lib/raphael.js"></script>
-    <%= scripts %>
+    </div>
+</noscript>
+<script src="lib/raphael.js"></script>
+<%= scripts %>
 </body>

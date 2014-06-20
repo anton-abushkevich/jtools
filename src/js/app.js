@@ -1,10 +1,6 @@
 var JTOOLS = {};
 
-if(document.addEventListener) {
-    window.addEventListener("load", onLoad);
-} else {
-    window.attachEvent("onload", onLoad);
-}
+window.addEventListener("load", onLoad);
 
 function onLoad() {
     var kbTriggers = document.getElementsByClassName("trigger-kb"),
@@ -13,10 +9,10 @@ function onLoad() {
 
     JTOOLS.container = document.getElementById("container");
 
-    addClickHandler(kbTriggers, function() {
+    addClickHandler(kbTriggers, function () {
         var kbElem = document.getElementById("kb");
-        if(kbElem) {
-            if(this.classList.contains("on")) {
+        if (kbElem) {
+            if (this.classList.contains("on")) {
                 this.classList.remove("on");
                 kbElem.style.display = "none";
             } else {
@@ -25,7 +21,7 @@ function onLoad() {
                 movePanelToTop(kbElem);
             }
         } else {
-            sendRequest("keyboard.html", function(html) {
+            sendRequest("keyboard.html", function (html) {
                 createPanel("kb", html);
                 JTOOLS.keyboard = new Keyboard();
             });
@@ -33,10 +29,10 @@ function onLoad() {
         }
     });
 
-    addClickHandler(recogTriggers, function() {
+    addClickHandler(recogTriggers, function () {
         var recogElem = document.getElementById("recog");
-        if(recogElem) {
-            if(this.classList.contains("on")) {
+        if (recogElem) {
+            if (this.classList.contains("on")) {
                 this.classList.remove("on");
                 recogElem.style.display = "none";
             } else {
@@ -45,7 +41,7 @@ function onLoad() {
                 movePanelToTop(recogElem);
             }
         } else {
-            sendRequest("recognition.html", function(html) {
+            sendRequest("recognition.html", function (html) {
                 createPanel("recog", html);
                 new Sliders();
                 JTOOLS.recognition = new Recognition();
@@ -56,8 +52,8 @@ function onLoad() {
     });
 
     function addClickHandler(elems, handler) {
-        if(elems instanceof HTMLCollection) {
-            for(var i = 0; i < elems.length; i++) {
+        if (elems instanceof HTMLCollection) {
+            for (var i = 0; i < elems.length; i++) {
                 elems[i].onclick = handler;
             }
         }
@@ -73,7 +69,7 @@ function onLoad() {
         JTOOLS.container.appendChild(panel);
         setDraggable(panel);
         panels.unshift(panel);
-        panel.addEventListener("mousedown", function() {
+        panel.addEventListener("mousedown", function () {
             movePanelToTop(panel);
         });
         refreshPanelsZIndices();
@@ -86,7 +82,7 @@ function onLoad() {
     }
 
     function refreshPanelsZIndices() {
-        for(var i = 0; i < panels.length; i++) {
+        for (var i = 0; i < panels.length; i++) {
             panels[i].style.zIndex = panels.length - i;
         }
     }
