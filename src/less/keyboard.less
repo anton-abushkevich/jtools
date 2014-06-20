@@ -1,0 +1,149 @@
+.row {
+  white-space: nowrap;
+  font-size: 0;
+}
+.row + .row {
+  margin: 10px 0 0 0;
+}
+
+#str {
+  border: 1px solid #c7c7c7;
+  font-size: 16px;
+  background-color: #fff;
+  height: 114px;
+  min-height: 51px;
+  width: 548px;
+  vertical-align: bottom;
+  padding: 3px;
+  margin: 0;
+  resize: vertical;
+  border-bottom-left-radius: 4px;
+  border-top-left-radius: 4px;
+}
+
+button {
+  display: block;
+  color: #221d1f;
+  background-color: #eae9ff;
+  font-size: 14px;
+  border: 1px solid #d2d2d2;
+  text-align: center;
+  vertical-align: middle;
+  margin: 0;
+  padding: 0;
+  height: 24px;
+  border-radius: 3px;
+  background-image: none;
+  letter-spacing: normal;
+  word-spacing: normal;
+  text-transform: none;
+  text-indent: 0px;
+}
+button:hover {
+  background-color: #fafaff;
+}
+button.selected {
+  background-color: #ccff8b;
+  background-image: none;
+}
+button.symb {
+  width: 49px;
+}
+button.symb.s {
+  height: 18px;
+  line-height: 16px;
+}
+button.output {
+  display: block;
+  width: 25px;
+  height: 30px;
+}
+button.aux {
+  display: inline;
+  color: #333;
+  width: 79px;
+  font-size: 12px;
+}
+button:active {
+  background-image: none;
+  outline: 0;
+  -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+  padding-top: .2em;
+  color: #443e3f;
+}
+button.symb.s:active {
+  padding-top: .1em;
+}
+
+.grp {
+  display: inline-block;
+  vertical-align: bottom;
+}
+.grp + .grp {
+  margin-left: 10px;
+}
+.grp .symb:first-child {
+  border-radius: 4px 4px 0 0;
+  margin-top: 0;
+}
+.grp .symb {
+  border-radius: 0;
+  margin-top: -1px;
+}
+.grp .symb:last-child {
+  border-radius: 0 0 4px 4px;
+}
+
+.separator {
+  margin-top: 5.5px;
+}
+
+.hgrp {
+  display: inline-block;
+  position: relative;
+  font-size: 0px;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+.hgrp + .hgrp {
+  margin-left: 10px;
+}
+.hgrp :first-child {
+  border-bottom-left-radius: 4px;
+  border-top-left-radius: 4px;
+  margin-left: 0;
+}
+.hgrp :last-child {
+  border-bottom-right-radius: 4px;
+  border-top-right-radius: 4px;
+}
+.hgrp button {
+  border-radius: 0;
+  margin-left: -1px;
+}
+.out-buttons {
+  display: inline-block;
+  vertical-align: top;
+  margin-left: -1px;
+}
+.out-buttons button {
+  border-radius: 0;
+}
+.out-buttons button + button {
+  margin-top: -1px;
+}
+.out-buttons button:first-child {
+  border-top-right-radius: 4px;
+}
+.out-buttons button:last-child {
+  border-bottom-right-radius: 4px;
+}
+
+/* for slightly better positioning */
+#space {width: 80px;}
+#clear {width: 78px;}
+
+
+
