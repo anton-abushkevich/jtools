@@ -8,7 +8,7 @@ function Handwriting() {
         brushColor = "#444",			// default strokes color
         randomStrokesColors = false,	// if true, ignore brushColor and assign random color to each stroke
         strokeThickness = 10,
-        showGrid = false,
+        showGrid = true,
         gridColor = "#000",
         gridSubdivideLevel = 3,
         gridContrast = 3,
@@ -306,17 +306,14 @@ function Handwriting() {
             .drag(move, down, up).touchstart(down).touchmove(move).touchend(up),
         filter = null,
 
-        btnRemoveLast = document.getElementById("btnRemoveLast"),
-        btnRemoveAll = document.getElementById("btnRemoveAll"),
-        chkGrid = document.getElementById("chkGrid"),
-        chkUseContour = document.getElementById("chkUseContour"),
-        chkNumbers = document.getElementById("chkNumbers"),
+        btnUndo = document.getElementById("btnUndo"),
+        btnRedo = document.getElementById("btnRedo"),
+        btnClear = document.getElementById("btnClear"),
+        tglGrid = document.getElementById("tglGrid"),
+        tglCalligraphy = document.getElementById("tglCalligraphy"),
+        tglNumbers = document.getElementById("tglNumbers"),
         sldThickness = document.getElementById("sldThickness"),
         sldBrushMass = document.getElementById("sldBrushMass");
-
-    chkGrid.checked = showGrid;
-    chkUseContour.checked = useContour;
-    chkNumbers.checked = showStrokesNumbers;
 
     if (sldThickness.setValue) {
         sldThickness.setValue(strokeThickness);
@@ -329,11 +326,12 @@ function Handwriting() {
         sldBrushMass.value = brushMass;
     }
 
-    btnRemoveLast.onclick = removeLastStroke;
-    btnRemoveAll.onclick = removeAllStrokes;
-    chkGrid.onclick = toggleGrid;
-    chkUseContour.onclick = toggleUseContour;
-    chkNumbers.onclick = toggleNumbers;
+    btnUndo.onclick = removeLastStroke;
+    btnRedo.onclick = removeLastStroke;
+    btnClear.onclick = removeAllStrokes;
+    tglGrid.onclick = toggleGrid;
+    tglCalligraphy.onclick = toggleUseContour;
+    tglNumbers.onclick = toggleNumbers;
     sldThickness.onchange = changeThickness;
     sldBrushMass.onchange = changeBrushMass;
 
