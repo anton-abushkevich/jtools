@@ -247,10 +247,12 @@ function Handwriting() {
                 grid = drawGrid();
             }
             showGrid = !showGrid;
+            setActive(this, showGrid);
         },
         toggleUseContour = function () {
             useContour = !useContour;
             brushAttrs = updateBrushAttrs();
+            setActive(this, useContour);
         },
         toggleNumbers = function () {
             showStrokesNumbers = !showStrokesNumbers;
@@ -259,6 +261,19 @@ function Handwriting() {
                     drawNumber(strokes[i], i + 1);
                 } else if (strokes[i].number) {
                     strokes[i].number.remove();
+                }
+            }
+            setActive(this, showStrokesNumbers);
+        },
+        setActive = function(elem, active) {
+            var classes = elem.classList;
+            if(active) {
+                if(!classes.contains("active")) {
+                    classes.add("active");
+                }
+            } else {
+                if(classes.contains("active")) {
+                    classes.remove("active");
                 }
             }
         },

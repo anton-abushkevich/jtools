@@ -1,12 +1,55 @@
 #paper {
   /* background-image: url(paper.jpg); */
   border: solid 1px #cacaca;
-  width: 278px;
-  height: 278px;
+  width: 286px;
+  height: 286px;
 }
 .sliders-block {
-  display: inline-block;
+  margin: 8px 0;
+}
+.sliders-block > .slit:first-child {
+  margin-right: 8px;
 }
 .buttons-block {
-  display: block;
+  button {
+    width: 34px;
+    height: 34px;
+    border: 1px solid transparent;
+    margin: 0;
+    background-color: transparent;
+    opacity: .8;
+    cursor: pointer;
+  }
+  button + button {
+    margin-left: 2px;
+  }
+  button:hover {
+    opacity: 1;
+  }
+  button:active {
+    background-position: 0 1px;
+  }
+  button.active {
+    border-radius: 3px;
+    border: 1px solid #D2D2D2;
+    background-color: #EAE9FF;
+  }
+}
+#btnClear {
+  background-image: url(undo-all.png);
+}
+#btnUndo {
+  background-image: url(undo.png);
+}
+#btnRedo {
+  background-image: url(redo.png);
+}
+#tglGrid {
+  background-image: url(grid.png);
+}
+#tglCalligraphy {
+  background-image: url(brush.png);
+}
+#tglNumbers {
+  background-image: url(numbers.png);
 }

@@ -8,7 +8,7 @@ function Sliders() {
         defaultKnobHeight = 16,
         defaultSlitImage = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIwAAAAQAQMAAAD+qgVFAAAAAXNSR0IArs4c6QAAAAZQTFRFmZmZ5+fnAKzB3gAAABRJREFUGNNjYMAE9f/RwIORKoQJAL0q8lNkiT1EAAAAAElFTkSuQmCC)",
         defaultKnobImage = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAQBAMAAAAG6llRAAAAAXNSR0IArs4c6QAAABVQTFRFlJSU1tbe1tbWzs7W9/f3tbW1597nN/SE2wAAADFJREFUCNdjCIWBAIYQFyhwYAhJg4IAKjMFoQDIVIICIFNZyQiElIFMYyhAYQYwwAAAVWUuIsQq8ZQAAAAASUVORK5CYII=)",
-        defaultFontSize = "11px",
+        defaultFontSize = "10px",
         defaultAngle = 0, // horizontal by default
         defaultOrigin = "50% 50%",
         defaultShowValueOnKnob = 1;
@@ -34,7 +34,7 @@ function Sliders() {
             slitImage = slitStyle.backgroundImage !== "none" ? slitStyle.backgroundImage : defaultSlitImage,
             knobImage = knobStyle.backgroundImage !== "none" ? knobStyle.backgroundImage : defaultKnobImage,
             cursor = slitStyle.cursor !== "auto" ? slitStyle.cursor : "pointer",
-            fontSize = parseInt(knobStyle.fontSize) < knobHeight ? knobStyle.fontSize : defaultFontSize,
+            fontSize = parseInt(knobStyle.fontSize),
             min = parseFloat(element.getAttribute("min")),
             max = parseFloat(element.getAttribute("max")),
             step = parseFloat(element.getAttribute("step")),
@@ -73,6 +73,9 @@ function Sliders() {
         if (isNaN(showValueOnKnob)) {
             showValueOnKnob = defaultShowValueOnKnob;
         }
+        if(showValueOnKnob && (fontSize == 0 || fontSize < knobHeight || isNaN(fontSize))) {
+            fontSize = defaultFontSize;
+        }
 
         var cssTransform = getSupportedProp(['transform', 'MozTransform', 'WebkitTransform', 'msTransform', 'OTransform']),
             cssTransformOrigin = getSupportedProp(['transformOrigin', 'MozTransformOrigin', 'WebkitTransformOrigin', 'msTransformOrigin', 'OTransformOrigin']);
@@ -82,6 +85,7 @@ function Sliders() {
         slit.style.backgroundImage = slitImage;
         slit.style.display = "inline-block";
         slit.style.cursor = cursor;
+        slit.title = element.title;
         changeCssProperty(slit, cssTransform, "rotate(" + angle + "rad)");
         changeCssProperty(slit, cssTransformOrigin, defaultOrigin);
 
