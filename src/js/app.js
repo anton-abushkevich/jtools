@@ -22,7 +22,7 @@ function onLoad() {
             }
         } else {
             sendRequest("keyboard.html", function (html) {
-                createPanel("kb", html);
+                JTOOLS.createPanel("kb", html);
                 JTOOLS.keyboard = new Keyboard();
             });
             this.classList.add("on");
@@ -42,7 +42,7 @@ function onLoad() {
             }
         } else {
             sendRequest("recognition.html", function (html) {
-                createPanel("recog", html);
+                JTOOLS.createPanel("recog", html);
                 new Sliders();
                 JTOOLS.recognition = new Recognition();
                 JTOOLS.handwriting = new Handwriting();
@@ -59,12 +59,12 @@ function onLoad() {
         }
     }
 
-    function createPanel(id, html) {
+    JTOOLS.createPanel = function(id, html, x, y) {
         var panel = document.createElement("div");
         panel.id = id;
         panel.className = "panel";
-        panel.style.left = "15%";
-        panel.style.top = "15%";
+        panel.style.left = x ? x : "15%";
+        panel.style.top = y ? y : "15%";
         panel.innerHTML = html;
         JTOOLS.container.appendChild(panel);
         setDraggable(panel);
@@ -73,6 +73,12 @@ function onLoad() {
             movePanelToTop(panel);
         });
         refreshPanelsZIndices();
+        return panel;
+    }
+
+    JTOOLS.removePanel = function(panel) {
+        JTOOLS.container.removeChild(panel);
+        panels.splice(panels.indexOf(panel), 1);
     }
 
     function movePanelToTop(panel) {

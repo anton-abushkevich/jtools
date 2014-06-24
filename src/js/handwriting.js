@@ -265,6 +265,23 @@ function Handwriting() {
             }
             setActive(this, showStrokesNumbers);
         },
+        showColorPicker = function() {
+            new ColorPicker().showAtElement(this, function(color) {
+                if(color === "random") {
+                    btnColor.classList.add("randomColorIcon");
+                    btnColor.style.backgroundColor = "transparent";
+                    btnColor.style.border = "1px solid transparent";
+                    randomStrokesColors = true;
+                    brushAttrs.fill = brushAttrs.stroke = getRandomColor();
+                } else {
+                    btnColor.classList.remove("randomColorIcon");
+                    btnColor.style.backgroundColor = color;
+                    btnColor.style.border = "5px solid #FFF";
+                    randomStrokesColors = false;
+                    brushAttrs.fill = brushAttrs.stroke = Raphael.getRGB(color);
+                }
+            });
+        },
         setActive = function(elem, active) {
             var classes = elem.classList;
             if(active) {
@@ -327,19 +344,14 @@ function Handwriting() {
         tglGrid = document.getElementById("tglGrid"),
         tglCalligraphy = document.getElementById("tglCalligraphy"),
         tglNumbers = document.getElementById("tglNumbers"),
+        btnColor = document.getElementById("btnColor"),
         sldThickness = document.getElementById("sldThickness"),
         sldBrushMass = document.getElementById("sldBrushMass");
 
-    if (sldThickness.setValue) {
-        sldThickness.setValue(strokeThickness);
-    } else {
-        sldThickness.value = strokeThickness;
-    }
-    if (sldBrushMass.setValue) {
-        sldBrushMass.setValue(brushMass);
-    } else {
-        sldBrushMass.value = brushMass;
-    }
+    sldThickness.setValue(strokeThickness);
+    sldThickness.onchange = changeThickness;
+    sldBrushMass.setValue(brushMass);
+    sldBrushMass.onchange = changeBrushMass;
 
     btnUndo.onclick = removeLastStroke;
     btnRedo.onclick = removeLastStroke;
@@ -347,8 +359,7 @@ function Handwriting() {
     tglGrid.onclick = toggleGrid;
     tglCalligraphy.onclick = toggleUseContour;
     tglNumbers.onclick = toggleNumbers;
-    sldThickness.onchange = changeThickness;
-    sldBrushMass.onchange = changeBrushMass;
+    btnColor.onclick = showColorPicker;
 
     canvas.addEventListener('contextmenu', function (e) {
         e.preventDefault();
@@ -356,13 +367,15 @@ function Handwriting() {
         return false;
     }, false);
 
+    canvas.addEventListener("mousewheel", mouseScroll, false);
+    canvas.addEventListener("DOMMouseScroll", mouseScroll, false);
     function mouseScroll(e) {
         var rolled = 0,
             thicknessValue = +sldThickness.value;
         if ('wheelDelta' in e) {
             rolled = e.wheelDelta;
         } else {
-            rolled = -40 * e.detail;
+            rolled = e.detail;
         }
 
         if (rolled > 0) {
@@ -373,7 +386,4 @@ function Handwriting() {
         e.preventDefault();
         return false;
     }
-
-    canvas.addEventListener("mousewheel", mouseScroll, false);
-    canvas.addEventListener("DOMMouseScroll", mouseScroll, false);
 }

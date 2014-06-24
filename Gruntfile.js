@@ -36,10 +36,12 @@ module.exports = function (grunt) {
                             '<script src="js/keyboard.js"></script>' +
                             '<script src="js/handwriting.js"></script>' +
                             '<script src="js/recognition.js"></script>' +
-                            '<script src="js/slider.js"></script>',
+                            '<script src="js/slider.js"></script>' +
+                            '<script src="js/colorpicker.js"></script>',
                         css: '<link type="text/css" rel="stylesheet" href="css/common.css">' +
                             '<link type="text/css" rel="stylesheet" href="css/keyboard.css">' +
-                            '<link type="text/css" rel="stylesheet" href="css/recognition.css">',
+                            '<link type="text/css" rel="stylesheet" href="css/recognition.css">' +
+                            '<link type="text/css" rel="stylesheet" href="css/colorpicker.css">',
                         year: '<%= grunt.template.today("yyyy") %>'
                     }
                 },
@@ -69,7 +71,8 @@ module.exports = function (grunt) {
                 files: {
                     "build/development/css/common.css": "src/less/common.less",
                     "build/development/css/keyboard.css": "src/less/keyboard.less",
-                    "build/development/css/recognition.css": "src/less/recognition.less"
+                    "build/development/css/recognition.css": "src/less/recognition.less",
+                    "build/development/css/colorpicker.css": "src/less/colorpicker.less"
                 }
             },
             pro: {
