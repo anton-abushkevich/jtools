@@ -56,16 +56,16 @@
 }
 #btnColor, #btnBg {
   background-color: #444;
-  border: 5px solid #fff;
+  background-origin: content-box;
+  background-clip: content-box;
+  padding: 4px;
   opacity: 1;
 }
 #btnColor:active, #btnBg:active {
-  border-top: 6px solid #fff;
-  border-bottom: 4px solid #fff;
+  padding: 5px 4px 3px;
   background-position: 0 0;
 }
 #btnBg {
-  background-color: transparent;
   background-repeat: no-repeat;
 }
 .randomColorIcon {

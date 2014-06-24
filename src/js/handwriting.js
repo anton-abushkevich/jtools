@@ -198,12 +198,13 @@ function Handwriting() {
         drawContour = function () {
             var d1 = stroke.cDots1,
                 d2 = stroke.cDots2,
-                path = "M" + d1[0].x + "," + d1[0].y + "L";
-            for (var i = 0; i < d1.length; i++) {
+                path = "M" + d1[0].x + "," + d1[0].y + "L",
+                i;
+            for (i = 0; i < d1.length; i++) {
                 path += round(d1[i].x) + "," + round(d1[i].y) + " ";
             }
             path += stroke.edgeCurve + "L";
-            for (var i = d2.length - 1; i >= 0; i--) {
+            for (i = d2.length - 1; i >= 0; i--) {
                 path += round(d2[i].x) + "," + round(d2[i].y) + " ";
             }
             path += stroke.tail;
@@ -270,15 +271,13 @@ function Handwriting() {
                 if(color === "random") {
                     btnColor.classList.add("randomColorIcon");
                     btnColor.style.backgroundColor = "transparent";
-                    btnColor.style.border = "1px solid transparent";
                     randomStrokesColors = true;
-                    brushAttrs.fill = brushAttrs.stroke = getRandomColor();
+                    bColor = brushAttrs.fill = brushAttrs.stroke = getRandomColor();
                 } else {
                     btnColor.classList.remove("randomColorIcon");
                     btnColor.style.backgroundColor = color;
-                    btnColor.style.border = "5px solid #FFF";
                     randomStrokesColors = false;
-                    brushAttrs.fill = brushAttrs.stroke = Raphael.getRGB(color);
+                    bColor = brushAttrs.fill = brushAttrs.stroke = Raphael.getRGB(color);
                 }
             });
         },
@@ -286,7 +285,7 @@ function Handwriting() {
             var bounds = this.getBoundingClientRect(),
                 bgPicker = JTOOLS.createPicker("bgPicker", "", bounds.left, this.offsetHeight + bounds.top);
 
-            createBgButton("btnBgNone"),
+            createBgButton("btnBgNone");
             createBgButton("btnBgPaper");
             createBgButton("btnBgBlackboard");
 
