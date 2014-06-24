@@ -282,6 +282,26 @@ function Handwriting() {
                 }
             });
         },
+        showBgPicker = function() {
+            var bounds = this.getBoundingClientRect(),
+                bgPicker = JTOOLS.createPicker("bgPicker", "", bounds.left, this.offsetHeight + bounds.top);
+
+            createBgButton("btnBgNone"),
+            createBgButton("btnBgPaper");
+            createBgButton("btnBgBlackboard");
+
+            function createBgButton(id) {
+                var btn = document.createElement("button");
+                btn.id = id;
+                btn.className = id + " btnBg";
+                btn.onclick = function() {
+                    bgPicker.removePicker();
+                    canvas.className =  id !== "btnBgNone" ? id : "";
+                    btnBg.className = id;
+                };
+                bgPicker.appendChild(btn);
+            }
+        },
         setActive = function(elem, active) {
             var classes = elem.classList;
             if(active) {
@@ -336,7 +356,6 @@ function Handwriting() {
         cel = paper.rect(0, 0, canvasWidth, canvasHeight, 0)	// front element, for all mousedrags
             .attr({fill: "#000", stroke: "none", "fill-opacity": 0, "stroke-width": 0})
             .drag(move, down, up).touchstart(down).touchmove(move).touchend(up),
-        filter = null,
 
         btnUndo = document.getElementById("btnUndo"),
         btnRedo = document.getElementById("btnRedo"),
@@ -345,6 +364,7 @@ function Handwriting() {
         tglCalligraphy = document.getElementById("tglCalligraphy"),
         tglNumbers = document.getElementById("tglNumbers"),
         btnColor = document.getElementById("btnColor"),
+        btnBg = document.getElementById("btnBg"),
         sldThickness = document.getElementById("sldThickness"),
         sldBrushMass = document.getElementById("sldBrushMass");
 
@@ -360,6 +380,7 @@ function Handwriting() {
     tglCalligraphy.onclick = toggleUseContour;
     tglNumbers.onclick = toggleNumbers;
     btnColor.onclick = showColorPicker;
+    btnBg.onclick = showBgPicker;
 
     canvas.addEventListener('contextmenu', function (e) {
         e.preventDefault();
@@ -370,12 +391,11 @@ function Handwriting() {
     canvas.addEventListener("mousewheel", mouseScroll, false);
     canvas.addEventListener("DOMMouseScroll", mouseScroll, false);
     function mouseScroll(e) {
-        var rolled = 0,
-            thicknessValue = +sldThickness.value;
+        var rolled = 0;
         if ('wheelDelta' in e) {
             rolled = e.wheelDelta;
         } else {
-            rolled = e.detail;
+            rolled = -e.detail;
         }
 
         if (rolled > 0) {

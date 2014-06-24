@@ -76,9 +76,31 @@ function onLoad() {
         return panel;
     }
 
+    JTOOLS.createPicker = function(id, html, x, y) {
+        var picker = JTOOLS.createPanel(id, html, x + "px", y + "px"),
+            pickerListener = picker.addEventListener("mousedown", function (e) {
+                e.stopPropagation();
+            }),
+            listener = document.addEventListener("mousedown", removePicker);
+
+        picker.removePicker = removePicker;
+
+        function removePicker() {
+            JTOOLS.removePanel(picker);
+            document.removeEventListener("mousedown", listener);
+            if(picker) {
+                picker.removeEventListener("mousedown", pickerListener);
+                picker = null;
+            }
+        }
+        return picker;
+    }
+
     JTOOLS.removePanel = function(panel) {
-        JTOOLS.container.removeChild(panel);
-        panels.splice(panels.indexOf(panel), 1);
+        if(panel) {
+            JTOOLS.container.removeChild(panel);
+            panels.splice(panels.indexOf(panel), 1);
+        }
     }
 
     function movePanelToTop(panel) {

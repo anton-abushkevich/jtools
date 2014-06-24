@@ -53,11 +53,32 @@
 #tglNumbers {
   background-image: url(numbers.png);
 }
-#btnColor {
+#btnColor, #btnBg {
   background-color: #444;
   border: 5px solid #fff;
   opacity: 1;
 }
+#btnBg {
+  background-color: transparent;
+  background-repeat: no-repeat;
+}
 .randomColorIcon {
   background-image: url(rndcolor.png);
+}
+.btnBg {
+  width: 66px;
+  height: 66px;
+  border: 1px solid #dfdfdf;
+}
+.btnBg + .btnBg {
+  margin-left: 5px;
+}
+.btnBgNone {
+  background-image: url(checkers.png);
+}
+.btnBgPaper {
+  background-image: url(paper.jpg);
+}
+.btnBgBlackboard {
+  background-image: url(blackboard.jpg);
 }

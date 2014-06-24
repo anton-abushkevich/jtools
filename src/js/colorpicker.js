@@ -6,39 +6,35 @@ function ColorPicker() {
     }
 
     function showAt(x, y, callback) {
-        var panel = JTOOLS.createPanel("colorpicker", "", x + "px", y + "px"),
-            pickerListener = panel.addEventListener("mousedown", function (e) {
-                e.stopPropagation();
-            }),
-            listener = document.addEventListener("mousedown", removePicker),
+        var picker = JTOOLS.createPicker("colorpicker", "", x, y),
             h, l, colorBtn;
 
         for (h = 0; h <= 100; h += 5) {
             createButton(h/100, 1, 0.75);
         }
-        panel.appendChild(document.createElement("br"));
+        picker.appendChild(document.createElement("br"));
         for (h = 0; h <= 100; h += 5) {
             createButton(h/100, 1, 0.5);
         }
-        panel.appendChild(document.createElement("br"));
+        picker.appendChild(document.createElement("br"));
         for (h = 0; h <= 100; h += 5) {
             createButton(h/100, 1, 0.25);
         }
-        panel.appendChild(document.createElement("br"));
+        picker.appendChild(document.createElement("br"));
         for (l = 0; l <= 100; l += 5) {
             createButton(0, 0, l/100);
         }
-        panel.appendChild(document.createElement("br"));
+        picker.appendChild(document.createElement("br"));
         var randomColorButton = document.createElement("button");
         randomColorButton.className = "randomColor";
         randomColorButton.innerHTML = "Random color";
         randomColorButton.onclick = function() {
-            removePicker();
+            picker.removePicker();
             callback("random");
         }
-        panel.appendChild(randomColorButton);
+        picker.appendChild(randomColorButton);
 
-        return panel;
+        return picker;
 
         function createButton(h, s, l) {
             var rgb = hslToRgb(h, s, l),
@@ -47,17 +43,10 @@ function ColorPicker() {
             colorBtn.className = "color";
             colorBtn.style.backgroundColor = colorStr;
             colorBtn.onclick = function () {
-                removePicker();
+                picker.removePicker();
                 callback(colorStr);
             }
-            panel.appendChild(colorBtn);
-        }
-
-        function removePicker() {
-            JTOOLS.removePanel(panel);
-            document.removeEventListener("mousedown", listener);
-            panel.removeEventListener("mousedown", pickerListener);
-            panel = null;
+            picker.appendChild(colorBtn);
         }
 
         function hslToRgb(h, s, l) {
