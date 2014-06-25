@@ -3,8 +3,6 @@ function Handwriting() {
     var canvas = document.getElementById("paper"),
         canvasWidth = canvas.clientWidth,
         canvasHeight = canvas.clientHeight,
-        paperColor = "#fff",
-        paperOpacity = 1,
         brushColor = "#444",			// default strokes color
         randomStrokesColors = false,	// if true, ignore brushColor and assign random color to each stroke
         strokeThickness = 10,
@@ -34,7 +32,6 @@ function Handwriting() {
                     .attr({stroke: gridColor, "stroke-width": 1, "stroke-opacity": (1 / (factor * gridContrast))});
                 gridLines.push(gridPath);
             }
-            bg.toBack();
             return gridLines;
         },
         round = function (value) {
@@ -345,8 +342,6 @@ function Handwriting() {
             };
         },
         paper = Raphael(canvas, canvasWidth, canvasHeight),
-        bg = paper.rect(0, 0, canvasWidth, canvasHeight, 0)
-            .attr({fill: paperColor, stroke: "none", "fill-opacity": (1 - paperOpacity)}),
         grid = showGrid ? drawGrid() : [],
         bColor = randomStrokesColors ? getRandomColor() : Raphael.getRGB(brushColor),
         brushAttrs = updateBrushAttrs(),

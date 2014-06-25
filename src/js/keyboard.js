@@ -90,11 +90,26 @@ function Keyboard() {
 
     str = document.getElementById('str');
     str.oninput = processText;
+    var strHeight = localStorage.getItem("kb.out.height");
+    if(strHeight && !(navigator.userAgent.lastIndexOf('Chrome/') > 0)) {   // http://code.google.com/p/chromium/issues/detail?id=94583
+        str.style.height = strHeight;
+    }
+    str.addEventListener("mousedown", function() {
+        strHeight = str.style.height;
+    });
+    document.addEventListener("mouseup", function() {
+        if(str.style.height !== strHeight) {
+            localStorage.setItem("kb.out.height", str.style.height);
+        }
+    });
     str.focus();
 
-    // set default layout and output: both hiragana
-    document.getElementById("hiragana").onclick();
-    document.getElementById("outHiragana").onclick();
+    var storedOut = localStorage.getItem("kb.out"),
+        storedLayout = localStorage.getItem("kb.layout");
+
+    // set layout and output: hiragana is default for both
+    document.getElementById(storedLayout ? storedLayout : "hiragana").onclick();
+    document.getElementById(storedOut ? storedOut : "outHiragana").onclick();
 
     rikaichanSupport();
 
@@ -104,6 +119,7 @@ function Keyboard() {
         document.getElementById("outKatakana").className = "output";
         convertSelectedString("katakana", "hiragana");
         str.focus();
+        localStorage.setItem("kb.out", "outHiragana");
     }
 
     function chooseKatakanaOutput() {
@@ -112,6 +128,7 @@ function Keyboard() {
         document.getElementById("outHiragana").className = "output";
         convertSelectedString("hiragana", "katakana");
         str.focus();
+        localStorage.setItem("kb.out", "outKatakana");
     }
 
     function convertSelectedString(from, to) {
@@ -171,6 +188,7 @@ function Keyboard() {
             }
             symbs[i].innerHTML = symbs[i].getAttribute(this.id) || symbs[i].getAttribute("default");
         }
+        localStorage.setItem("kb.layout", this.id);
     }
 
     function getSymbol(element, attr) {

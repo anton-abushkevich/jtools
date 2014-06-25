@@ -25,8 +25,13 @@ function startDrag(e) {
 }
 
 function stopDrag() {
+    var d = document.nowDragged;
+    if(d) {
+        localStorage.setItem(d.elem.id + ".x", d.elem.getBoundingClientRect().left);
+        localStorage.setItem(d.elem.id + ".y", d.elem.getBoundingClientRect().top);
+        document.nowDragged = null;
+    }
     document.mousemove = null;
-    document.nowDragged = null;
 }
 
 function move(e) {

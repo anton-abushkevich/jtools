@@ -3,52 +3,49 @@ var JTOOLS = {};
 window.addEventListener("load", onLoad);
 
 function onLoad() {
-    var kbTriggers = document.getElementsByClassName("trigger-kb"),
-        recogTriggers = document.getElementsByClassName("trigger-recog"),
-        panels = [];
-
-    JTOOLS.container = document.getElementById("container");
-
-    addClickHandler(kbTriggers, function () {
-        var kbElem = document.getElementById("kb");
-        if (kbElem) {
-            if (this.classList.contains("on")) {
-                this.classList.remove("on");
-                kbElem.style.display = "none";
-            } else {
-                this.classList.add("on");
-                kbElem.style.display = "block";
-                movePanelToTop(kbElem);
-            }
-        } else {
+    var triggers = {
+            kb: document.getElementsByClassName("trigger-kb"),
+            recog: document.getElementsByClassName("trigger-recog")
+        },
+        panels = [],
+        loadKbPanel = function () {
             sendRequest("keyboard.html", function (html) {
-                JTOOLS.createPanel("kb", html);
+                var x = localStorage.getItem("kb.x"),
+                    y = localStorage.getItem("kb.y");
+                JTOOLS.createPanel("kb", html, x ? x + "px" : "10%", y ? y + "px" : "10%");
                 JTOOLS.keyboard = new Keyboard();
             });
-            this.classList.add("on");
-        }
-    });
-
-    addClickHandler(recogTriggers, function () {
-        var recogElem = document.getElementById("recog");
-        if (recogElem) {
-            if (this.classList.contains("on")) {
-                this.classList.remove("on");
-                recogElem.style.display = "none";
-            } else {
-                this.classList.add("on");
-                recogElem.style.display = "block";
-                movePanelToTop(recogElem);
-            }
-        } else {
+        },
+        loadRecogPanel = function() {
             sendRequest("recognition.html", function (html) {
-                JTOOLS.createPanel("recog", html);
+                var x = localStorage.getItem("recog.x"),
+                    y = localStorage.getItem("recog.y");
+                JTOOLS.createPanel("recog", html, x ? x + "px" : "20%", y ? y + "px" : "20%");
                 new Sliders();
                 JTOOLS.recognition = new Recognition();
                 JTOOLS.handwriting = new Handwriting();
             });
-            this.classList.add("on");
-        }
+        },
+        kbZIndex = localStorage.getItem("kb.z"),
+        recogZIndex = localStorage.getItem("recog.z");
+
+    JTOOLS.container = document.getElementById("container");
+
+    if(kbZIndex) showPanel("kb", loadKbPanel);
+    if(recogZIndex) showPanel("recog", loadRecogPanel);
+
+    addClickHandler(triggers.kb, function () {
+        var id = "kb",
+            panel = document.getElementById(id),
+            isHidden = !panel || panel.style.display === "none";
+        isHidden ? showPanel(id, loadKbPanel) : hidePanel(id);
+    });
+
+    addClickHandler(triggers.recog, function () {
+        var id = "recog",
+            panel = document.getElementById(id),
+            isHidden = !panel || panel.style.display === "none";
+        isHidden ? showPanel(id, loadRecogPanel) : hidePanel(id);
     });
 
     function addClickHandler(elems, handler) {
@@ -57,6 +54,32 @@ function onLoad() {
                 elems[i].onclick = handler;
             }
         }
+    }
+
+    function showPanel(id, initFunc) {
+        var panel = document.getElementById(id),
+            trigs = triggers[id];
+        if (panel) {
+            panel.style.display = "block";
+            movePanelToTop(panel);
+        } else {
+            initFunc();
+        }
+        for (var i = 0; i < trigs.length; i++) {
+            trigs[i].classList.add("on");
+        }
+    }
+
+    function hidePanel(id) {
+        var panel = document.getElementById(id),
+            trigs = triggers[id];
+        if (panel) {
+            for (var i = 0; i < trigs.length; i++) {
+                trigs[i].classList.remove("on");
+            }
+            panel.style.display = "none";
+        }
+        localStorage.removeItem(id + ".z");
     }
 
     JTOOLS.createPanel = function(id, html, x, y) {
@@ -100,6 +123,7 @@ function onLoad() {
         if(panel) {
             JTOOLS.container.removeChild(panel);
             panels.splice(panels.indexOf(panel), 1);
+            localStorage.removeItem(panel.id + ".z");
         }
     }
 
@@ -112,6 +136,7 @@ function onLoad() {
     function refreshPanelsZIndices() {
         for (var i = 0; i < panels.length; i++) {
             panels[i].style.zIndex = panels.length - i;
+            localStorage.setItem(panels[i].id + ".z", panels[i].style.zIndex);
         }
     }
 }
