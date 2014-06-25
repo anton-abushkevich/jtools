@@ -15,11 +15,17 @@
     width: 34px;
     height: 34px;
     border: 1px solid transparent;
-    margin: 0;
+    padding: 0;
     background-color: transparent;
     opacity: .8;
     cursor: pointer;
     vertical-align: top;
+  }
+  button.icon {
+    background-image: url(icons.png);
+    background-repeat: no-repeat;
+    background-clip: padding-box;
+    background-origin: content-box;
   }
   button + button {
     margin-left: 2px;
@@ -28,7 +34,7 @@
     opacity: 1;
   }
   button:active {
-    background-position: 0 1px;
+    padding: 1px 0;
   }
   button.active {
     border-radius: 3px;
@@ -37,22 +43,22 @@
   }
 }
 #btnClear {
-  background-image: url(undo-all.png);
+  background-position: 0 0;
 }
 #btnUndo {
-  background-image: url(undo.png);
+  background-position: -32px 0;
 }
 #btnRedo {
-  background-image: url(redo.png);
+  background-position: -64px 0;
 }
 #tglGrid {
-  background-image: url(grid.png);
+  background-position: -96px 0;
 }
 #tglCalligraphy {
-  background-image: url(brush.png);
+  background-position: -128px 0;
 }
 #tglNumbers {
-  background-image: url(numbers.png);
+  background-position: -160px 0;
 }
 #btnColor, #btnBg {
   background-color: #444;
@@ -63,13 +69,13 @@
 }
 #btnColor:active, #btnBg:active {
   padding: 5px 4px 3px;
-  background-position: 0 0;
 }
 #btnBg {
   background-repeat: no-repeat;
 }
 .randomColorIcon {
-  background-image: url(rndcolor.png);
+  background-image: url(icons.png);
+  background-position: -192px 0;
 }
 .btnBg {
   width: 66px;
