@@ -1,20 +1,28 @@
 function Handwriting() {
 
-    var canvas = document.getElementById("paper"),
+    var storedGrid = localStorage.getItem("hw.grid"),
+        storedUseContour = localStorage.getItem("hw.calligraphy"),
+        storedNumbers = localStorage.getItem("hw.numbers"),
+        storedColor = localStorage.getItem("hw.color"),
+        storedBg = localStorage.getItem("hw.bg"),
+        storedThickness = localStorage.getItem("hw.thickness"),
+        storedSmoothing = localStorage.getItem("hw.smoothing"),
+
+        canvas = document.getElementById("paper"),
         canvasWidth = canvas.clientWidth,
         canvasHeight = canvas.clientHeight,
-        brushColor = "#444",			// default strokes color
-        randomStrokesColors = false,	// if true, ignore brushColor and assign random color to each stroke
-        strokeThickness = 10,
-        showGrid = true,
+        randomStrokesColors = storedColor && storedColor === "random",
+        brushColor = !randomStrokesColors && storedColor ? storedColor : "#444",
+        showGrid = storedGrid ? storedGrid == "true" : true,
         gridColor = "#000",
         gridSubdivideLevel = 3,
         gridContrast = 3,
-        showStrokesNumbers = false,
+        showStrokesNumbers = storedNumbers == "true",
         strokeNumberOffset = 20,
         numberFontSize = 16,
-        useContour = true,				// true = caligraphic brush, false = simple path
-        brushMass = 5,					// mass of brush. define brush inertia for smoothing
+        useContour = storedUseContour ? storedUseContour == "true" : true, // true = calligraphic brush, false = simple path
+        strokeThickness = storedThickness ? +storedThickness : 10,
+        brushMass = storedSmoothing ? +storedSmoothing : 5,   // mass of brush. define brush inertia for smoothing
 
         drawGrid = function () {
             var gridLines = [];
@@ -123,7 +131,7 @@ function Handwriting() {
 
             if (randomStrokesColors) {
                 bColor = getRandomColor();
-                brushAttrs.fill = brushAttrs.stroke = bColor;
+                updateBrushAttrs();
             }
         },
         smoothDot = function (dot) {
@@ -246,11 +254,13 @@ function Handwriting() {
             }
             showGrid = !showGrid;
             setActive(this, showGrid);
+            localStorage.setItem("hw.grid", showGrid);
         },
         toggleUseContour = function () {
             useContour = !useContour;
             brushAttrs = updateBrushAttrs();
             setActive(this, useContour);
+            localStorage.setItem("hw.calligraphy", useContour);
         },
         toggleNumbers = function () {
             showStrokesNumbers = !showStrokesNumbers;
@@ -262,21 +272,27 @@ function Handwriting() {
                 }
             }
             setActive(this, showStrokesNumbers);
+            localStorage.setItem("hw.numbers", showStrokesNumbers);
         },
         showColorPicker = function() {
-            new ColorPicker().showAtElement(this, function(color) {
-                if(color === "random") {
-                    btnColor.classList.add("randomColorIcon");
-                    btnColor.style.backgroundColor = "transparent";
-                    randomStrokesColors = true;
-                    bColor = brushAttrs.fill = brushAttrs.stroke = getRandomColor();
-                } else {
-                    btnColor.classList.remove("randomColorIcon");
-                    btnColor.style.backgroundColor = color;
-                    randomStrokesColors = false;
-                    bColor = brushAttrs.fill = brushAttrs.stroke = Raphael.getRGB(color);
-                }
-            });
+            new ColorPicker().showAtElement(this, setBrushColor);
+        },
+        setBrushColor = function(color) {
+            if(!color) return;
+
+            if(color === "random") {
+                btnColor.classList.add("randomColorIcon");
+                btnColor.style.backgroundColor = "transparent";
+                randomStrokesColors = true;
+                bColor = getRandomColor();
+            } else {
+                btnColor.classList.remove("randomColorIcon");
+                btnColor.style.backgroundColor = color;
+                randomStrokesColors = false;
+                bColor = Raphael.getRGB(color);
+            }
+            updateBrushAttrs();
+            localStorage.setItem("hw.color", color);
         },
         showBgPicker = function() {
             var bounds = this.getBoundingClientRect(),
@@ -292,11 +308,16 @@ function Handwriting() {
                 btn.className = id + " btnBg";
                 btn.onclick = function() {
                     bgPicker.removePicker();
-                    canvas.className =  id !== "btnBgNone" ? id : "";
-                    btnBg.className = id;
+                    setBg(id);
                 };
                 bgPicker.appendChild(btn);
             }
+        },
+        setBg = function(className) {
+            if(!className) return;
+            canvas.className =  className !== "btnBgNone" ? className : "";
+            btnBg.className = className;
+            localStorage.setItem("hw.bg", className);
         },
         setActive = function(elem, active) {
             var classes = elem.classList;
@@ -313,9 +334,11 @@ function Handwriting() {
         changeThickness = function () {
             strokeThickness = sldThickness.value;
             brushAttrs = updateBrushAttrs();
+            localStorage.setItem("hw.thickness", strokeThickness);
         },
         changeBrushMass = function () {
             brushMass = sldBrushMass.value;
+            localStorage.setItem("hw.smoothing", brushMass);
         },
         getRandomColor = function () {
             // not too bright, not too dark
@@ -325,22 +348,18 @@ function Handwriting() {
             return Raphael.getRGB("rgb(" + r + "," + g + "," + b + ")");
         },
         updateBrushAttrs = function () {
-            return useContour ?
-            {
-                fill: bColor,
-                stroke: bColor,
-                "stroke-width": strokeThickness / 2,
-                "stroke-linecap": "round",
-                "stroke-linejoin": "round"
-            } :
-            {
-                fill: "none",
-                stroke: bColor,
-                "stroke-width": strokeThickness,
-                "stroke-linecap": "round",
-                "stroke-linejoin": "round"
-            };
+            if(!brushAttrs) {
+                brushAttrs = {
+                    "stroke-linecap": "round",
+                    "stroke-linejoin": "round"
+                }
+            }
+            brushAttrs.fill = useContour ? bColor : "none";
+            brushAttrs.stroke = bColor;
+            brushAttrs["stroke-width"] = useContour ? strokeThickness / 2 : strokeThickness;
+            return brushAttrs;
         },
+
         paper = Raphael(canvas, canvasWidth, canvasHeight),
         grid = showGrid ? drawGrid() : [],
         bColor = randomStrokesColors ? getRandomColor() : Raphael.getRGB(brushColor),
@@ -375,6 +394,12 @@ function Handwriting() {
     tglNumbers.onclick = toggleNumbers;
     btnColor.onclick = showColorPicker;
     btnBg.onclick = showBgPicker;
+
+    setActive(tglGrid, showGrid);
+    setActive(tglCalligraphy, useContour);
+    setActive(tglNumbers, showStrokesNumbers);
+    setBrushColor(storedColor);
+    setBg(storedBg);
 
     canvas.addEventListener('contextmenu', function (e) {
         e.preventDefault();
