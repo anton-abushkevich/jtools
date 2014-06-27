@@ -47,6 +47,8 @@ function Handwriting() {
         },
         down = function (x, y, e) {
             if (e.which === 3) {
+                stroke.deleteSegments();
+                stroke.destroy();
                 stroke = null;
                 return;
             }
@@ -274,13 +276,13 @@ function Handwriting() {
             setActive(this, showStrokesNumbers);
             localStorage.setItem("hw.numbers", showStrokesNumbers);
         },
-        showColorPicker = function() {
+        showColorPicker = function () {
             new ColorPicker().showAtElement(this, setBrushColor);
         },
-        setBrushColor = function(color) {
-            if(!color) return;
+        setBrushColor = function (color) {
+            if (!color) return;
 
-            if(color === "random") {
+            if (color === "random") {
                 btnColor.classList.add("randomColorIcon");
                 btnColor.style.backgroundColor = "transparent";
                 randomStrokesColors = true;
@@ -294,7 +296,7 @@ function Handwriting() {
             updateBrushAttrs();
             localStorage.setItem("hw.color", color);
         },
-        showBgPicker = function() {
+        showBgPicker = function () {
             var bounds = this.getBoundingClientRect(),
                 bgPicker = JTOOLS.createPicker("bgPicker", "", bounds.left, this.offsetHeight + bounds.top);
 
@@ -306,27 +308,27 @@ function Handwriting() {
                 var btn = document.createElement("button");
                 btn.id = id;
                 btn.className = id + " btnBg";
-                btn.onclick = function() {
+                btn.onclick = function () {
                     bgPicker.removePicker();
                     setBg(id);
                 };
                 bgPicker.appendChild(btn);
             }
         },
-        setBg = function(className) {
-            if(!className) return;
-            canvas.className =  className !== "btnBgNone" ? className : "";
+        setBg = function (className) {
+            if (!className) return;
+            canvas.className = className !== "btnBgNone" ? className : "";
             btnBg.className = className;
             localStorage.setItem("hw.bg", className);
         },
-        setActive = function(elem, active) {
+        setActive = function (elem, active) {
             var classes = elem.classList;
-            if(active) {
-                if(!classes.contains("active")) {
+            if (active) {
+                if (!classes.contains("active")) {
                     classes.add("active");
                 }
             } else {
-                if(classes.contains("active")) {
+                if (classes.contains("active")) {
                     classes.remove("active");
                 }
             }
@@ -348,7 +350,7 @@ function Handwriting() {
             return Raphael.getRGB("rgb(" + r + "," + g + "," + b + ")");
         },
         updateBrushAttrs = function () {
-            if(!brushAttrs) {
+            if (!brushAttrs) {
                 brushAttrs = {
                     "stroke-linecap": "round",
                     "stroke-linejoin": "round"
