@@ -93,13 +93,7 @@ function Handwriting() {
 
             strokes[strokeIndex].wipe();
             strokeIndex -= 1;
-            if (strokeIndex < 0) {
-                btnUndo.classList.add("disabled");
-                btnClear.classList.add("disabled");
-            }
-            if (strokeIndex < strokes.length - 1) {
-                btnRedo.classList.remove("disabled");
-            }
+            updateUndoRedoIcons();
         },
         redoStroke = function () {
             var redoingStroke = strokes[strokeIndex + 1];
@@ -109,6 +103,16 @@ function Handwriting() {
                 if (showStrokesNumbers) {
                     redoingStroke.drawNumber(strokeIndex + 1);
                 }
+            }
+            updateUndoRedoIcons();
+        },
+        updateUndoRedoIcons = function() {
+            if (strokeIndex < 0) {
+                btnUndo.classList.add("disabled");
+                btnClear.classList.add("disabled");
+            } else {
+                btnUndo.classList.remove("disabled");
+                btnClear.classList.remove("disabled");
             }
             if (strokeIndex < strokes.length - 1) {
                 btnRedo.classList.remove("disabled");
@@ -121,11 +125,7 @@ function Handwriting() {
                 strokes[i].wipe();
             }
             strokeIndex = -1;
-            btnUndo.classList.add("disabled");
-            btnClear.classList.add("disabled");
-            if (strokeIndex < strokes.length - 1) {
-                btnRedo.classList.remove("disabled");
-            }
+            updateUndoRedoIcons();
         },
         toggleGrid = function () {
             if (showGrid) {
@@ -317,11 +317,11 @@ function Handwriting() {
             number = null,	// stroke number, drawn on showStrokesNumbers = true
             segments = [],  // accumulated stroke segments, delete on mouseup
 
-        // for simple path
+            // for simple path
             pathStr = useContour ? null : "M" + dot.x + "," + dot.y + "L",
             path = null,
 
-        // for contour (calligraphic brush)
+            // for contour (calligraphic brush)
             contour = null,
             nibSegment = useContour ? paper.path().attr(brushAttrs) : null,
             cDots1 = [],		// contour dots
@@ -330,7 +330,7 @@ function Handwriting() {
             tail,
             f = 1,			// stroke narrowing and widening factor
 
-        //for smoothing
+            //for smoothing
             v = {x: 0, y: 0};	// velocity
 
         this.addDot = addDot;
@@ -357,7 +357,7 @@ function Handwriting() {
         }
 
         function draw() {
-            if (useContour) {
+            if (cDots1) {
                 drawContour();
                 nibSegment.remove();
             } else {
