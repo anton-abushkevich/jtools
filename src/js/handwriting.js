@@ -246,7 +246,7 @@ function Handwriting() {
 
         function move(e) {
             if (e.which != 1 || !stroke) return;
-            stroke.addDot(e.clientX - bounds.left, e.clientY - bounds.top);
+            stroke.addDot({x: e.clientX - bounds.left, y: e.clientY - bounds.top});
         }
 
         function up(e) {
@@ -346,10 +346,13 @@ function Handwriting() {
         elem.toFront = function () {
             parent.removeChild(elem);
             parent.appendChild(elem);
+            return elem;
 
         };
         elem.remove = function () {
-            parent.removeChild(elem);
+            elem && parent.removeChild(elem);
+            elem = null;
+            return null;
         };
         return elem;
     }
@@ -389,9 +392,9 @@ function Handwriting() {
             return dots.length > 2;
         }
 
-        function addDot(x, y) {
+        function addDot(dot) {
             prev = curr;
-            curr = smoothDot({x: x, y: y});
+            curr = smoothDot(dot);
             dots.push(curr);
 
             if (useContour) {
@@ -406,10 +409,7 @@ function Handwriting() {
                 drawPath();
             } else {
                 drawContour();
-                if (nibSegment) {
-                    nibSegment.remove();
-                    nibSegment = null;
-                }
+                nibSegment = nibSegment && nibSegment.remove();
             }
             deleteSegments();
 
@@ -417,30 +417,15 @@ function Handwriting() {
         }
 
         function wipe() {
-            if (nibSegment) {
-                nibSegment.remove();
-                nibSegment = null;
-            }
-            if (contour) {
-                contour.remove();
-                contour = null;
-            }
-            if (path) {
-                path.remove();
-                path = null;
-            }
-            if (number) {
-                number.remove();
-                number = null;
-            }
+            nibSegment = nibSegment && nibSegment.remove();
+            contour = contour && contour.remove();
+            path = path && path.remove();
+            number = number && number.remove();
             deleteSegments();
         }
 
         function wipeNumber() {
-            if (number) {
-                number.remove();
-                number = null;
-            }
+            number = number && number.remove();
         }
 
         function deleteSegments() {
