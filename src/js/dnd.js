@@ -6,7 +6,9 @@ function setDraggable(elem) {
 }
 
 function startDrag(e) {
-    if (DRAG_TAGS_IGNORE.indexOf(e.target.tagName.toLowerCase()) > -1 || e.target.classList.contains("no-drag")) {
+    if (e.which != 1 ||
+        DRAG_TAGS_IGNORE.indexOf(e.target.tagName.toLowerCase()) > -1 ||
+        e.target.classList.contains("no-drag")) {
         return;
     }
 
@@ -26,7 +28,7 @@ function startDrag(e) {
 
 function stopDrag() {
     var d = document.nowDragged;
-    if(d) {
+    if (d) {
         localStorage.setItem(d.elem.id + ".x", d.elem.getBoundingClientRect().left);
         localStorage.setItem(d.elem.id + ".y", d.elem.getBoundingClientRect().top);
         document.nowDragged = null;
