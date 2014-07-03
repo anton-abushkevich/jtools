@@ -43,51 +43,6 @@ function Handwriting() {
             }
             return gridLines;
         },
-        down = function (e) {
-            if (e.which != 1) return;
-            var bounds = canvas.getBoundingClientRect();
-
-            // define new stroke on mousedown
-            stroke = new Stroke({x: e.clientX - bounds.left, y: e.clientY - bounds.top});
-
-            document.addEventListener("mousemove", move);
-            document.addEventListener("mouseup", up);
-        },
-        move = function (e) {
-            if (e.which != 1 || !stroke) return;
-
-            var bounds = canvas.getBoundingClientRect();
-            stroke.addDot(e.clientX - bounds.left, e.clientY - bounds.top);
-        },
-        up = function (e) {
-            if (e.which != 1 || !stroke) return;
-
-            if (!stroke.validate()) {
-                stroke.wipe();
-                stroke = null;
-                return;
-            }
-
-            strokes[++strokeIndex] = stroke;
-
-            btnUndo.classList.remove("disabled");
-            btnClear.classList.remove("disabled");
-
-            stroke.draw();
-
-            if (showStrokesNumbers) {
-                stroke.drawNumber(strokeIndex + 1);
-            }
-
-            if (randomStrokesColors) {
-                bColor = getRandomColor();
-                updateBrushAttrs();
-            }
-
-            stroke = null;
-            document.removeEventListener("mousemove", move);
-            document.removeEventListener("mouseup", up);
-        },
         undoStroke = function () {
             if (strokeIndex < 0 || stroke) return;
 
@@ -277,7 +232,53 @@ function Handwriting() {
         sldThickness = document.getElementById("sldThickness"),
         sldBrushMass = document.getElementById("sldBrushMass");
 
-    cel.addEventListener("mousedown", down);
+    cel.onmousedown = function (e) {
+        if (e.which != 1) return;
+        var bounds = canvas.getBoundingClientRect();
+
+        // define new stroke on mousedown
+        stroke = new Stroke({x: e.clientX - bounds.left, y: e.clientY - bounds.top});
+
+        document.addEventListener("mousemove", move);
+        document.addEventListener("mouseup", up);
+
+        return false;
+
+        function move(e) {
+            if (e.which != 1 || !stroke) return;
+            stroke.addDot(e.clientX - bounds.left, e.clientY - bounds.top);
+        }
+
+        function up(e) {
+            if (e.which != 1 || !stroke) return;
+
+            if (!stroke.validate()) {
+                stroke.wipe();
+                stroke = null;
+                return;
+            }
+
+            strokes[++strokeIndex] = stroke;
+
+            btnUndo.classList.remove("disabled");
+            btnClear.classList.remove("disabled");
+
+            stroke.draw();
+
+            if (showStrokesNumbers) {
+                stroke.drawNumber(strokeIndex + 1);
+            }
+
+            if (randomStrokesColors) {
+                bColor = getRandomColor();
+                updateBrushAttrs();
+            }
+
+            stroke = null;
+            document.removeEventListener("mousemove", move);
+            document.removeEventListener("mouseup", up);
+        }
+    };
 
     sldThickness.setValue(strokeThickness);
     sldThickness.onchange = changeThickness;
@@ -341,15 +342,15 @@ function Handwriting() {
             content && (child.innerHTML = content);
             elem.appendChild(child);
             return elem;
-        }
+        };
         elem.toFront = function () {
             parent.removeChild(elem);
             parent.appendChild(elem);
 
-        }
+        };
         elem.remove = function () {
             parent.removeChild(elem);
-        }
+        };
         return elem;
     }
 
