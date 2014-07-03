@@ -42,29 +42,20 @@ function Handwriting() {
             }
             return gridLines;
         },
-        round = function (value) {
-            return (value * 100 ^ 0) / 100;
-        },
         down = function (x, y, e) {
-            if (e.which === 3) {
-                if (stroke) {
-                    stroke.wipe();
-                    stroke = null;
-                }
-                return;
-            }
+            if (e.which != 1) return;
             var bounds = canvas.getBoundingClientRect();
 
             // define new stroke on mousedown
             stroke = new Stroke({x: x - bounds.left, y: y - bounds.top});
         },
-        move = function (dx, dy) {
-            if (!stroke) return;
+        move = function (dx, dy, x, y, e) {
+            if (e.which != 1 || !stroke) return;
 
             stroke.addDot(dx, dy);
         },
         up = function (e) {
-            if (e.which === 3 || !stroke) return;
+            if (e.which != 1 || !stroke) return;
 
             if (!stroke.validate()) {
                 stroke.wipe();
@@ -87,9 +78,11 @@ function Handwriting() {
                 bColor = getRandomColor();
                 updateBrushAttrs();
             }
+
+            stroke = null;
         },
         undoStroke = function () {
-            if (strokeIndex < 0) return;
+            if (strokeIndex < 0 || stroke) return;
 
             strokes[strokeIndex].wipe();
             strokeIndex -= 1;
@@ -106,7 +99,7 @@ function Handwriting() {
             }
             updateUndoRedoIcons();
         },
-        updateUndoRedoIcons = function() {
+        updateUndoRedoIcons = function () {
             if (strokeIndex < 0) {
                 btnUndo.classList.add("disabled");
                 btnClear.classList.add("disabled");
@@ -147,7 +140,7 @@ function Handwriting() {
         },
         toggleNumbers = function () {
             showStrokesNumbers = !showStrokesNumbers;
-            for (var i = 0; i < strokes.length; i++) {
+            for (var i = 0; i <= strokeIndex; i++) {
                 if (showStrokesNumbers) {
                     strokes[i].drawNumber(i + 1);
                 } else {
@@ -242,13 +235,24 @@ function Handwriting() {
             brushAttrs["stroke-width"] = useContour ? strokeThickness / 2 : strokeThickness;
             return brushAttrs;
         },
+        shallowClone = function (obj) {
+            if (obj == null || typeof(obj) != 'object') return obj;
+
+            var clone = obj.constructor();
+            for (var key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    clone[key] = obj[key];
+                }
+            }
+            return clone;
+        },
 
         paper = Raphael(canvas, canvasWidth, canvasHeight),
         grid = showGrid ? drawGrid() : [],
         bColor = randomStrokesColors ? getRandomColor() : Raphael.getRGB(brushColor),
         brushAttrs = updateBrushAttrs(),
         strokes = [],
-        stroke,            // now drawing stroke (on mouseup it will be pushed to strokes[])
+        stroke,            // now drawing stroke (on mouseup it must be pushed to strokes[] and assign to null)
         strokeIndex = -1,  // current stroke index (in strokes[])
         cel = paper.rect(0, 0, canvasWidth, canvasHeight, 0)	// front element, for all mousedrags
             .attr({fill: "#000", stroke: "none", "fill-opacity": 0, "stroke-width": 0})
@@ -312,26 +316,27 @@ function Handwriting() {
 
     function Stroke(dot) {
         var dots = [dot],
-            curr = dot,		// current dot
-            prev = null,    // previous dot
-            number = null,	// stroke number, drawn on showStrokesNumbers = true
-            segments = [],  // accumulated stroke segments, delete on mouseup
+            curr = dot,	        // current dot
+            prev = null,        // previous dot
+            number = null,	    // stroke number, drawn on showStrokesNumbers = true
+            segments = [],      // accumulated stroke segments, delete on mouseup
+            ba = shallowClone(brushAttrs),   // save current brush attributes
 
-            // for simple path
+        // for simple path
             pathStr = useContour ? null : "M" + dot.x + "," + dot.y + "L",
             path = null,
 
-            // for contour (calligraphic brush)
+        // for contour (calligraphic brush)
             contour = null,
-            nibSegment = useContour ? paper.path().attr(brushAttrs) : null,
+            nibSegment = useContour ? paper.path().attr(ba) : null,
             cDots1 = [],		// contour dots
             cDots2 = [],
             edgeCurve,
             tail,
-            f = 1,			// stroke narrowing and widening factor
+            f = 1,			    // stroke narrowing and widening factor
 
-            //for smoothing
-            v = {x: 0, y: 0};	// velocity
+        //for smoothing
+            v = {x: 0, y: 0};          	// velocity
 
         this.addDot = addDot;
         this.validate = validate;
@@ -357,11 +362,11 @@ function Handwriting() {
         }
 
         function draw() {
-            if (cDots1) {
+            if (pathStr) {
+                drawPath();
+            } else {
                 drawContour();
                 nibSegment.remove();
-            } else {
-                drawPath();
             }
             deleteSegments();
 
@@ -373,6 +378,7 @@ function Handwriting() {
             if (contour) contour.remove();
             if (path) path.remove();
             if (number) number.remove();
+            deleteSegments();
         }
 
         function wipeNumber() {
@@ -436,7 +442,7 @@ function Handwriting() {
                 tail = t;
             }
             nibSegment.attr({path: "M" + e1.x + "," + e1.y + edgeCurve + "z"});
-            segments.push(paper.path(segment).attr(brushAttrs));
+            segments.push(paper.path(segment).attr(ba));
             cDots1.push(e1);
             cDots2.push(e2);
         }
@@ -445,7 +451,7 @@ function Handwriting() {
             var segment = "M" + prev.x + "," + prev.y + "L" + curr.x + "," + curr.y;
 
             pathStr += round(curr.x) + "," + round(curr.y) + " ";
-            segments.push(paper.path(segment).attr(brushAttrs));
+            segments.push(paper.path(segment).attr(ba));
         }
 
         function drawContour() {
@@ -461,11 +467,11 @@ function Handwriting() {
                 path += round(d2[i].x) + "," + round(d2[i].y) + " ";
             }
             path += tail;
-            contour = paper.path(path).attr(brushAttrs);
+            contour = paper.path(path).attr(ba);
         }
 
         function drawPath() {
-            path = paper.path(pathStr).attr(brushAttrs);
+            path = paper.path(pathStr).attr(ba);
         }
 
         function drawNumber(num) {
@@ -475,13 +481,12 @@ function Handwriting() {
                 nx = firstDot.x - strokeNumberOffset * Math.cos(atan),
                 ny = firstDot.y - strokeNumberOffset * Math.sin(atan);
 
-            number = paper.text(nx, ny, num);
+            number = paper.text(nx, ny, num)
+                .attr({stroke: "none", fill: ba.stroke, "font-size": numberFontSize});
+        }
 
-            var brightnessAdjust = randomStrokesColors ? 1.5 : 1,
-                hsb = Raphael.rgb2hsb(bColor.r, bColor.g, bColor.b),
-                numberColor = Raphael.getRGB(Raphael.hsb(hsb.h, hsb.s, hsb.b / brightnessAdjust));
-
-            number.attr({stroke: "none", fill: numberColor, "font-size": numberFontSize});
+        function round(value) {
+            return (value * 100 ^ 0) / 100;
         }
     }
 }
