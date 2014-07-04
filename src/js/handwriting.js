@@ -472,14 +472,14 @@ function Handwriting() {
                 ox = strokeThickness / 14,
                 oy = strokeThickness / 20,
                 t = (segments.length == 0)
-                    ? "C" + round(s2.x - ox * s) + "," + round(s2.y + oy * s) + " "
-                    + round(s1.x - ox * s) + "," + round(s1.y + oy * s) + " " + s1.x + "," + s1.y + "z"
+                    ? "C" + (s2.x - ox * s) + "," + (s2.y + oy * s) + " "
+                    + (s1.x - ox * s) + "," + (s1.y + oy * s) + " " + s1.x + "," + s1.y + "z"
                     : " " + s1.x + "," + s1.y + "z",
                 segment = "M" + s1.x + "," + s1.y +
                     "L" + e1.x + "," + e1.y + " " + e2.x + "," + e2.y + " " + s2.x + "," + s2.y + t;
 
-            edgeCurve = "C" + round(e1.x + ox * s) + "," + round(e1.y - oy * s) + " "
-                + round(e2.x + ox * s) + "," + round(e2.y - oy * s) + " " + e2.x + "," + e2.y;
+            edgeCurve = "C" + (e1.x + ox * s) + "," + (e1.y - oy * s) + " "
+                + (e2.x + ox * s) + "," + (e2.y - oy * s) + " " + e2.x + "," + e2.y;
 
             if (segments.length == 0) {
                 tail = t;
@@ -493,7 +493,7 @@ function Handwriting() {
         function updatePath() {
             var segment = "M" + prev.x + "," + prev.y + "L" + curr.x + "," + curr.y;
 
-            pathStr += round(curr.x) + "," + round(curr.y) + " ";
+            pathStr += curr.x + "," + curr.y + " ";
             segments.push(elem(paper, "path").attrs(ba).attrs({d: segment}));
         }
 
@@ -503,11 +503,11 @@ function Handwriting() {
                 path = "M" + d1[0].x + "," + d1[0].y + "L",
                 i;
             for (i = 0; i < d1.length; i++) {
-                path += round(d1[i].x) + "," + round(d1[i].y) + " ";
+                path += d1[i].x + "," + d1[i].y + " ";
             }
             path += edgeCurve + "L";
             for (i = d2.length - 1; i >= 0; i--) {
-                path += round(d2[i].x) + "," + round(d2[i].y) + " ";
+                path += d2[i].x + "," + d2[i].y + " ";
             }
             path += tail;
             contour = elem(paper, "path").attrs(ba).attrs({d: path});
@@ -525,13 +525,10 @@ function Handwriting() {
                 ny = firstDot.y - strokeNumberOffset * Math.sin(atan);
 
             number = elem(paper, "text").
-                attrs({x: nx, y: ny, stroke: "none", fill: ba.stroke, "font-size": numberFontSize}).
+                attrs({x: nx, y: ny, stroke: "none", fill: ba.stroke, "font-size": numberFontSize,
+                    style: "text-anchor: middle; font: " + numberFontSize + "px Arial"}).
                 child("tspan", num);
             cel.toFront();
-        }
-
-        function round(value) {
-            return (value * 100 ^ 0) / 100;
         }
     }
 }
