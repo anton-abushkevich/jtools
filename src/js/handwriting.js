@@ -274,6 +274,10 @@ function Handwriting() {
                 updateBrushAttrs();
             }
 
+            if (strokeIndex == strokes.length - 1) {
+                btnRedo.classList.add("disabled");
+            }
+
             stroke = null;
             document.removeEventListener("mousemove", move);
             document.removeEventListener("mouseup", up);
