@@ -11,7 +11,10 @@ function Recognition(loadingProgressCallback) {
             SW: [0, 2],
             W: [0, 1],
             NW: [0, 0],
-            MID: [1, 1]
+            MID: [1, 1],
+            isClose: function (location1, location2) {
+                return Math.abs(location1[0] - location2[0]) <= 1 && Math.abs(location1[1] - location2[1]) <= 1;
+            }
         },
         directions = {
             N: 0,
@@ -22,10 +25,20 @@ function Recognition(loadingProgressCallback) {
             SW: 5,
             W: 6,
             NW: 7,
-            X: -1
+            X: -1,
+            isClose: function (direction1, direction2) {
+                if (direction1 === directions.X || direction2 === directions.X || direction1 === direction2) {
+                    return true;
+                }
+                return (direction1 === ((direction2 + 1) % 8)) || (((direction1 + 1) % 8) === direction2);
+            }
         },
         DIRECTION_THRESHOLD = 51,
-        DIAGONAL_THRESHOLD = 77;
+        DIAGONAL_THRESHOLD = 77,
+        STROKE_DIRECTION_WEIGHT = 1.0,
+        MOVE_DIRECTION_WEIGHT = 0.8,
+        STROKE_LOCATION_WEIGHT = 0.6,
+        CLOSE_WEIGHT = 0.7;
 
     this.kanjis = kanjis;
 
@@ -59,7 +72,7 @@ function Recognition(loadingProgressCallback) {
             fullLength = Object.keys(recog).length,
             tickEvery = 5,                                      // call progress cb on every tickEvery%
             percentTick = (fullLength / (100 / tickEvery)) ^ 0;
-            start = new Date;
+        start = new Date;
         for (var k in recog) {
             if (!recog.hasOwnProperty(k)) {
                 continue;
@@ -73,7 +86,7 @@ function Recognition(loadingProgressCallback) {
                 kanjis[kanji.strokes.length] = sub;
             }
             sub[kanji.symbol] = kanji;
-            if(loadingProgressCallback && count % percentTick == 0) {
+            if (loadingProgressCallback && count % percentTick == 0) {
                 loadingProgressCallback(tickEvery * count / percentTick ^ 0);
             }
             count++;
@@ -127,33 +140,25 @@ function Recognition(loadingProgressCallback) {
         if (x < 85) {
             if (y < 85) {
                 return locations.NW;
-            }
-            else if (y < 170) {
+            } else if (y < 170) {
                 return locations.W;
-            }
-            else {
+            } else {
                 return locations.SW;
             }
-        }
-        else if (x < 170) {
+        } else if (x < 170) {
             if (y < 85) {
                 return locations.N;
-            }
-            else if (y < 170) {
+            } else if (y < 170) {
                 return locations.MID;
-            }
-            else {
+            } else {
                 return locations.S;
             }
-        }
-        else {
+        } else {
             if (y < 85) {
                 return locations.NE;
-            }
-            else if (y < 170) {
+            } else if (y < 170) {
                 return locations.E;
-            }
-            else {
+            } else {
                 return locations.SE;
             }
         }
@@ -175,38 +180,104 @@ function Recognition(loadingProgressCallback) {
             if (deltaX > 0) {
                 if (diagonal) {
                     return deltaY < 0 ? directions.NE : directions.SE;
-                }
-                else {
+                } else {
                     return directions.E;
                 }
-            }
-            else {
+            } else {
                 if (diagonal) {
                     return deltaY < 0 ? directions.NW : directions.SW;
-                }
-                else {
+                } else {
                     return directions.W;
                 }
             }
-        }
-        else {
+        } else {
             diagonal = absDeltaX > ((DIAGONAL_THRESHOLD * absDeltaY) >> 8);
             if (deltaY > 0) {
                 if (diagonal) {
                     return deltaX < 0 ? directions.SW : directions.SE;
-                }
-                else {
+                } else {
                     return directions.S;
                 }
-            }
-            else {
+            } else {
                 if (diagonal) {
                     return deltaX < 0 ? directions.NW : directions.NE;
-                }
-                else {
+                } else {
                     return directions.N;
                 }
             }
         }
+    }
+
+    function getStrictMatch(potentialKanji) {
+        var match,
+            maxScore = 0,
+            kanjisList = kanjis[potentialKanji.strokes.length],
+
+            drawnStarts = potentialKanji.strokeStarts,
+            drawnEnds = potentialKanji.strokeEnds,
+            drawnDirections = potentialKanji.strokeDirections,
+            drawnMoves = potentialKanji.moveDirections;
+
+        for (var k in kanjisList) {
+            if (!kanjisList.hasOwnProperty(k)) {
+                continue;
+            }
+            var score = getScore(kanjisList[k]);
+            if (score > maxScore) {
+                maxScore = score;
+                match = kanjisList[k].symbol;
+            }
+        }
+
+        return {
+            symbol: match,
+            score: maxScore
+        };
+
+        function getScore(kanji) {
+            var kanjiStarts = kanji.strokeStarts,
+                kanjiEnds = kanji.strokeEnds,
+                kanjiDirections = kanji.strokeDirections,
+                kanjiMoves = kanji.moveDirections,
+                score = 0;
+
+            for (var i = 0; i < drawnStarts.length; i++) {
+                if (drawnDirections[i] == kanjiDirections[i]) {
+                    score += STROKE_DIRECTION_WEIGHT;
+                } else if (directions.isClose(drawnDirections[i], kanjiDirections[i])) {
+                    score += STROKE_DIRECTION_WEIGHT * CLOSE_WEIGHT;
+                }
+
+                if (i > 0) {
+                    if (drawnMoves[i - 1] == kanjiMoves[i - 1]) {
+                        score += MOVE_DIRECTION_WEIGHT;
+                    } else if (directions.isClose(drawnMoves[i - 1], kanjiMoves[i - 1])) {
+                        score += MOVE_DIRECTION_WEIGHT * CLOSE_WEIGHT;
+                    }
+                }
+
+                if (drawnStarts[i] == kanjiStarts[i]) {
+                    score += STROKE_LOCATION_WEIGHT;
+                } else if (locations.isClose(drawnStarts[i], kanjiStarts[i])) {
+                    score += STROKE_LOCATION_WEIGHT * CLOSE_WEIGHT;
+                }
+                if (drawnEnds[i] == kanjiEnds[i]) {
+                    score += STROKE_LOCATION_WEIGHT;
+                } else if (locations.isClose(drawnEnds[i], kanjiEnds[i])) {
+                    score += STROKE_LOCATION_WEIGHT * CLOSE_WEIGHT;
+                }
+            }
+
+            var max = drawnStarts.length * (STROKE_DIRECTION_WEIGHT + 2 * STROKE_LOCATION_WEIGHT)
+                + (drawnStarts.length - 1) * MOVE_DIRECTION_WEIGHT;
+
+            return 100.0 * score / max;
+        }
+    }
+
+    this.recognize = function (strokesRecogData) {
+        var potentialKanji = new Kanji("?", strokesRecogData);
+
+        return getStrictMatch(potentialKanji);
     }
 }

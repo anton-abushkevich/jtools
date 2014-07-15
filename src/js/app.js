@@ -1,6 +1,7 @@
 var JTOOLS = {};
 
 window.addEventListener("load", onLoad);
+window.debug = document.getElementById("debug");
 
 function onLoad() {
     var triggers = {
@@ -23,7 +24,10 @@ function onLoad() {
                 JTOOLS.createPanel("recog", html, x ? x + "px" : "20%", y ? y + "px" : "20%");
                 new Sliders();
                 JTOOLS.recognition = new Recognition();
-                JTOOLS.handwriting = new Handwriting();
+                JTOOLS.handwriting = new Handwriting(function (data) {
+                    var match = JTOOLS.recognition.recognize(data);
+                    debug.innerHTML = match.symbol + " (" + match.score + ")";
+                });
             });
         },
         kbZIndex = localStorage.getItem("kb.z"),
@@ -97,7 +101,7 @@ function onLoad() {
         });
         refreshPanelsZIndices();
         return panel;
-    }
+    };
 
     JTOOLS.createPicker = function(id, html, x, y) {
         var picker = JTOOLS.createPanel(id, html, x + "px", y + "px"),
@@ -117,7 +121,7 @@ function onLoad() {
             }
         }
         return picker;
-    }
+    };
 
     JTOOLS.removePanel = function(panel) {
         if(panel) {
@@ -125,7 +129,7 @@ function onLoad() {
             panels.splice(panels.indexOf(panel), 1);
             localStorage.removeItem(panel.id + ".z");
         }
-    }
+    };
 
     function movePanelToTop(panel) {
         panels.splice(panels.indexOf(panel), 1);
