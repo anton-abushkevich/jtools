@@ -245,7 +245,7 @@ function Keyboard() {
         str.focus();
     }
 
-    function processText(e) {
+    function processText() {
         var s = str.selectionStart,
             letter1 = str.value.charAt(s - 3) && str.value.charAt(s - 3).toLowerCase(),
             letter2 = str.value.charAt(s - 2) && str.value.charAt(s - 2).toLowerCase(),
@@ -316,6 +316,7 @@ function Keyboard() {
             var kanjis = document.getElementsByClassName("w-kanji");
 
             if (kanjis.length > 0) {
+                e.preventDefault();
                 if (kanji == undefined) {
                     index = 0;
                     selectKanji();
@@ -333,7 +334,6 @@ function Keyboard() {
                 }
             }
 
-            e.preventDefault();
             return false;
 
             function selectKanji() {
