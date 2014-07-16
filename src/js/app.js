@@ -13,7 +13,7 @@ function onLoad() {
             sendRequest("keyboard.html", function (html) {
                 var x = localStorage.getItem("kb.x"),
                     y = localStorage.getItem("kb.y");
-                JTOOLS.createPanel("kb", html, x ? x + "px" : "10%", y ? y + "px" : "10%");
+                JTOOLS.createPanel("kb", html, x ? x + "px" : "40px", y ? y + "px" : "40px");
                 JTOOLS.keyboard = new Keyboard();
             });
         },
@@ -21,7 +21,7 @@ function onLoad() {
             sendRequest("recognition.html", function (html) {
                 var x = localStorage.getItem("recog.x"),
                     y = localStorage.getItem("recog.y");
-                JTOOLS.createPanel("recog", html, x ? x + "px" : "20%", y ? y + "px" : "20%");
+                JTOOLS.createPanel("recog", html, x ? x + "px" : "650px", y ? y + "px" : "40px");
                 new Sliders();
                 JTOOLS.recognition = new Recognition();
                 JTOOLS.handwriting = new Handwriting(function (data) {
@@ -30,13 +30,18 @@ function onLoad() {
                 });
             });
         },
-        kbZIndex = localStorage.getItem("kb.z"),
-        recogZIndex = localStorage.getItem("recog.z");
+        kbX = localStorage.getItem("kb.x"),
+        recogX = localStorage.getItem("recog.x");
 
     JTOOLS.container = document.getElementById("container");
 
-    if(kbZIndex) showPanel("kb", loadKbPanel);
-    if(recogZIndex) showPanel("recog", loadRecogPanel);
+    if (!kbX && !recogX) {
+        showPanel("kb", loadKbPanel);
+        showPanel("recog", loadRecogPanel);
+    } else {
+        if (localStorage.getItem("kb.z")) showPanel("kb", loadKbPanel);
+        if (localStorage.getItem("recog.z")) showPanel("recog", loadRecogPanel);
+    }
 
     addClickHandler(triggers.kb, function () {
         var id = "kb",
