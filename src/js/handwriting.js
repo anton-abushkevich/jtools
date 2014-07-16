@@ -83,6 +83,7 @@ function Handwriting(strokeDrawnHandler) {
             }
             strokeIndex = -1;
             updateUndoRedoIcons();
+            onStrokeDrawn();
         },
         toggleGrid = function () {
             if (showGrid) {
