@@ -288,9 +288,7 @@ function Handwriting(strokeDrawnHandler) {
             }
         },
         onStrokeDrawn = function () {
-            setTimeout(function () {
-                strokeDrawnHandler(assembleStrokesData());
-            }, 0);
+            strokeDrawnHandler(assembleStrokesData());
         },
 
         paper = elem(canvas, "svg", false).attrs({width: canvasWidth, height: canvasHeight, version: "1.1",

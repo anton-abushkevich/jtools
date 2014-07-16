@@ -271,7 +271,7 @@ function Recognition(loadingProgressCallback) {
             var max = drawnStarts.length * (STROKE_DIRECTION_WEIGHT + 2 * STROKE_LOCATION_WEIGHT)
                 + (drawnStarts.length - 1) * MOVE_DIRECTION_WEIGHT;
 
-            return 100.0 * score / max;
+            return 100 * score / max;
         }
     }
 

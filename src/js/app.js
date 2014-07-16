@@ -26,7 +26,7 @@ function onLoad() {
                 JTOOLS.recognition = new Recognition();
                 JTOOLS.handwriting = new Handwriting(function (data) {
                     var match = JTOOLS.recognition.recognize(data);
-                    debug.innerHTML = match.symbol + " (" + match.score + ")";
+                    debug.innerHTML = match.symbol ? match.symbol + " (" + match.score + ")" : "";
                 });
             });
         },
