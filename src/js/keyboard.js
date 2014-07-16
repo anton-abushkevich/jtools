@@ -111,7 +111,9 @@ function Keyboard() {
     document.getElementById(storedLayout ? storedLayout : "hiragana").onclick();
     document.getElementById(storedOut ? storedOut : "outHiragana").onclick();
 
-    rikaichanSupport();
+    if (navigator.userAgent.lastIndexOf('Firefox/') > 0) {
+        rikaichanSupport();
+    }
 
     function chooseHiraganaOutput() {
         caps = false;
@@ -296,17 +298,20 @@ function Keyboard() {
         }
     }
 
-    /** various behavior definitions concerning Rikaichan Firefox addon
+    /** various behavior definitions concerning Rikaichan Firefox addon.
+     *  So here we are free to use Firefox-specific events.
      */
     function rikaichanSupport() {
         // selected kanji and its index. see mouse scroll event handler
         var kanji, index;
 
-        document.addEventListener("click", function (e) {
-            if (e.button == 0 || e.button == 1) {
+        // on click rikaichan-window removes before the "click" event, so we use "mousedown"
+        document.addEventListener("mousedown", function (e) {
+            var rikaichan = document.getElementById("rikaichan-window");
+            if (rikaichan && rikaichan.innerHTML && e.button == 0 && kanji) {
+                e.preventDefault();
                 addSymbol(kanji);
                 clear();
-                e.preventDefault();
                 return false;
             }
         });
