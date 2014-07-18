@@ -95,7 +95,7 @@ module.exports = function (grunt) {
             },
             pro: {
                 files: [
-                    {expand: true, cwd: 'src/data/', src: ['**'], dest: 'build/release/'},
+                    {expand: true, cwd: 'src/data/', src: ['**'], dest: 'build/release/data/'},
                     {expand: true, cwd: 'src/assets/', src: ['**'], dest: 'build/release/'},
                     {expand: true, cwd: 'src/lib/', src: ['**'], dest: 'build/release/lib/'}
                 ]
