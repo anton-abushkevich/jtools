@@ -17,10 +17,10 @@
                 return;
             }
             callback(req.responseText);
-        }
+        };
         if (req.readyState == 4) return;
         req.send(postData);
-    }
+    };
 
     var XMLHttpFactories = [
         function () {
