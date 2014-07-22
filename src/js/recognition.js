@@ -40,21 +40,22 @@ function Recognition(loadingProgressCallback, recognizedKanjiClickHandler) {
         STROKE_LOCATION_WEIGHT = 0.6,
         CLOSE_WEIGHT = 0.7,
 
-        outputs = document.getElementsByClassName("output-item");
+        OUTPUT_QUANTITY = 8,
+        strictOutputs = document.getElementById("output-strict"),
+        fuzzyOutputs = document.getElementById("output-fuzzy"),
+        plusMinusOneOutputs = document.getElementById("output-plus-minus-1"),
+        plusMinusTwoOutputs = document.getElementById("output-plus-minus-2");
 
-    for (var i = 0; i < outputs.length; i++) {
-        outputs[i].classList.add("no-drag");
-        outputs[i].onclick = function (e) {
-            e.preventDefault();
-            recognizedKanjiClickHandler(this.innerHTML);
-        }
-    }
+    fillOutputs(strictOutputs);
+    fillOutputs(fuzzyOutputs);
+    fillOutputs(plusMinusOneOutputs);
+    fillOutputs(plusMinusTwoOutputs);
 
     this.kanjis = kanjis;
 
-    init();
+    initData();
 
-    function init() {
+    function initData() {
         var data = localStorage.getItem("recog"),
             version = localStorage.getItem("recog_version");
 
@@ -75,33 +76,32 @@ function Recognition(loadingProgressCallback, recognizedKanjiClickHandler) {
                 doInit(JSON.parse(data));
             });
         }
-    }
 
-    function doInit(recog) {
-        var count = 0,
-            fullLength = Object.keys(recog).length,
-            tickEvery = 5,                                      // call progress cb on every tickEvery%
-            percentTick = (fullLength / (100 / tickEvery)) ^ 0;
-        start = new Date;
-        for (var k in recog) {
-            if (!recog.hasOwnProperty(k)) {
-                continue;
-            }
+        function doInit(recog) {
+            var count = 0,
+                fullLength = Object.keys(recog).length,
+                tickEvery = 5,                                      // call progress cb on every tickEvery%
+                percentTick = (fullLength / (100 / tickEvery)) ^ 0;
 
-            var kanji = new Kanji(k, recog[k]),
-                sub = kanjis[kanji.strokes.length];
+            for (var k in recog) {
+                if (!recog.hasOwnProperty(k)) {
+                    continue;
+                }
 
-            if (!sub) {
-                sub = {};
-                kanjis[kanji.strokes.length] = sub;
+                var kanji = new Kanji(k, recog[k]),
+                    sub = kanjis[kanji.strokes.length];
+
+                if (!sub) {
+                    sub = {};
+                    kanjis[kanji.strokes.length] = sub;
+                }
+                sub[kanji.symbol] = kanji;
+                if (loadingProgressCallback && count % percentTick == 0) {
+                    loadingProgressCallback(tickEvery * count / percentTick ^ 0);
+                }
+                count++;
             }
-            sub[kanji.symbol] = kanji;
-            if (loadingProgressCallback && count % percentTick == 0) {
-                loadingProgressCallback(tickEvery * count / percentTick ^ 0);
-            }
-            count++;
         }
-        console.log("Parse complete in: " + ((new Date - start) / 1000) + " sec");
     }
 
     function Kanji(symbol, strokesRecogData) {
@@ -245,7 +245,7 @@ function Recognition(loadingProgressCallback, recognizedKanjiClickHandler) {
             return 0;
         });
 
-        return matches.slice(0, 8);
+        return matches.slice(0, OUTPUT_QUANTITY);
 
         function getScore(kanji) {
             var kanjiStarts = kanji.strokeStarts,
@@ -288,13 +288,25 @@ function Recognition(loadingProgressCallback, recognizedKanjiClickHandler) {
         }
     }
 
+    function fillOutputs(outputBlock) {
+        for (var i = 0; i < OUTPUT_QUANTITY; i++) {
+            var item = document.createElement("div");
+            item.classList.add("output-item");
+            item.classList.add("no-drag");
+            item.onclick = function (e) {
+                e.preventDefault();
+                recognizedKanjiClickHandler(this.innerHTML);
+            };
+            outputBlock.appendChild(item);
+        }
+    }
+
     this.recognize = function (strokesRecogData) {
         var potentialKanji = new Kanji("?", strokesRecogData),
-            strictMatches = getStrictMatches(potentialKanji),
-            strictOutputs = document.getElementById("output-strict").children;
+            strictMatches = getStrictMatches(potentialKanji);
 
-        for (var i = 0; i < strictOutputs.length; i++) {
-            strictOutputs[i].innerHTML = strictMatches[i] ? strictMatches[i].symbol : "";
+        for (var i = 0; i < strictOutputs.children.length; i++) {
+            strictOutputs.children[i].innerHTML = strictMatches[i] ? strictMatches[i].symbol : "";
         }
     };
 }
