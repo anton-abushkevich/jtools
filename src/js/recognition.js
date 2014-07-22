@@ -1,4 +1,4 @@
-function Recognition(loadingProgressCallback) {
+function Recognition(loadingProgressCallback, recognizedKanjiClickHandler) {
 
     var VERSION = '0.2',
         kanjis = {},
@@ -38,7 +38,17 @@ function Recognition(loadingProgressCallback) {
         STROKE_DIRECTION_WEIGHT = 1.0,
         MOVE_DIRECTION_WEIGHT = 0.8,
         STROKE_LOCATION_WEIGHT = 0.6,
-        CLOSE_WEIGHT = 0.7;
+        CLOSE_WEIGHT = 0.7,
+
+        outputs = document.getElementsByClassName("output-item");
+
+    for (var i = 0; i < outputs.length; i++) {
+        outputs[i].classList.add("no-drag");
+        outputs[i].onclick = function (e) {
+            e.preventDefault();
+            recognizedKanjiClickHandler(this.innerHTML);
+        }
+    }
 
     this.kanjis = kanjis;
 
@@ -208,9 +218,8 @@ function Recognition(loadingProgressCallback) {
         }
     }
 
-    function getStrictMatch(potentialKanji) {
-        var match,
-            maxScore = 0,
+    function getStrictMatches(potentialKanji) {
+        var matches = [],
             kanjisList = kanjis[potentialKanji.strokes.length],
 
             drawnStarts = potentialKanji.strokeStarts,
@@ -222,17 +231,21 @@ function Recognition(loadingProgressCallback) {
             if (!kanjisList.hasOwnProperty(k)) {
                 continue;
             }
-            var score = getScore(kanjisList[k]);
-            if (score > maxScore) {
-                maxScore = score;
+            var score = getScore(kanjisList[k]),
                 match = kanjisList[k].symbol;
-            }
+            matches.push({
+                symbol: match,
+                score: score
+            })
         }
 
-        return {
-            symbol: match,
-            score: maxScore
-        };
+        matches.sort(function (k1, k2) {
+            if (k1.score > k2.score) return -1;
+            if (k1.score < k2.score) return 1;
+            return 0;
+        });
+
+        return matches.slice(0, 8);
 
         function getScore(kanji) {
             var kanjiStarts = kanji.strokeStarts,
@@ -276,8 +289,12 @@ function Recognition(loadingProgressCallback) {
     }
 
     this.recognize = function (strokesRecogData) {
-        var potentialKanji = new Kanji("?", strokesRecogData);
+        var potentialKanji = new Kanji("?", strokesRecogData),
+            strictMatches = getStrictMatches(potentialKanji),
+            strictOutputs = document.getElementById("output-strict").children;
 
-        return getStrictMatch(potentialKanji);
-    }
+        for (var i = 0; i < strictOutputs.length; i++) {
+            strictOutputs[i].innerHTML = strictMatches[i] ? strictMatches[i].symbol : "";
+        }
+    };
 }

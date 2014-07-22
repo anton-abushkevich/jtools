@@ -127,6 +127,32 @@
   display: inline-block;
   vertical-align: top;
   margin-left: 10px;
+
+  .output {
+    white-space: nowrap;
+  }
+  .output-item {
+    display: inline-block;
+    border: 1px solid #ddd;
+    border-radius: 2px;
+    background-color: white;
+    font-size: 30px;
+    width: 40px;
+    height: 40px;
+    vertical-align: top;
+    text-align: center;
+    cursor: pointer;
+    padding: 0 0 1px;
+  }
+  .output-item:hover {
+    border: 1px solid #bbb;
+  }
+  .output-item:active {
+    padding: 1px 0 0;
+  }
+  .output-item + .output-item {
+    margin-left: 4px;
+  }
 }
 
 .recog-output-label {
@@ -135,4 +161,8 @@
 
 .recog-output-label > b {
   font-size: 14px;
+}
+
+.recog-output-label:not(:first-child) {
+  margin-top: 7px;
 }

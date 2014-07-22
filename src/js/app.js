@@ -23,11 +23,12 @@ function onLoad() {
                     y = localStorage.getItem("recog.y");
                 JTOOLS.createPanel("recog", html, x ? x + "px" : "650px", y ? y + "px" : "40px");
                 new Sliders();
-                JTOOLS.recognition = new Recognition();
-                JTOOLS.handwriting = new Handwriting(function (data) {
-                    var match = JTOOLS.recognition.recognize(data);
-                    debug.innerHTML = match.symbol ? match.symbol + " (" + match.score + ")" : "";
+                JTOOLS.recognition = new Recognition(null, function (kanji) {
+                    if (JTOOLS.keyboard) {
+                        JTOOLS.keyboard.addSymbol(kanji);
+                    }
                 });
+                JTOOLS.handwriting = new Handwriting(JTOOLS.recognition.recognize);
             });
         },
         kbX = localStorage.getItem("kb.x"),

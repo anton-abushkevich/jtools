@@ -78,6 +78,8 @@ function Keyboard() {
             "0": "０", "1": "１", "2": "２", "3": "３", "4": "４", "5": "５", "6": "６", "7": "７", "8": "８", "9": "９"
         };
 
+    this.addSymbol = addSymbol;
+
     document.getElementById("outHiragana").onclick = chooseHiraganaOutput;
     document.getElementById("outKatakana").onclick = chooseKatakanaOutput;
     document.getElementById("hiragana").onclick = switchKeyboard;
