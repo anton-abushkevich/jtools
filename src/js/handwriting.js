@@ -337,6 +337,7 @@ function Handwriting(strokeDrawnHandler) {
             if (!stroke.validate()) {
                 stroke.wipe();
                 stroke = null;
+                removeListeners();
                 return;
             }
 
@@ -363,7 +364,10 @@ function Handwriting(strokeDrawnHandler) {
             stroke = null;
 
             onStrokeDrawn();
+            removeListeners();
+        }
 
+        function removeListeners() {
             document.removeEventListener("mousemove", move);
             document.removeEventListener("mouseup", up);
         }
