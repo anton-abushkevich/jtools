@@ -130,6 +130,7 @@
 
   .output {
     white-space: nowrap;
+    position: relative;
   }
   .output-item {
     display: inline-block;
@@ -152,6 +153,15 @@
   }
   .output-item + .output-item {
     margin-left: 4px;
+  }
+  .output.not-yet-implemented:after {
+    content: "Not yet implemented";
+    color: #bababa;
+    font-weight: bold;
+    font-size: 18px;
+    position: absolute;
+    top: 8px;
+    left: 70px;
   }
 }
 
