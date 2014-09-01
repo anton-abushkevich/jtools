@@ -55,7 +55,7 @@ module.exports = function (grunt) {
                 options: {
                     data: {
                         scripts: '<script src="js/<%= pkg.name %>-<%= pkg.version %>.js"></script>',
-                        css: '<link type="text/css" rel="stylesheet" href="css/style.css">',
+                        css: '<link type="text/css" rel="stylesheet" href="css/<%= pkg.name %>-<%= pkg.version %>.css">',
                         year: '<%= grunt.template.today("yyyy") %>'
                     }
                 },
@@ -80,7 +80,7 @@ module.exports = function (grunt) {
                     yuicompress: true
                 },
                 files: {
-                    "build/release/css/style.css": "tmp/style.less"
+                    "build/release/css/<%= pkg.name %>-<%= pkg.version %>.css": "tmp/style.less"
                 }
             }
         },

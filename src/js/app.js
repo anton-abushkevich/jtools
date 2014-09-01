@@ -59,7 +59,7 @@ function onLoad() {
     });
 
     function addClickHandler(elems, handler) {
-        if (elems instanceof HTMLCollection) {
+        if (elems.length) {
             for (var i = 0; i < elems.length; i++) {
                 elems[i].onclick = handler;
             }

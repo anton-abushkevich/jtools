@@ -1,6 +1,6 @@
 function Recognition(loadingProgressCallback, recognizedKanjiClickHandler) {
 
-    var VERSION = '0.2',
+    var VERSION = '0.3',
         kanjis = {},
         locations = {
             N: [1, 0],
@@ -63,14 +63,18 @@ function Recognition(loadingProgressCallback, recognizedKanjiClickHandler) {
             if (version != VERSION) {
                 downloadData();
             } else {
-                doInit(JSON.parse(data));
+                try {
+                    doInit(JSON.parse(data));
+                } catch (e) {
+                    downloadData();
+                }
             }
         } else {
             downloadData();
         }
 
         function downloadData() {
-            sendRequest("data/recog-" + VERSION + ".json", function (data) {
+            sendRequest("data/recog-" + VERSION + ".txt", function (data) {
                 localStorage.setItem("recog", data);
                 localStorage.setItem("recog_version", VERSION);
                 doInit(JSON.parse(data));
@@ -236,7 +240,7 @@ function Recognition(loadingProgressCallback, recognizedKanjiClickHandler) {
             matches.push({
                 symbol: match,
                 score: score
-            })
+            });
         }
 
         matches.sort(function (k1, k2) {
