@@ -113,9 +113,7 @@ function Keyboard() {
     document.getElementById(storedLayout ? storedLayout : "hiragana").onclick();
     document.getElementById(storedOut ? storedOut : "outHiragana").onclick();
 
-    if (navigator.userAgent.lastIndexOf('Firefox/') > 0) {
-        rikaichanSupport();
-    }
+    rikaichanSupport();
 
     function chooseHiraganaOutput() {
         caps = false;
@@ -300,8 +298,7 @@ function Keyboard() {
         }
     }
 
-    /** various behavior definitions concerning Rikaichan Firefox addon.
-     *  So here we are free to use Firefox-specific events.
+    /** various behavior definitions concerning Rikaichan (Firefox) and Rikaikun (Chrome) addons
      */
     function rikaichanSupport() {
         // selected kanji and its index. see mouse scroll event handler
@@ -319,7 +316,16 @@ function Keyboard() {
         });
 
         // mousewheel - select a kanji to paste
-        document.addEventListener("DOMMouseScroll", function (e) {
+        document.addEventListener("DOMMouseScroll", onmousewheel, false);
+        document.addEventListener("mousewheel", onmousewheel, false);
+
+        document.addEventListener("DOMNodeInserted", function (e) {
+            if (kanji && e.relatedNode.id == "rikaichan-window") {
+                clear();
+            }
+        });
+
+        function onmousewheel(e) {
             var kanjis = document.getElementsByClassName("w-kanji");
 
             if (kanjis.length > 0) {
@@ -329,7 +335,7 @@ function Keyboard() {
                     selectKanji();
                     kanji = kanjis[0].innerHTML;
                 } else {
-                    index += e.detail < 0 ? -1 : 1;
+                    index += (('wheelDelta' in e) ? e.wheelDelta : -e.detail) < 0 ? 1 : -1;
                     if (index >= kanjis.length) {
                         index = 0;
                     }
@@ -348,13 +354,7 @@ function Keyboard() {
                     kanjis[i].className = "w-kanji" + (i == index ? " selected" : "");
                 }
             }
-        }, false);
-
-        document.addEventListener("DOMNodeInserted", function (e) {
-            if (kanji && e.relatedNode.id == "rikaichan-window") {
-                clear();
-            }
-        });
+        }
 
         function clear() {
             kanji = undefined;
