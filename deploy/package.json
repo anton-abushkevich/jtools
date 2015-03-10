@@ -1,0 +1,11 @@
+{
+    "name": "jtools",
+    "description": "Various tools for hiragana, katakana and kanji input: virtual keyboard, client-side kanji recognition",
+    "version" : "0.3.0",
+    "private" : false,
+    "engines" : {
+        "node" : "0.10.29"
+    },
+    "dependencies" : {},
+    "devDependencies": {}
+}
