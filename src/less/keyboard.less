@@ -39,7 +39,7 @@
     letter-spacing: normal;
     word-spacing: normal;
     text-transform: none;
-    text-indent: 0px;
+    text-indent: 0;
   }
 
   button:hover {
@@ -117,9 +117,17 @@
   .hgrp {
     display: inline-block;
     position: relative;
-    font-size: 0px;
+    font-size: 0;
     white-space: nowrap;
     vertical-align: middle;
+  }
+
+  /* webkit zero font-size bug fix */
+  @media screen and (-webkit-min-device-pixel-ratio: 0) {
+    .hgrp {
+      font-size: 12px;
+      letter-spacing: -.4em;
+    }
   }
 
   .hgrp + .hgrp {

@@ -71,6 +71,8 @@ function onLoad() {
             trigs = triggers[id];
         if (panel) {
             panel.style.display = "block";
+            panel.classList.remove("animate-fade-out");
+            panel.classList.add("animate-fade-in");
             movePanelToTop(panel);
         } else {
             initFunc();
@@ -87,7 +89,11 @@ function onLoad() {
             for (var i = 0; i < trigs.length; i++) {
                 trigs[i].classList.remove("on");
             }
-            panel.style.display = "none";
+            panel.classList.remove("animate-fade-in");
+            panel.classList.add("animate-fade-out");
+            setTimeout(function () {
+                panel.style.display = "none";
+            }, 100)
         }
         localStorage.removeItem(id + ".z");
     }
@@ -95,7 +101,7 @@ function onLoad() {
     JTOOLS.createPanel = function(id, html, x, y) {
         var panel = document.createElement("div");
         panel.id = id;
-        panel.className = "panel";
+        panel.className = "panel animate-fade-in";
         panel.style.left = x ? x : "15%";
         panel.style.top = y ? y : "15%";
         panel.innerHTML = html;
@@ -173,4 +179,5 @@ function message(text, type) {
         mDiv.style.display = "none";
     }
 }
+
 
