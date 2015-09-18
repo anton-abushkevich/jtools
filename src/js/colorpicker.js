@@ -3,7 +3,7 @@ function ColorPicker() {
     this.showAtElement = function (elem, callback) {
         var bounds = elem.getBoundingClientRect();
         return showAt(bounds.left, elem.offsetHeight + bounds.top, callback);
-    }
+    };
 
     function showAt(x, y, callback) {
         var picker = JTOOLS.createPicker("colorpicker", "", x, y),
@@ -31,7 +31,7 @@ function ColorPicker() {
         randomColorButton.onclick = function() {
             picker.removePicker();
             callback("random");
-        }
+        };
         picker.appendChild(randomColorButton);
 
         return picker;
@@ -45,7 +45,7 @@ function ColorPicker() {
             colorBtn.onclick = function () {
                 picker.removePicker();
                 callback(colorStr);
-            }
+            };
             picker.appendChild(colorBtn);
         }
 
