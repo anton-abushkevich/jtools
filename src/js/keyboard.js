@@ -219,6 +219,7 @@ function Keyboard() {
             str.value += symb;
         }
         str.focus();
+        console.log(symb + ": " + symb.charCodeAt(0));
     }
 
     function space() {
@@ -309,9 +310,9 @@ function Keyboard() {
         // on click rikaichan-window removes before the "click" event, so we use "mousedown"
         document.addEventListener("mousedown", function (e) {
             var rikaichan = document.getElementById("rikaichan-window");
-            if (rikaichan && rikaichan.innerHTML && e.button == 0 && kanji) {
+            if (rikaichan && rikaichan.innerHTML && (e.button == 0 || e.button == 1) && kanji) {
                 e.preventDefault();
-                addSymbol(kanji);
+                addSymbol(e.button ? kanjiOnly(kanji) : kanji);
                 clear();
                 return false;
             }
@@ -367,6 +368,17 @@ function Keyboard() {
         function clear() {
             kanji = undefined;
             index = 0;
+        }
+
+        function kanjiOnly(kanji) {
+            var curr, i;
+            for(i = kanji.length - 1; i >= 0; i--) {
+                curr = kanji.charCodeAt(i);
+                if(curr < 12353 || curr > 12540) {    // not kana
+                    break;
+                }
+            }
+            return kanji.substr(0, i + 1);
         }
     }
 }
