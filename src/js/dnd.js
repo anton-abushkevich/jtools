@@ -1,49 +1,38 @@
 var DRAG_TAGS_IGNORE = ["textarea", "button", "canvas", "input", "rect"];
 
 function setDraggable(elem) {
-    elem.onmousedown = startDrag;
-    document.onmouseup = stopDrag;
-}
+	var initialX, initialY;
+	
+    elem.addEventListener("mousedown", startDrag);
 
-function startDrag(e) {
-    if (e.which != 1 ||
-        DRAG_TAGS_IGNORE.indexOf(e.target.tagName.toLowerCase()) > -1 ||
-        e.target.classList.contains("no-drag")) {
-        return;
-    }
+	function startDrag(e) {
+		if (e.which != 1 ||
+			DRAG_TAGS_IGNORE.indexOf(e.target.tagName.toLowerCase()) > -1 ||
+			e.target.classList.contains("no-drag")) {
+			return;
+		}
 
-    var bounds = this.getBoundingClientRect();
-    this.style.margin = "0";
-    this.style.top = bounds.top + "px";
-    this.style.left = bounds.left + "px";
+		initialX = e.clientX - elem.getBoundingClientRect().left;
+		initialY = e.clientY - elem.getBoundingClientRect().top;
+	
+		document.addEventListener("mousemove", move);
+		document.addEventListener("mouseup", stopDrag);
+		
+		document.body.classList.add("unselectable"); // prevent text selection on drag
+		
+		return false;
+	}
 
-    document.nowDragged = {
-        elem: this,
-        initialX: e.clientX - bounds.left,
-        initialY: e.clientY - bounds.top
-    };
-    document.onmousemove = move;
-    return false;
-}
+	function stopDrag() {
+		localStorage.setItem(elem.id + ".x", elem.getBoundingClientRect().left);
+		localStorage.setItem(elem.id + ".y", elem.getBoundingClientRect().top);		
+		document.removeEventListener("mousemove", move);
+		document.removeEventListener("mouseup", stopDrag);
+		document.body.classList.remove("unselectable");
+	}
 
-function stopDrag() {
-    var d = document.nowDragged;
-    if (d) {
-        localStorage.setItem(d.elem.id + ".x", d.elem.getBoundingClientRect().left);
-        localStorage.setItem(d.elem.id + ".y", d.elem.getBoundingClientRect().top);
-        document.nowDragged = null;
-    }
-    document.mousemove = null;
-}
-
-function move(e) {
-    var nowDragged = document.nowDragged;
-    if (!nowDragged) {
-        stopDrag();
-        return;
-    }
-
-    var elem = nowDragged.elem;
-    elem.style.left = (e.clientX - document.nowDragged.initialX) + "px";
-    elem.style.top = (e.clientY - document.nowDragged.initialY) + "px";
+	function move(e) {
+		elem.style.left = (e.clientX - initialX) + "px";
+		elem.style.top = (e.clientY - initialY) + "px";
+	}
 }
