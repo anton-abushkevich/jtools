@@ -75,7 +75,7 @@ function Keyboard() {
             "фа": "ふぁ", "фи": "ふぃ", "фэ": "ふぇ", "фо": "ふぉ", "фе": "ふぇ",
 
             "--": "ー", "_": "ー", "~": "ー",
-            " ": "　", ",": "、", ".": "。", "!": "！", "?": "？", "%": "％",
+            " ": "　", ",": "、", ".": "。", "!": "！", "?": "？", "%": "％", "[": "【", "]": "】", "/" : "／",
 
             "0": "０", "1": "１", "2": "２", "3": "３", "4": "４", "5": "５", "6": "６", "7": "７", "8": "８", "9": "９"
         };
@@ -219,7 +219,6 @@ function Keyboard() {
             str.value += symb;
         }
         str.focus();
-        console.log(symb + ": " + symb.charCodeAt(0));
     }
 
     function space() {
@@ -289,6 +288,7 @@ function Keyboard() {
                 str.value = str.value.slice(0, s - symbQ) + mora + str.value.slice(s);
                 str.selectionStart = str.selectionEnd = s - symbQ + mora.length;
             }
+            //console.log(mora + ": " + mora.charCodeAt(0));
         }
 
         function processN() {
