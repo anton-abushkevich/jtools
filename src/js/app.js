@@ -21,7 +21,7 @@ function onLoad() {
             sendRequest("recognition.html", function (html) {
                 var x = localStorage.getItem("recog.x"),
                     y = localStorage.getItem("recog.y");
-                JTOOLS.createPanel("recog", html, x ? x + "px" : "650px", y ? y + "px" : "40px");
+                JTOOLS.createPanel("recog", html, x ? x + "px" : "396px", y ? y + "px" : "248px");
                 new Sliders();
                 JTOOLS.recognition = new Recognition(null, function (kanji) {
                     if (JTOOLS.keyboard) {
