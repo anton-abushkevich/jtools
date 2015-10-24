@@ -1,3 +1,5 @@
+"use strict";
+
 (function () {
 
     window.sendRequest = function (url, callback, postData) {

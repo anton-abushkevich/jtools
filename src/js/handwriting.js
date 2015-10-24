@@ -1,3 +1,5 @@
+"use strict";
+
 function Handwriting(strokeDrawnHandler) {
 
     var storedGrid = localStorage.getItem("hw.grid"),

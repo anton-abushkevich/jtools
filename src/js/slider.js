@@ -1,3 +1,5 @@
+"use strict";
+
 function Sliders() {
     var defaultMin = 0,
         defaultMax = 20,

@@ -1,3 +1,5 @@
+"use strict";
+
 function Keyboard() {
 
     var caps, str,

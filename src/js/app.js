@@ -1,3 +1,5 @@
+"use strict";
+
 var JTOOLS = {};
 
 window.addEventListener("load", onLoad);

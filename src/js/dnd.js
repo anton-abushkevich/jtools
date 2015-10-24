@@ -1,3 +1,5 @@
+"use strict";
+
 var DRAG_TAGS_IGNORE = ["textarea", "button", "canvas", "input", "rect"];
 
 function setDraggable(elem) {
@@ -17,10 +19,8 @@ function setDraggable(elem) {
 	
 		document.addEventListener("mousemove", move);
 		document.addEventListener("mouseup", stopDrag);
-		
+
 		document.body.classList.add("unselectable"); // prevent text selection on drag
-		
-		return false;
 	}
 
 	function stopDrag() {
