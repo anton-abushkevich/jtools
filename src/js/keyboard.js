@@ -271,12 +271,13 @@ function Keyboard() {
             mora = mora1;
             symbQ = 1;
 
-            if (letter2.toLowerCase() === "n" || letter2.toLowerCase() === "н") { // special case:
-                processN();						// process ん in case of one-symbol convertion: space, comma, dot
+            if (letter2.toLowerCase() === "n" || letter2.toLowerCase() === "н") {
+                processN(); // process ん in case of one-symbol conversion: space, comma, dot
             }
 
-        } else if (letter2.toLowerCase() === "n" || letter2.toLowerCase() === "н") { // special case
-            processN();
+        } else if ((letter2.toLowerCase() === "n" && letter3.toLowerCase() !== "y") || letter2.toLowerCase() === "н" ) {
+            processN(); // process ん in case of two-symbol conversion,
+                        // except following "y" for three-letter conversion of 「にゃ」、「にゅ」 and「にょ」
         }
 
         if (mora) {
