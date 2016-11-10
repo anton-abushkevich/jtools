@@ -139,7 +139,7 @@ function Handwriting(strokeDrawnHandler) {
         },
         showBgPicker = function () {
             var bounds = this.getBoundingClientRect(),
-                bgPicker = JTOOLS.createPicker("bgPicker", "", bounds.left, this.offsetHeight + bounds.top);
+                bgPicker = JTOOLS.createPicker("bgPicker", bounds.left, this.offsetHeight + bounds.top);
 
             createBgButton("btnBgNone");
             createBgButton("btnBgPaper");
@@ -614,11 +614,10 @@ function Handwriting(strokeDrawnHandler) {
         }
 
         function drawNumber(num) {
-            var firstDot = dots[0],
-                auxDot = dots.length > 5 ? dots[5] : dots[dots.length - 1],
-                atan = Math.atan2(auxDot.y - firstDot.y, auxDot.x - firstDot.x),
-                nx = firstDot.x - strokeNumberOffset * Math.cos(atan),
-                ny = firstDot.y - strokeNumberOffset * Math.sin(atan);
+            var auxDot = dots.length > 5 ? dots[5] : dots[dots.length - 1],
+                atan = Math.atan2(auxDot.y - dot.y, auxDot.x - dot.x),      // dot - initial dot
+                nx = dot.x - strokeNumberOffset * Math.cos(atan),
+                ny = dot.y - strokeNumberOffset * Math.sin(atan);
 
             number = elem(paper, "text").
                 attrs({x: nx, y: ny, stroke: "none", fill: ba.stroke, "font-size": numberFontSize,

@@ -8,7 +8,7 @@ function ColorPicker() {
     };
 
     function showAt(x, y, callback) {
-        var picker = JTOOLS.createPicker("colorpicker", "", x, y),
+        var picker = JTOOLS.createPicker("colorpicker", x, y),
             h, l, colorBtn;
 
         for (h = 0; h <= 100; h += 5) {

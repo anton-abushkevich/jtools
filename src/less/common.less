@@ -37,6 +37,21 @@ html, body {
   white-space: nowrap;
 }
 
+.hidden {
+  display: none;
+}
+
+.loading {
+  width: 252px;
+  height: 60px;
+  text-align: center;
+  &:after {
+    content: "Loading...";
+    line-height: 60px;
+    font-size: 14px;
+  }
+}
+
 .pull-left {
   float: left;
   margin-right: 10px;
