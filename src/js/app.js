@@ -46,7 +46,7 @@ function onLoad() {
     JTOOLS.createPanel = function(id, x, y) {
         var panel = document.createElement("div");
 
-        // if panel hasn't loaded in 200ms, display loading message
+        // if the panel hasn't loaded in 200 ms, display a loading message
         setTimeout(function () {
             if (!panel.innerHTML) {
                 var loading = document.createElement("div");
@@ -73,23 +73,26 @@ function onLoad() {
 
     JTOOLS.createPicker = function(id, x, y) {
         var picker = JTOOLS.createPanel(id, x + "px", y + "px"),
-            pickerListener = picker.addEventListener("mousedown", function (e) {
+            stopPropagation = function (e) {
                 e.stopPropagation();
-            }),
-            listener = document.addEventListener("mousedown", removePicker);
+            };
+
+        picker.addEventListener("mousedown", stopPropagation);
+        document.addEventListener("mousedown", removePicker);
 
         picker.removePicker = removePicker;
         picker.style.display = "block";
+        return picker;
 
         function removePicker() {
+            picker.removeEventListener("mousedown", stopPropagation);
+            document.removeEventListener("mousedown", removePicker);
             JTOOLS.removePanel(picker);
-            document.removeEventListener("mousedown", listener);
-            if(picker) {
-                picker.removeEventListener("mousedown", pickerListener);
-                picker = null;
+            if (picker.onRemove) {
+                picker.onRemove();
             }
+            picker = null;
         }
-        return picker;
     };
 
     JTOOLS.removePanel = function(panel) {

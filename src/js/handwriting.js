@@ -25,7 +25,9 @@ function Handwriting(strokeDrawnHandler) {
         useContour = storedUseContour ? storedUseContour == "true" : true, // true = calligraphic brush, false = simple path
         strokeThickness = storedThickness ? +storedThickness : 10,
         brushMass = storedSmoothing ? +storedSmoothing : 5,   // mass of brush. define brush inertia for smoothing
-
+        colorPicker, 
+        bgPicker,
+        
         drawGrid = function () {
             var gridLines = [];
             for (var i = gridSubdivideLevel; i >= 1; i--) {
@@ -118,7 +120,10 @@ function Handwriting(strokeDrawnHandler) {
             localStorage.setItem("hw.numbers", showStrokesNumbers);
         },
         showColorPicker = function () {
-            new ColorPicker().showAtElement(this, setBrushColor);
+            colorPicker = new ColorPicker().showAtElement(this, setBrushColor);
+            colorPicker.onRemove = function () {
+                colorPicker = null;
+            }
         },
         setBrushColor = function (color) {
             if (!color) return;
@@ -138,8 +143,12 @@ function Handwriting(strokeDrawnHandler) {
             localStorage.setItem("hw.color", color);
         },
         showBgPicker = function () {
-            var bounds = this.getBoundingClientRect(),
-                bgPicker = JTOOLS.createPicker("bgPicker", bounds.left, this.offsetHeight + bounds.top);
+            var bounds = this.getBoundingClientRect();
+
+            bgPicker = JTOOLS.createPicker("bgPicker", bounds.left, this.offsetHeight + bounds.top);
+            bgPicker.onRemove = function () {
+                bgPicker = null;
+            };
 
             createBgButton("btnBgNone");
             createBgButton("btnBgPaper");

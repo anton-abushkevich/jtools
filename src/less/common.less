@@ -42,12 +42,15 @@ html, body {
 }
 
 .loading {
-  width: 252px;
-  height: 60px;
-  text-align: center;
+  width: 137px;
+  height: 45px;
+  padding-left: 75px;
   &:after {
     content: "Loading...";
-    line-height: 60px;
+    animation-name: loading;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    line-height: 45px;
     font-size: 14px;
   }
 }
@@ -168,3 +171,19 @@ html, body {
     transform: scale(.95);
   }
 }
+
+@keyframes loading {
+  25% {
+    content: "Loading"
+  }
+  50% {
+    content: "Loading."
+  }
+  75% {
+    content: "Loading.."
+  }
+  100% {
+    content: "Loading..."
+  }
+}
+
