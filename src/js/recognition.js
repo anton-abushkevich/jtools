@@ -55,9 +55,7 @@ function Recognition(loadingProgressCallback, recognizedKanjiClickHandler) {
 
     this.kanjis = kanjis;
 
-    initData();
-
-    function initData() {
+    (function initData() {
         var data = localStorage.getItem("recog"),
             version = localStorage.getItem("recog_version");
 
@@ -108,7 +106,7 @@ function Recognition(loadingProgressCallback, recognizedKanjiClickHandler) {
                 count++;
             }
         }
-    }
+    }());
 
     function Kanji(symbol, strokesRecogData) {
         var strokes = [],

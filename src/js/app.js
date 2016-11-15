@@ -13,20 +13,24 @@ function onLoad() {
         },
         panels = [],
         loadKbPanel = function () {
-            var x = localStorage.getItem("kb.x"),
-                y = localStorage.getItem("kb.y"),
-                panel = JTOOLS.createPanel("kb", x ? x + "px" : "40px", y ? y + "px" : "40px");
+            JTOOLS.showLoader();
             sendRequest("keyboard.html", function (html) {
+                var x = localStorage.getItem("kb.x"),
+                    y = localStorage.getItem("kb.y"),
+                    panel = JTOOLS.createPanel("kb", x ? x + "px" : "40px", y ? y + "px" : "40px");
                 panel.innerHTML = html;
                 JTOOLS.keyboard = new Keyboard();
                 panel.style.display = "block";
+                JTOOLS.hideLoader();
             });
         },
         loadRecogPanel = function() {
-            var x = localStorage.getItem("recog.x"),
-                y = localStorage.getItem("recog.y"),
-                panel = JTOOLS.createPanel("recog", x ? x + "px" : "396px", y ? y + "px" : "248px");
+            JTOOLS.showLoader();
             sendRequest("recognition.html", function (html) {
+                var x = localStorage.getItem("recog.x"),
+                    y = localStorage.getItem("recog.y"),
+                    panel = JTOOLS.createPanel("recog", x ? x + "px" : "396px", y ? y + "px" : "248px");
+
                 panel.innerHTML = html;
                 panel.style.display = "block";
                 new Sliders();
@@ -36,6 +40,7 @@ function onLoad() {
                     }
                 });
                 JTOOLS.handwriting = new Handwriting(JTOOLS.recognition.recognize);
+                JTOOLS.hideLoader();
             });
         },
         kbX = localStorage.getItem("kb.x"),
@@ -45,17 +50,6 @@ function onLoad() {
 
     JTOOLS.createPanel = function(id, x, y) {
         var panel = document.createElement("div");
-
-        // if the panel hasn't loaded in 200 ms, display a loading message
-        setTimeout(function () {
-            if (!panel.innerHTML) {
-                var loading = document.createElement("div");
-                loading.className = "loading";
-                panel.style.display = "block";
-                panel.appendChild(loading);
-            }
-        }, 200);
-
         panel.style.display = "none";
         panel.id = id;
         panel.className = "panel animate-fade-in";
@@ -88,9 +82,6 @@ function onLoad() {
             picker.removeEventListener("mousedown", stopPropagation);
             document.removeEventListener("mousedown", removePicker);
             JTOOLS.removePanel(picker);
-            if (picker.onRemove) {
-                picker.onRemove();
-            }
             picker = null;
         }
     };
@@ -101,6 +92,14 @@ function onLoad() {
             panels.splice(panels.indexOf(panel), 1);
             localStorage.removeItem(panel.id + ".z");
         }
+    };
+
+    JTOOLS.showLoader = function () {
+        document.getElementById("footer").classList.add("loading");
+    };
+
+    JTOOLS.hideLoader = function () {
+        document.getElementById("footer").classList.remove("loading");
     };
 
     if (!kbX && !recogX) {

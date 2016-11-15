@@ -25,9 +25,7 @@ function Handwriting(strokeDrawnHandler) {
         useContour = storedUseContour ? storedUseContour == "true" : true, // true = calligraphic brush, false = simple path
         strokeThickness = storedThickness ? +storedThickness : 10,
         brushMass = storedSmoothing ? +storedSmoothing : 5,   // mass of brush. define brush inertia for smoothing
-        colorPicker, 
-        bgPicker,
-        
+
         drawGrid = function () {
             var gridLines = [];
             for (var i = gridSubdivideLevel; i >= 1; i--) {
@@ -120,10 +118,7 @@ function Handwriting(strokeDrawnHandler) {
             localStorage.setItem("hw.numbers", showStrokesNumbers);
         },
         showColorPicker = function () {
-            colorPicker = new ColorPicker().showAtElement(this, setBrushColor);
-            colorPicker.onRemove = function () {
-                colorPicker = null;
-            }
+            new ColorPicker().showAtElement(this, setBrushColor);
         },
         setBrushColor = function (color) {
             if (!color) return;
@@ -143,12 +138,8 @@ function Handwriting(strokeDrawnHandler) {
             localStorage.setItem("hw.color", color);
         },
         showBgPicker = function () {
-            var bounds = this.getBoundingClientRect();
-
-            bgPicker = JTOOLS.createPicker("bgPicker", bounds.left, this.offsetHeight + bounds.top);
-            bgPicker.onRemove = function () {
-                bgPicker = null;
-            };
+            var bounds = this.getBoundingClientRect(),
+                bgPicker = JTOOLS.createPicker("bgPicker", bounds.left, this.offsetHeight + bounds.top);
 
             createBgButton("btnBgNone");
             createBgButton("btnBgPaper");
@@ -628,10 +619,10 @@ function Handwriting(strokeDrawnHandler) {
                 nx = dot.x - strokeNumberOffset * Math.cos(atan),
                 ny = dot.y - strokeNumberOffset * Math.sin(atan);
 
-            number = elem(paper, "text").
-                attrs({x: nx, y: ny, stroke: "none", fill: ba.stroke, "font-size": numberFontSize,
-                    style: "text-anchor: middle; font: " + numberFontSize + "px Arial"}).
-                child("tspan", num);
+            number = elem(paper, "text")
+                .attrs({x: nx, y: ny, stroke: "none", fill: ba.stroke, "font-size": numberFontSize,
+                    style: "text-anchor: middle; font: " + numberFontSize + "px Arial"})
+                .child("tspan", num);
             cel.toFront();
         }
     }

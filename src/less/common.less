@@ -41,20 +41,6 @@ html, body {
   display: none;
 }
 
-.loading {
-  width: 137px;
-  height: 45px;
-  padding-left: 75px;
-  &:after {
-    content: "Loading...";
-    animation-name: loading;
-    animation-duration: 1s;
-    animation-iteration-count: infinite;
-    line-height: 45px;
-    font-size: 14px;
-  }
-}
-
 .pull-left {
   float: left;
   margin-right: 10px;
@@ -81,6 +67,22 @@ html, body {
   width: 70%;
   padding: 5px 0 15px;
   border-top: 1px solid #888;
+
+  &::after {
+    content: "Loading...";
+    animation-name: loading;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    font-size: 14px;
+    position: absolute;
+    right: 0;
+    top: -22px;
+    width: 69px;
+    display: none;
+  }
+  &.loading::after {
+    display: block;
+  }
 }
 
 .copyright {
