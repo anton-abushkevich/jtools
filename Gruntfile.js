@@ -31,6 +31,7 @@ module.exports = function (grunt) {
                 options: {
                     data: {
                         scripts: '<script src="js/app.js"></script>' +
+                            '<script src="js/panels.js"></script>' +
                             '<script src="js/dnd.js"></script>' +
                             '<script src="js/ajax.js"></script>' +
                             '<script src="js/keyboard.js"></script>' +
@@ -50,7 +51,8 @@ module.exports = function (grunt) {
                 files: {
                     'build/development/index.html': ['src/index.html'],
                     'build/development/keyboard.html': ['src/keyboard.html'],
-                    'build/development/recognition.html': ['src/recognition.html']
+                    'build/development/recognition.html': ['src/recognition.html'],
+                    'build/development/kanjitest.html': ['src/kanjitest.html']
                 }
             },
             pro: {
@@ -66,7 +68,8 @@ module.exports = function (grunt) {
                 files: {
                     'build/release/index.html': ['src/index.html'],
                     'build/release/keyboard.html': ['src/keyboard.html'],
-                    'build/release/recognition.html': ['src/recognition.html']
+                    'build/release/recognition.html': ['src/recognition.html'],
+                    'build/release/kanjitest.html': ['src/kanjitest.html']
                 }
             }
         },

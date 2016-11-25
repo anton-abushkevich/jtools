@@ -6,93 +6,7 @@ window.addEventListener("load", onLoad);
 window.debug = document.getElementById("debug");
 
 function onLoad() {
-    var triggers = {
-            kb: document.getElementsByClassName("trigger-kb"),
-            recog: document.getElementsByClassName("trigger-recog"),
-            kanjitest: document.getElementsByClassName("trigger-kanjitest")
-        },
-        panels = [],
-        loadKbPanel = function () {
-            JTOOLS.showLoader();
-            sendRequest("keyboard.html", function (html) {
-                var x = localStorage.getItem("kb.x"),
-                    y = localStorage.getItem("kb.y"),
-                    panel = JTOOLS.createPanel("kb", x ? x + "px" : "40px", y ? y + "px" : "40px");
-                panel.innerHTML = html;
-                JTOOLS.keyboard = new Keyboard();
-                panel.style.display = "block";
-                JTOOLS.hideLoader();
-            });
-        },
-        loadRecogPanel = function() {
-            JTOOLS.showLoader();
-            sendRequest("recognition.html", function (html) {
-                var x = localStorage.getItem("recog.x"),
-                    y = localStorage.getItem("recog.y"),
-                    panel = JTOOLS.createPanel("recog", x ? x + "px" : "396px", y ? y + "px" : "248px");
-
-                panel.innerHTML = html;
-                panel.style.display = "block";
-                new Sliders();
-                JTOOLS.recognition = new Recognition(null, function (kanji) {
-                    if (JTOOLS.keyboard) {
-                        JTOOLS.keyboard.addSymbol(kanji);
-                    }
-                });
-                JTOOLS.handwriting = new Handwriting(JTOOLS.recognition.recognize);
-                JTOOLS.hideLoader();
-            });
-        },
-        kbX = localStorage.getItem("kb.x"),
-        recogX = localStorage.getItem("recog.x");
-
-    JTOOLS.container = document.getElementById("container");
-
-    JTOOLS.createPanel = function(id, x, y) {
-        var panel = document.createElement("div");
-        panel.style.display = "none";
-        panel.id = id;
-        panel.className = "panel animate-fade-in";
-        panel.style.left = x ? x : "15%";
-        panel.style.top = y ? y : "15%";
-        JTOOLS.container.appendChild(panel);
-        setDraggable(panel);
-        panels.unshift(panel);
-        panel.addEventListener("mousedown", function () {
-            movePanelToTop(panel);
-        });
-        refreshPanelsZIndices();
-        return panel;
-    };
-
-    JTOOLS.createPicker = function(id, x, y) {
-        var picker = JTOOLS.createPanel(id, x + "px", y + "px"),
-            stopPropagation = function (e) {
-                e.stopPropagation();
-            };
-
-        picker.addEventListener("mousedown", stopPropagation);
-        document.addEventListener("mousedown", removePicker);
-
-        picker.removePicker = removePicker;
-        picker.style.display = "block";
-        return picker;
-
-        function removePicker() {
-            picker.removeEventListener("mousedown", stopPropagation);
-            document.removeEventListener("mousedown", removePicker);
-            JTOOLS.removePanel(picker);
-            picker = null;
-        }
-    };
-
-    JTOOLS.removePanel = function(panel) {
-        if(panel) {
-            JTOOLS.container.removeChild(panel);
-            panels.splice(panels.indexOf(panel), 1);
-            localStorage.removeItem(panel.id + ".z");
-        }
-    };
+    var panels = new Panels();
 
     JTOOLS.showLoader = function () {
         document.getElementById("footer").classList.add("loading");
@@ -102,79 +16,58 @@ function onLoad() {
         document.getElementById("footer").classList.remove("loading");
     };
 
-    if (!kbX && !recogX) {
-        showPanel("kb", loadKbPanel);
-        showPanel("recog", loadRecogPanel);
-    } else {
-        if (localStorage.getItem("kb.z")) showPanel("kb", loadKbPanel);
-        if (localStorage.getItem("recog.z")) showPanel("recog", loadRecogPanel);
-    }
+    JTOOLS.createPicker = panels.createPicker;
 
-    addClickHandler(triggers.kb, function () {
-        var id = "kb",
-            panel = document.getElementById(id),
-            isHidden = !panel || panel.style.display === "none";
-        isHidden ? showPanel(id, loadKbPanel) : hidePanel(id);
-    });
-
-    addClickHandler(triggers.recog, function () {
-        var id = "recog",
-            panel = document.getElementById(id),
-            isHidden = !panel || panel.style.display === "none";
-        isHidden ? showPanel(id, loadRecogPanel) : hidePanel(id);
-    });
-
-    function addClickHandler(elems, handler) {
-        if (elems.length) {
-            for (var i = 0; i < elems.length; i++) {
-                elems[i].onclick = handler;
-            }
-        }
-    }
-
-    function showPanel(id, initFunc) {
-        var panel = document.getElementById(id),
-            trigs = triggers[id];
-        if (panel) {
+    panels.initPanel("kb", function () {
+        JTOOLS.showLoader();
+        sendRequest("keyboard.html", function (html) {
+            var x = localStorage.getItem("kb.x"),
+                y = localStorage.getItem("kb.y"),
+                panel = panels.createPanel("kb", x ? x + "px" : "40px", y ? y + "px" : "40px");
+            panel.innerHTML = html;
+            JTOOLS.keyboard = new Keyboard();
             panel.style.display = "block";
-            panel.classList.remove("animate-fade-out");
-            panel.classList.add("animate-fade-in");
-            movePanelToTop(panel);
-        } else {
-            initFunc();
-        }
-        for (var i = 0; i < trigs.length; i++) {
-            trigs[i].classList.add("on");
-        }
-    }
+            JTOOLS.hideLoader();
+        });
+    });
 
-    function hidePanel(id) {
-        var panel = document.getElementById(id),
-            trigs = triggers[id];
-        if (panel) {
-            for (var i = 0; i < trigs.length; i++) {
-                trigs[i].classList.remove("on");
-            }
-            panel.classList.remove("animate-fade-in");
-            panel.classList.add("animate-fade-out");
-            setTimeout(function () {
-                panel.style.display = "none";
-            }, 90)
-        }
-        localStorage.removeItem(id + ".z");
-    }
+    panels.initPanel("recog", function() {
+        JTOOLS.showLoader();
+        sendRequest("recognition.html", function (html) {
+            var x = localStorage.getItem("recog.x"),
+                y = localStorage.getItem("recog.y"),
+                panel = panels.createPanel("recog", x ? x + "px" : "396px", y ? y + "px" : "248px");
 
-    function movePanelToTop(panel) {
-        panels.splice(panels.indexOf(panel), 1);
-        panels.unshift(panel);
-        refreshPanelsZIndices();
-    }
+            panel.innerHTML = html;
+            panel.style.display = "block";
+            new Sliders();
+            JTOOLS.recognition = new Recognition(null, function (kanji) {
+                if (JTOOLS.keyboard) {
+                    JTOOLS.keyboard.addSymbol(kanji);
+                }
+            });
+            JTOOLS.handwriting = new Handwriting(JTOOLS.recognition.recognize);
+            JTOOLS.hideLoader();
+        });
+    });
 
-    function refreshPanelsZIndices() {
-        for (var i = 0; i < panels.length; i++) {
-            panels[i].style.zIndex = panels.length - i;
-            localStorage.setItem(panels[i].id + ".z", panels[i].style.zIndex);
-        }
+    panels.initPanel("kanjitest", function() {
+        JTOOLS.showLoader();
+        sendRequest("kanjitest.html", function (html) {
+            var x = localStorage.getItem("kanjitest.x"),
+                y = localStorage.getItem("kanjitest.y"),
+                panel = panels.createPanel("kanjitest", x ? x + "px" : "426px", y ? y + "px" : "258px");
+
+            panel.innerHTML = html;
+            panel.style.display = "block";
+            //JTOOLS.kanjitest = new KanjiTest();
+            JTOOLS.hideLoader();
+        });
+    });
+
+    if (!panels.hasSavedPanes()) {
+        panels.loadPanel("kb");
+        panels.loadPanel("recog");
     }
 }
 

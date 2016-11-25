@@ -15,7 +15,17 @@ function Sliders() {
         defaultOrigin = "50% 50%",
         defaultShowValueOnKnob = 1;
 
-    init();
+
+    (function init() {
+        var inputs = document.querySelectorAll("input[type=slider]");
+        for (var i = 0; i < inputs.length; i++) {
+            var element = inputs[i],
+                elemSlider = new Slider(element);
+            element.setValue = elemSlider.setValue;
+            element.valueUp = elemSlider.valueUp;
+            element.valueDown = elemSlider.valueDown;
+        }
+    }());
 
     function Slider(element) {
         var id = element.id,
@@ -208,17 +218,6 @@ function Sliders() {
             }
             e.preventDefault();
             return false;
-        }
-    }
-
-    function init() {
-        var inputs = document.querySelectorAll("input[type=slider]");
-        for (var i = 0; i < inputs.length; i++) {
-            var element = inputs[i],
-                elemSlider = new Slider(element);
-            element.setValue = elemSlider.setValue;
-            element.valueUp = elemSlider.valueUp;
-            element.valueDown = elemSlider.valueDown;
         }
     }
 }

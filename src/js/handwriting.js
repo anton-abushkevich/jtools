@@ -147,7 +147,6 @@ function Handwriting(strokeDrawnHandler) {
 
             function createBgButton(id) {
                 var btn = document.createElement("button");
-                btn.id = id;
                 btn.className = id + " btnBg";
                 btn.onclick = function () {
                     bgPicker.removePicker();
