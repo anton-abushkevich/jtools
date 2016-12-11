@@ -51,12 +51,12 @@ function onLoad() {
         });
     });
 
-    panels.initPanel("kanjitest", function() {
+    panels.initPanel("kakijun", function() {
         JTOOLS.showLoader();
-        sendRequest("kanjitest.html", function (html) {
-            var x = localStorage.getItem("kanjitest.x"),
-                y = localStorage.getItem("kanjitest.y"),
-                panel = panels.createPanel("kanjitest", x ? x + "px" : "426px", y ? y + "px" : "258px");
+        sendRequest("kakijun.html", function (html) {
+            var x = localStorage.getItem("kakijun.x"),
+                y = localStorage.getItem("kakijun.y"),
+                panel = panels.createPanel("kakijun", x ? x + "px" : "426px", y ? y + "px" : "258px");
 
             panel.innerHTML = html;
             panel.style.display = "block";

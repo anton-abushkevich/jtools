@@ -42,6 +42,7 @@ module.exports = function (grunt) {
                         css: '<link type="text/css" rel="stylesheet" href="css/common.css">' +
                             '<link type="text/css" rel="stylesheet" href="css/keyboard.css">' +
                             '<link type="text/css" rel="stylesheet" href="css/recognition.css">' +
+                            '<link type="text/css" rel="stylesheet" href="css/kakijun.css">' +
                             '<link type="text/css" rel="stylesheet" href="css/colorpicker.css">',
                         year: '<%= grunt.template.today("yyyy") %>',
                         pkgname: '<%= pkg.name %>',
@@ -52,7 +53,7 @@ module.exports = function (grunt) {
                     'build/development/index.html': ['src/index.html'],
                     'build/development/keyboard.html': ['src/keyboard.html'],
                     'build/development/recognition.html': ['src/recognition.html'],
-                    'build/development/kanjitest.html': ['src/kanjitest.html']
+                    'build/development/kakijun.html': ['src/kakijun.html']
                 }
             },
             pro: {
@@ -69,7 +70,7 @@ module.exports = function (grunt) {
                     'build/release/index.html': ['src/index.html'],
                     'build/release/keyboard.html': ['src/keyboard.html'],
                     'build/release/recognition.html': ['src/recognition.html'],
-                    'build/release/kanjitest.html': ['src/kanjitest.html']
+                    'build/release/kakijun.html': ['src/kakijun.html']
                 }
             }
         },
@@ -79,7 +80,8 @@ module.exports = function (grunt) {
                     "build/development/css/common.css": "src/less/common.less",
                     "build/development/css/keyboard.css": "src/less/keyboard.less",
                     "build/development/css/recognition.css": "src/less/recognition.less",
-                    "build/development/css/colorpicker.css": "src/less/colorpicker.less"
+                    "build/development/css/colorpicker.css": "src/less/colorpicker.less",
+                    "build/development/css/kakijun.css": "src/less/kakijun.less"
                 }
             },
             pro: {

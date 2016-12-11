@@ -2,13 +2,6 @@
   display: inline-block;
 }
 
-#paper {
-  /* background-image: url(paper.jpg); */
-  border: solid 1px #cacaca;
-  width: 286px;
-  height: 286px;
-}
-
 .sliders-block {
   display: table;
   margin: 8px 0;
@@ -55,6 +48,7 @@
     opacity: .3;
   }
   button.disabled:active {
+    box-shadow: none;
     padding: 0;
   }
 }
@@ -104,25 +98,25 @@
   background-position: -192px 0;
 }
 
-.btnBg {
+.btn-bg {
   width: 66px;
   height: 66px;
   border: 1px solid #dfdfdf;
 }
 
-.btnBg + .btnBg {
+.btn-bg + .btn-bg {
   margin-left: 5px;
 }
 
-.btnBgNone {
+.bg-none {
   background-image: url(checkers.png);
 }
 
-.btnBgPaper {
+.bg-paper {
   background-image: url(paper.jpg);
 }
 
-.btnBgBlackboard {
+.bg-blackboard {
   background-image: url(blackboard.jpg);
 }
 

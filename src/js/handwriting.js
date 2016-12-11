@@ -10,9 +10,10 @@ function Handwriting(strokeDrawnHandler) {
         storedThickness = localStorage.getItem("hw.thickness"),
         storedSmoothing = localStorage.getItem("hw.smoothing"),
 
-        canvas = document.getElementById("paper"),
+        canvas = document.getElementById("recogPaper"),
         canvasWidth = canvas.clientWidth,
         canvasHeight = canvas.clientHeight,
+        backgrounds = ["bg-none", "bg-paper", "bg-blackboard"],
         randomStrokesColors = storedColor && storedColor === "random",
         brushColor = !randomStrokesColors && storedColor ? storedColor : "#444",
         showGrid = storedGrid ? storedGrid == "true" : true,
@@ -141,13 +142,13 @@ function Handwriting(strokeDrawnHandler) {
             var bounds = this.getBoundingClientRect(),
                 bgPicker = JTOOLS.createPicker("bgPicker", bounds.left, this.offsetHeight + bounds.top);
 
-            createBgButton("btnBgNone");
-            createBgButton("btnBgPaper");
-            createBgButton("btnBgBlackboard");
+            for (var i = 0; i < backgrounds.length; i++) {
+                createBgButton(backgrounds[i]);
+            }
 
             function createBgButton(id) {
                 var btn = document.createElement("button");
-                btn.className = id + " btnBg";
+                btn.className = "btn-bg " + id;
                 btn.onclick = function () {
                     bgPicker.removePicker();
                     setBg(id);
@@ -156,8 +157,18 @@ function Handwriting(strokeDrawnHandler) {
             }
         },
         setBg = function (className) {
-            if (!className) return;
-            canvas.className = className !== "btnBgNone" ? className : "";
+            if (!className || backgrounds.indexOf(className) < 0) {
+                className = backgrounds[0];
+            }
+            var BG_CLASS = /^bg-.*/;
+            for (var i = 0; i < canvas.classList.length; i++) {
+                if (canvas.classList[i].match(BG_CLASS)) {
+                    canvas.classList.remove(canvas.classList[i]);
+                }
+            }
+            if (className !== "bg-none") {
+                canvas.classList.add(className);
+            }
             btnBg.className = className;
             localStorage.setItem("hw.bg", className);
         },
@@ -293,8 +304,7 @@ function Handwriting(strokeDrawnHandler) {
         },
 
         paper = elem(canvas, "svg", false).attrs({width: canvasWidth, height: canvasHeight, version: "1.1",
-            style: "overflow: hidden; position: relative;"}).
-            child("desc", "JTOOLS").child("defs"),
+            style: "overflow: hidden; position: relative;"}).child("desc", "JTOOLS").child("defs"),
         grid = showGrid ? drawGrid() : [],
         bColor = randomStrokesColors ? getRandomColor() : brushColor,
         brushAttrs = updateBrushAttrs(),
