@@ -56,7 +56,7 @@ module.exports = function (grunt) {
                     'build/development/kakijun.html': ['src/kakijun.html']
                 }
             },
-            pro: {
+            prod: {
                 options: {
                     data: {
                         scripts: '<script src="js/<%= pkg.name %>-<%= pkg.version %>.js"></script>',
@@ -84,7 +84,7 @@ module.exports = function (grunt) {
                     "build/development/css/kakijun.css": "src/less/kakijun.less"
                 }
             },
-            pro: {
+            prod: {
                 options: {
                     yuicompress: true
                 },
@@ -102,7 +102,7 @@ module.exports = function (grunt) {
                     {expand: true, cwd: 'src/lib/', src: ['**'], dest: 'build/development/lib/'}
                 ]
             },
-            pro: {
+            prod: {
                 files: [
                     {expand: true, cwd: 'src/data/', src: ['**'], dest: 'build/release/data/'},
                     {expand: true, cwd: 'src/assets/', src: ['**'], dest: 'build/release/'},
@@ -117,5 +117,5 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.registerTask('default', ['template:dev', 'less:dev', 'copy:dev']);
-    grunt.registerTask('pro', ['concat:js', 'uglify', 'concat:less', 'less:pro', 'template:pro', 'copy:pro']);
+    grunt.registerTask('prod', ['concat:js', 'uglify', 'concat:less', 'less:prod', 'template:prod', 'copy:prod']);
 };

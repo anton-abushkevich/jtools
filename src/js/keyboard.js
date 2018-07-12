@@ -308,12 +308,18 @@ function Keyboard() {
      */
     function rikaichanSupport() {
         // selected kanji and its index. see mouse scroll event handler
-        var kanji, index;
+        var kanji,
+            index;
 
         // on click rikaichan-window removes before the "click" event, so we use "mousedown"
         document.addEventListener("mousedown", function (e) {
             var rikaichan = document.getElementById("rikaichan-window");
-            if (rikaichan && rikaichan.innerHTML && (e.button == 0 || e.button == 1) && kanji) {
+
+            if (!rikaichan) {
+                rikaichan = document.getElementById("rikaichamp-window");
+            }
+
+            if (rikaichan && rikaichan.innerHTML && (e.button === 0 || e.button === 1) && kanji) {
                 e.preventDefault();
                 addSymbol(e.button ? kanjiOnly(kanji) : kanji);
                 clear();
@@ -326,13 +332,13 @@ function Keyboard() {
         document.addEventListener("mousewheel", onmousewheel, false);
 
         document.addEventListener("DOMNodeInserted", function (e) {
-            if (kanji && e.relatedNode.id == "rikaichan-window") {
+            if (kanji && (e.relatedNode.id === "rikaichan-window" || e.relatedNode.id === "rikaichamp-window")) {
                 clear();
             }
         });
 
         document.addEventListener("DOMNodeRemoved", function (e) {
-            if (e.relatedNode.id == "rikaichan-window") {
+            if (e.relatedNode.id === "rikaichan-window" || e.relatedNode.id === "rikaichamp-window") {
                 document.getElementById("str").focus();
             }
         });
@@ -342,7 +348,7 @@ function Keyboard() {
 
             if (kanjis.length > 0) {
                 e.preventDefault();
-                if (kanji == undefined) {
+                if (kanji === undefined) {
                     index = 0;
                     selectKanji();
                     kanji = kanjis[0].innerHTML;
@@ -363,7 +369,7 @@ function Keyboard() {
 
             function selectKanji() {
                 for (var i = 0; i < kanjis.length; i++) {
-                    kanjis[i].className = "w-kanji" + (i == index ? " selected" : "");
+                    kanjis[i].className = "w-kanji" + (i === index ? " selected" : "");
                 }
             }
         }

@@ -10,17 +10,17 @@
         req.open(method, url, true);
 
         if (postData) {
-            req.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         }
         req.onreadystatechange = function () {
-            if (req.readyState != 4) return;
-            if (req.status != 200 && req.status != 304) {
-                alert('HTTP error. Something went wrong in server side.');
+            if (req.readyState !== 4) return;
+            if (req.status !== 200 && req.status !== 304) {
+                message("HTTP error. Something went wrong in server side.", "error");
                 return;
             }
             callback(req.responseText);
         };
-        if (req.readyState == 4) return;
+        if (req.readyState === 4) return;
         req.send(postData);
     };
 

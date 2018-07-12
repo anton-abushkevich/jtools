@@ -2,7 +2,7 @@
 
 function Recognition(loadingProgressCallback, recognizedKanjiClickHandler) {
 
-    var VERSION = '0.3',
+    var VERSION = "0.3",
         kanjis = {},
         locations = {
             N: [1, 0],
@@ -60,7 +60,7 @@ function Recognition(loadingProgressCallback, recognizedKanjiClickHandler) {
             version = localStorage.getItem("recog_version");
 
         if (data !== null) {
-            if (version != VERSION) {
+            if (version !== VERSION) {
                 downloadData();
             } else {
                 try {
@@ -100,7 +100,7 @@ function Recognition(loadingProgressCallback, recognizedKanjiClickHandler) {
                     kanjis[kanji.strokes.length] = sub;
                 }
                 sub[kanji.symbol] = kanji;
-                if (loadingProgressCallback && count % percentTick == 0) {
+                if (loadingProgressCallback && count % percentTick === 0) {
                     loadingProgressCallback(tickEvery * count / percentTick ^ 0);
                 }
                 count++;
@@ -129,7 +129,7 @@ function Recognition(loadingProgressCallback, recognizedKanjiClickHandler) {
 
         function parseRecogData() {
             strokesRecogData = strokesRecogData.replace(/x/g, "00").replace(/y/g, "ff");
-            if (strokesRecogData.length % 8 != 0) {
+            if (strokesRecogData.length % 8 !== 0) {
                 return;
             }
             var count = strokesRecogData.length / 8;
@@ -259,26 +259,26 @@ function Recognition(loadingProgressCallback, recognizedKanjiClickHandler) {
                 score = 0;
 
             for (var i = 0; i < drawnStarts.length; i++) {
-                if (drawnDirections[i] == kanjiDirections[i]) {
+                if (drawnDirections[i] === kanjiDirections[i]) {
                     score += STROKE_DIRECTION_WEIGHT;
                 } else if (directions.isClose(drawnDirections[i], kanjiDirections[i])) {
                     score += STROKE_DIRECTION_WEIGHT * CLOSE_WEIGHT;
                 }
 
                 if (i > 0) {
-                    if (drawnMoves[i - 1] == kanjiMoves[i - 1]) {
+                    if (drawnMoves[i - 1] === kanjiMoves[i - 1]) {
                         score += MOVE_DIRECTION_WEIGHT;
                     } else if (directions.isClose(drawnMoves[i - 1], kanjiMoves[i - 1])) {
                         score += MOVE_DIRECTION_WEIGHT * CLOSE_WEIGHT;
                     }
                 }
 
-                if (drawnStarts[i] == kanjiStarts[i]) {
+                if (drawnStarts[i] === kanjiStarts[i]) {
                     score += STROKE_LOCATION_WEIGHT;
                 } else if (locations.isClose(drawnStarts[i], kanjiStarts[i])) {
                     score += STROKE_LOCATION_WEIGHT * CLOSE_WEIGHT;
                 }
-                if (drawnEnds[i] == kanjiEnds[i]) {
+                if (drawnEnds[i] === kanjiEnds[i]) {
                     score += STROKE_LOCATION_WEIGHT;
                 } else if (locations.isClose(drawnEnds[i], kanjiEnds[i])) {
                     score += STROKE_LOCATION_WEIGHT * CLOSE_WEIGHT;

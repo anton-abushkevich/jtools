@@ -1,1 +1,1 @@
-http-server build/development
+http-server build/development -c-1 -p8088

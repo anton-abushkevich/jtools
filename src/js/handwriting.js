@@ -16,14 +16,14 @@ function Handwriting(strokeDrawnHandler) {
         backgrounds = ["bg-none", "bg-paper", "bg-blackboard"],
         randomStrokesColors = storedColor && storedColor === "random",
         brushColor = !randomStrokesColors && storedColor ? storedColor : "#444",
-        showGrid = storedGrid ? storedGrid == "true" : true,
+        showGrid = storedGrid ? storedGrid === "true" : true,
         gridColor = "#000",
         gridSubdivideLevel = 3,
         gridContrast = 3,
-        showStrokesNumbers = storedNumbers == "true",
+        showStrokesNumbers = storedNumbers === "true",
         strokeNumberOffset = 20,
         numberFontSize = 16,
-        useContour = storedUseContour ? storedUseContour == "true" : true, // true = calligraphic brush, false = simple path
+        useContour = storedUseContour ? storedUseContour === "true" : true, // true = calligraphic brush, false = simple path
         strokeThickness = storedThickness ? +storedThickness : 10,
         brushMass = storedSmoothing ? +storedSmoothing : 5,   // mass of brush. define brush inertia for smoothing
 
@@ -213,7 +213,7 @@ function Handwriting(strokeDrawnHandler) {
             return brushAttrs;
         },
         shallowClone = function (obj) {
-            if (obj == null || typeof(obj) != 'object') return obj;
+            if (obj == null || typeof(obj) !== 'object') return obj;
 
             var clone = obj.constructor();
             for (var key in obj) {
@@ -326,7 +326,7 @@ function Handwriting(strokeDrawnHandler) {
         sldBrushMass = document.getElementById("sldBrushMass");
 
     cel.onmousedown = function (e) {
-        if (e.which != 1) return;
+        if (e.which !== 1) return;
         var bounds = canvas.getBoundingClientRect();
 
         // define new stroke on mousedown
@@ -338,12 +338,12 @@ function Handwriting(strokeDrawnHandler) {
         return false;
 
         function move(e) {
-            if (e.which != 1 || !stroke) return;
+            if (e.which !== 1 || !stroke) return;
             stroke.addDot({x: e.clientX - bounds.left, y: e.clientY - bounds.top});
         }
 
         function up(e) {
-            if (e.which != 1 || !stroke) return;
+            if (e.which !== 1 || !stroke) return;
 
             if (!stroke.validate()) {
                 stroke.wipe();
@@ -368,7 +368,7 @@ function Handwriting(strokeDrawnHandler) {
                 updateBrushAttrs();
             }
 
-            if (strokeIndex == strokes.length - 1) {
+            if (strokeIndex === strokes.length - 1) {
                 btnRedo.classList.add("disabled");
             }
 
@@ -554,7 +554,7 @@ function Handwriting(strokeDrawnHandler) {
             var s = (prev.x - prev.y < curr.x - curr.y) ? 1 : -1,
                 angle = Math.atan2(curr.y - prev.y, curr.x - prev.x);
 
-            if (cDots1.length == 0) { // cDots2 check is not nessessary, I believe...
+            if (cDots1.length === 0) { // cDots2 check is not nessessary, I believe...
                 cDots1.push({x: prev.x - strokeThickness * s / 4, y: prev.y - strokeThickness * s / 4});
                 cDots2.push({x: prev.x + strokeThickness * s / 4, y: prev.y + strokeThickness * s / 4});
             }
@@ -576,7 +576,7 @@ function Handwriting(strokeDrawnHandler) {
                 e2 = {x: curr.x + strokeThickness * s * f / 4, y: curr.y + strokeThickness * s * f / 4},
                 ox = strokeThickness / 14,
                 oy = strokeThickness / 20,
-                t = (segments.length == 0)
+                t = (segments.length === 0)
                     ? "C" + (s2.x - ox * s) + "," + (s2.y + oy * s) + " "
                     + (s1.x - ox * s) + "," + (s1.y + oy * s) + " " + s1.x + "," + s1.y + "z"
                     : " " + s1.x + "," + s1.y + "z",
@@ -586,7 +586,7 @@ function Handwriting(strokeDrawnHandler) {
             edgeCurve = "C" + (e1.x + ox * s) + "," + (e1.y - oy * s) + " "
                 + (e2.x + ox * s) + "," + (e2.y - oy * s) + " " + e2.x + "," + e2.y;
 
-            if (segments.length == 0) {
+            if (segments.length === 0) {
                 tail = t;
             }
             nibSegment.attrs({d: "M" + e1.x + "," + e1.y + edgeCurve + "z"});
