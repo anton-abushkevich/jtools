@@ -224,80 +224,12 @@ function Handwriting(strokeDrawnHandler) {
             return clone;
         },
         assembleStrokesData = function () {
-            var dots,
-                minX = Number.MAX_VALUE,
-                minY = Number.MAX_VALUE,
-                maxX = Number.MIN_VALUE,
-                maxY = Number.MIN_VALUE,
-                i,
-                out = "";
-            for (i = 0; i <= strokeIndex; i++) {
+            var dots, strokesData = [];
+            for (var i = 0; i <= strokeIndex; i++) {
                 dots = strokes[i].dots;
-                if (dots[0].x < minX) {
-                    minX = dots[0].x;
-                }
-                if (dots[0].y < minY) {
-                    minY = dots[0].y;
-                }
-                if (dots[0].x > maxX) {
-                    maxX = dots[0].x;
-                }
-                if (dots[0].y > maxY) {
-                    maxY = dots[0].y;
-                }
-                if (dots[dots.length - 1].x < minX) {
-                    minX = dots[dots.length - 1].x;
-                }
-                if (dots[dots.length - 1].y < minY) {
-                    minY = dots[dots.length - 1].y;
-                }
-                if (dots[dots.length - 1].x > maxX) {
-                    maxX = dots[dots.length - 1].x;
-                }
-                if (dots[dots.length - 1].y > maxY) {
-                    maxY = dots[dots.length - 1].y;
-                }
+                strokesData.push([dots[0].x, dots[0].y, dots[dots.length - 1].x, dots[dots.length - 1].y]);
             }
-
-            // prevent division by zero
-            if (minX - maxX === 0) {
-                minX += .01;
-                maxX -= .01;
-            }
-            if (minY - maxY === 0) {
-                minY += .01;
-                maxY -= .01;
-            }
-
-            var xRange = Math.abs(minX - maxX),
-                yRange = Math.abs(minY - maxY),
-                adjust;
-            if (xRange > 5 * yRange) {
-                adjust = (xRange - yRange) / 2;
-                minY -= adjust;
-                maxY += adjust;
-            } else if (yRange > 5 * xRange) {
-                adjust = (yRange - xRange) / 2;
-                minX -= adjust;
-                maxX += adjust;
-            }
-
-            var startX, startY, endX, endY;
-            for (i = 0; i <= strokeIndex; i++) {
-                dots = strokes[i].dots;
-                startX = 255 * (dots[0].x - minX) / (maxX - minX);
-                startY = 255 * (dots[0].y - minY) / (maxY - minY);
-                endX = 255 * (dots[dots.length - 1].x - minX) / (maxX - minX);
-                endY = 255 * (dots[dots.length - 1].y - minY) / (maxY - minY);
-                out += toHex(startX) + toHex(startY) + toHex(endX) + toHex(endY);
-            }
-
-            return out;
-
-            function toHex(d) {
-                var s = (d ^ 0).toString(16);
-                return s.length === 1 ? '0' + s : s;
-            }
+            return strokesData;
         },
         onStrokeDrawn = function () {
             strokeDrawnHandler(assembleStrokesData());
