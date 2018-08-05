@@ -38,6 +38,7 @@ module.exports = function (grunt) {
                             '<script src="js/handwriting.js"></script>' +
                             '<script src="js/recognition.js"></script>' +
                             '<script src="js/slider.js"></script>' +
+                            '<script src="js/compressor.js"></script>' +
                             '<script src="js/colorpicker.js"></script>',
                         css: '<link type="text/css" rel="stylesheet" href="css/common.css">' +
                             '<link type="text/css" rel="stylesheet" href="css/keyboard.css">' +
