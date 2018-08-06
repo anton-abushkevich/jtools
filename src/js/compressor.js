@@ -1,3 +1,5 @@
+"use strict";
+
 // Copyright (c) 2013 Pieroxy <pieroxy@pieroxy.net>
 // This work is free. You can redistribute it and/or modify it
 // under the terms of the WTFPL, Version 2
@@ -12,12 +14,14 @@ var LZString = (function () {
 
     return {
         compress: function (uncompressed) {
+            if (!uncompressed) {
+                return "";
+            }
             return LZString._compress(uncompressed, 16, function (a) {
                 return f(a);
             });
         },
         _compress: function (uncompressed, bitsPerChar, getCharFromInt) {
-            if (!uncompressed) return "";
             var i, value,
                 context_dictionary = {},
                 context_dictionaryToCreate = {},
@@ -47,7 +51,7 @@ var LZString = (function () {
                         if (context_w.charCodeAt(0) < 256) {
                             for (i = 0; i < context_numBits; i++) {
                                 context_data_val = (context_data_val << 1);
-                                if (context_data_position == bitsPerChar - 1) {
+                                if (context_data_position === bitsPerChar - 1) {
                                     context_data_position = 0;
                                     context_data.push(getCharFromInt(context_data_val));
                                     context_data_val = 0;
@@ -58,7 +62,7 @@ var LZString = (function () {
                             value = context_w.charCodeAt(0);
                             for (i = 0; i < 8; i++) {
                                 context_data_val = (context_data_val << 1) | (value & 1);
-                                if (context_data_position == bitsPerChar - 1) {
+                                if (context_data_position === bitsPerChar - 1) {
                                     context_data_position = 0;
                                     context_data.push(getCharFromInt(context_data_val));
                                     context_data_val = 0;
@@ -71,7 +75,7 @@ var LZString = (function () {
                             value = 1;
                             for (i = 0; i < context_numBits; i++) {
                                 context_data_val = (context_data_val << 1) | value;
-                                if (context_data_position == bitsPerChar - 1) {
+                                if (context_data_position === bitsPerChar - 1) {
                                     context_data_position = 0;
                                     context_data.push(getCharFromInt(context_data_val));
                                     context_data_val = 0;
@@ -83,7 +87,7 @@ var LZString = (function () {
                             value = context_w.charCodeAt(0);
                             for (i = 0; i < 16; i++) {
                                 context_data_val = (context_data_val << 1) | (value & 1);
-                                if (context_data_position == bitsPerChar - 1) {
+                                if (context_data_position === bitsPerChar - 1) {
                                     context_data_position = 0;
                                     context_data.push(getCharFromInt(context_data_val));
                                     context_data_val = 0;
@@ -94,7 +98,7 @@ var LZString = (function () {
                             }
                         }
                         context_enlargeIn--;
-                        if (context_enlargeIn == 0) {
+                        if (context_enlargeIn === 0) {
                             context_enlargeIn = Math.pow(2, context_numBits);
                             context_numBits++;
                         }
@@ -103,7 +107,7 @@ var LZString = (function () {
                         value = context_dictionary[context_w];
                         for (i = 0; i < context_numBits; i++) {
                             context_data_val = (context_data_val << 1) | (value & 1);
-                            if (context_data_position == bitsPerChar - 1) {
+                            if (context_data_position === bitsPerChar - 1) {
                                 context_data_position = 0;
                                 context_data.push(getCharFromInt(context_data_val));
                                 context_data_val = 0;
@@ -116,7 +120,7 @@ var LZString = (function () {
 
                     }
                     context_enlargeIn--;
-                    if (context_enlargeIn == 0) {
+                    if (context_enlargeIn === 0) {
                         context_enlargeIn = Math.pow(2, context_numBits);
                         context_numBits++;
                     }
@@ -132,7 +136,7 @@ var LZString = (function () {
                     if (context_w.charCodeAt(0) < 256) {
                         for (i = 0; i < context_numBits; i++) {
                             context_data_val = (context_data_val << 1);
-                            if (context_data_position == bitsPerChar - 1) {
+                            if (context_data_position === bitsPerChar - 1) {
                                 context_data_position = 0;
                                 context_data.push(getCharFromInt(context_data_val));
                                 context_data_val = 0;
@@ -143,7 +147,7 @@ var LZString = (function () {
                         value = context_w.charCodeAt(0);
                         for (i = 0; i < 8; i++) {
                             context_data_val = (context_data_val << 1) | (value & 1);
-                            if (context_data_position == bitsPerChar - 1) {
+                            if (context_data_position === bitsPerChar - 1) {
                                 context_data_position = 0;
                                 context_data.push(getCharFromInt(context_data_val));
                                 context_data_val = 0;
@@ -156,7 +160,7 @@ var LZString = (function () {
                         value = 1;
                         for (i = 0; i < context_numBits; i++) {
                             context_data_val = (context_data_val << 1) | value;
-                            if (context_data_position == bitsPerChar - 1) {
+                            if (context_data_position === bitsPerChar - 1) {
                                 context_data_position = 0;
                                 context_data.push(getCharFromInt(context_data_val));
                                 context_data_val = 0;
@@ -168,7 +172,7 @@ var LZString = (function () {
                         value = context_w.charCodeAt(0);
                         for (i = 0; i < 16; i++) {
                             context_data_val = (context_data_val << 1) | (value & 1);
-                            if (context_data_position == bitsPerChar - 1) {
+                            if (context_data_position === bitsPerChar - 1) {
                                 context_data_position = 0;
                                 context_data.push(getCharFromInt(context_data_val));
                                 context_data_val = 0;
@@ -179,7 +183,7 @@ var LZString = (function () {
                         }
                     }
                     context_enlargeIn--;
-                    if (context_enlargeIn == 0) {
+                    if (context_enlargeIn === 0) {
                         context_enlargeIn = Math.pow(2, context_numBits);
                         context_numBits++;
                     }
@@ -188,7 +192,7 @@ var LZString = (function () {
                     value = context_dictionary[context_w];
                     for (i = 0; i < context_numBits; i++) {
                         context_data_val = (context_data_val << 1) | (value & 1);
-                        if (context_data_position == bitsPerChar - 1) {
+                        if (context_data_position === bitsPerChar - 1) {
                             context_data_position = 0;
                             context_data.push(getCharFromInt(context_data_val));
                             context_data_val = 0;
@@ -201,8 +205,8 @@ var LZString = (function () {
 
                 }
                 context_enlargeIn--;
-                if (context_enlargeIn == 0) {
-                    context_enlargeIn = Math.pow(2, context_numBits);
+                if (context_enlargeIn === 0) {
+                    //context_enlargeIn = Math.pow(2, context_numBits);
                     context_numBits++;
                 }
             }
@@ -211,7 +215,7 @@ var LZString = (function () {
             value = 2;
             for (i = 0; i < context_numBits; i++) {
                 context_data_val = (context_data_val << 1) | (value & 1);
-                if (context_data_position == bitsPerChar - 1) {
+                if (context_data_position === bitsPerChar - 1) {
                     context_data_position = 0;
                     context_data.push(getCharFromInt(context_data_val));
                     context_data_val = 0;
@@ -224,7 +228,7 @@ var LZString = (function () {
             // Flush the last char
             while (true) {
                 context_data_val = (context_data_val << 1);
-                if (context_data_position == bitsPerChar - 1) {
+                if (context_data_position === bitsPerChar - 1) {
                     context_data.push(getCharFromInt(context_data_val));
                     break;
                 }
@@ -234,8 +238,9 @@ var LZString = (function () {
         },
 
         decompress: function (compressed) {
-            if (compressed == null) return "";
-            if (compressed == "") return null;
+            if (!compressed || compressed === "") {
+                return "";
+            }
             return LZString._decompress(compressed.length, 32768, function (index) {
                 return compressed.charCodeAt(index);
             });
@@ -262,10 +267,10 @@ var LZString = (function () {
             bits = 0;
             maxpower = Math.pow(2, 2);
             power = 1;
-            while (power != maxpower) {
+            while (power !== maxpower) {
                 resb = data.val & data.position;
                 data.position >>= 1;
-                if (data.position == 0) {
+                if (data.position === 0) {
                     data.position = resetValue;
                     data.val = getNextValue(data.index++);
                 }
@@ -278,10 +283,10 @@ var LZString = (function () {
                     bits = 0;
                     maxpower = Math.pow(2, 8);
                     power = 1;
-                    while (power != maxpower) {
+                    while (power !== maxpower) {
                         resb = data.val & data.position;
                         data.position >>= 1;
-                        if (data.position == 0) {
+                        if (data.position === 0) {
                             data.position = resetValue;
                             data.val = getNextValue(data.index++);
                         }
@@ -294,10 +299,10 @@ var LZString = (function () {
                     bits = 0;
                     maxpower = Math.pow(2, 16);
                     power = 1;
-                    while (power != maxpower) {
+                    while (power !== maxpower) {
                         resb = data.val & data.position;
                         data.position >>= 1;
-                        if (data.position == 0) {
+                        if (data.position === 0) {
                             data.position = resetValue;
                             data.val = getNextValue(data.index++);
                         }
@@ -320,10 +325,10 @@ var LZString = (function () {
                 bits = 0;
                 maxpower = Math.pow(2, numBits);
                 power = 1;
-                while (power != maxpower) {
+                while (power !== maxpower) {
                     resb = data.val & data.position;
                     data.position >>= 1;
-                    if (data.position == 0) {
+                    if (data.position === 0) {
                         data.position = resetValue;
                         data.val = getNextValue(data.index++);
                     }
@@ -336,10 +341,10 @@ var LZString = (function () {
                         bits = 0;
                         maxpower = Math.pow(2, 8);
                         power = 1;
-                        while (power != maxpower) {
+                        while (power !== maxpower) {
                             resb = data.val & data.position;
                             data.position >>= 1;
-                            if (data.position == 0) {
+                            if (data.position === 0) {
                                 data.position = resetValue;
                                 data.val = getNextValue(data.index++);
                             }
@@ -355,10 +360,10 @@ var LZString = (function () {
                         bits = 0;
                         maxpower = Math.pow(2, 16);
                         power = 1;
-                        while (power != maxpower) {
+                        while (power !== maxpower) {
                             resb = data.val & data.position;
                             data.position >>= 1;
-                            if (data.position == 0) {
+                            if (data.position === 0) {
                                 data.position = resetValue;
                                 data.val = getNextValue(data.index++);
                             }
@@ -373,7 +378,7 @@ var LZString = (function () {
                         return result.join('');
                 }
 
-                if (enlargeIn == 0) {
+                if (enlargeIn === 0) {
                     enlargeIn = Math.pow(2, numBits);
                     numBits++;
                 }
@@ -395,7 +400,7 @@ var LZString = (function () {
 
                 w = entry;
 
-                if (enlargeIn == 0) {
+                if (enlargeIn === 0) {
                     enlargeIn = Math.pow(2, numBits);
                     numBits++;
                 }

@@ -60,7 +60,7 @@ function onLoad() {
 
             panel.innerHTML = html;
             panel.style.display = "block";
-            //JTOOLS.kanjitest = new KanjiTest();
+            JTOOLS.kakijun = new Kakijun();
             JTOOLS.hideLoader();
         });
     });
