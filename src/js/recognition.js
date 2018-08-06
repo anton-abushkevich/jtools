@@ -367,7 +367,22 @@ function Recognition(loadingProgressCallback, recognizedKanjiClickHandler) {
     function parsePaths(paths) {
         var strokesData = [],
             EOL = -1,
-            NUMBER = -2;
+            NUMBER = -2,
+            M = 77,
+            m = 109,
+            C = 67,
+            c = 99,
+            S = 83,
+            s = 115,
+            Z = 90,
+            z = 122,
+            SPACE = 32,
+            PLUS = 43,
+            COMMA = 44,
+            MINUS = 45,
+            DOT = 46,
+            ZERO = 48,
+            NINE = 57;
 
         for (var i = 0; i < paths.length; i++) {
             strokesData.push(parsePath(paths[i]));
@@ -381,7 +396,7 @@ function Recognition(loadingProgressCallback, recognizedKanjiClickHandler) {
                 endX, endY;
 
             var initial = path.readLetter();
-            if (initial !== 'M'.charCodeAt(0) && initial !== 'm'.charCodeAt(0)) {
+            if (initial !== M && initial !== m) {
                 return error("Path must start with 'M' or 'm'");
             }
 
@@ -406,7 +421,7 @@ function Recognition(loadingProgressCallback, recognizedKanjiClickHandler) {
                 switch (command) {
                     case EOL:
                         return [startX, startY, endX, endY];
-                    case 'c'.charCodeAt(0):
+                    case c:
                         path.readNumber();
                         path.readNumber();
                         path.readNumber();
@@ -414,7 +429,7 @@ function Recognition(loadingProgressCallback, recognizedKanjiClickHandler) {
                         endX += path.readNumber();
                         endY += path.readNumber();
                         break;
-                    case 'C'.charCodeAt(0):
+                    case C:
                         path.readNumber();
                         path.readNumber();
                         path.readNumber();
@@ -422,20 +437,20 @@ function Recognition(loadingProgressCallback, recognizedKanjiClickHandler) {
                         endX = path.readNumber();
                         endY = path.readNumber();
                         break;
-                    case 's'.charCodeAt(0):
+                    case s:
                         path.readNumber();
                         path.readNumber();
                         endX += path.readNumber();
                         endY += path.readNumber();
                         break;
-                    case 'S'.charCodeAt(0):
+                    case S:
                         path.readNumber();
                         path.readNumber();
                         endX = path.readNumber();
                         endY = path.readNumber();
                         break;
-                    case 'z'.charCodeAt(0):
-                    case 'Z'.charCodeAt(0):
+                    case z:
+                    case Z:
                         endX = startX;
                         endY = startY;
                         break;
@@ -461,11 +476,11 @@ function Recognition(loadingProgressCallback, recognizedKanjiClickHandler) {
                             return EOL;
                         }
                         var letter = remaining.charCodeAt(pos);
-                        if (letter !== ' '.charCodeAt(0)) {
-                            if (letter === ','.charCodeAt(0) ||
-                                letter === '-'.charCodeAt(0) ||
-                                letter === '+'.charCodeAt(0) ||
-                                (letter >= '0'.charCodeAt(0) && letter <= '9'.charCodeAt(0))) {
+                        if (letter !== SPACE) {
+                            if (letter === COMMA ||
+                                letter === MINUS ||
+                                letter === PLUS ||
+                                (letter >= ZERO && letter <= NINE)) {
                                 return NUMBER;
                             }
                             remaining = remaining.substring(pos + 1);
@@ -478,7 +493,7 @@ function Recognition(loadingProgressCallback, recognizedKanjiClickHandler) {
                     var start = 0, end, c;
                     while (true) {
                         c = remaining.charCodeAt(start);
-                        if (c !== ','.charCodeAt(0) && c !== ' '.charCodeAt(0) && c !== '+'.charCodeAt(0)) {
+                        if (c !== COMMA && c !== SPACE && c !== PLUS) {
                             break;
                         }
                         start++;
@@ -490,7 +505,7 @@ function Recognition(loadingProgressCallback, recognizedKanjiClickHandler) {
                             break;
                         }
                         c = remaining.charCodeAt(end);
-                        if (c !== '.' && (c < '0'.charCodeAt(0) || c > '9'.charCodeAt(0))) {
+                        if (c !== DOT && (c < ZERO || c > NINE)) {
                             break;
                         }
                         end++;
