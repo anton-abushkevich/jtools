@@ -14,7 +14,7 @@ function Keyboard() {
             "ma": "ま", "mi": "み", "mu": "む", "me": "め", "mo": "も",
             "ya": "や", "yu": "ゆ", "yo": "よ",
             "ra": "ら", "ri": "り", "ru": "る", "re": "れ", "ro": "ろ",
-            "wa": "わ", "wo": "を", // ん - special case, see processText()
+            "wa": "わ", "wo": "を", "n'": "ん", // ん - special case, see processText()
 
             "ga": "が", "gi": "ぎ", "gu": "ぐ", "ge": "げ", "go": "ご",
             "za": "ざ", "ji": "じ", "zu": "ず", "ze": "ぜ", "zo": "ぞ",
@@ -48,7 +48,7 @@ function Keyboard() {
             "ма": "ま", "ми": "み", "му": "む", "мэ": "め", "мо": "も", "ме": "め",
             "я": "や", "ю": "ゆ", "ё": "よ",
             "ра": "ら", "ри": "り", "ру": "る", "рэ": "れ", "ро": "ろ", "ре": "れ",
-            "ва": "わ", "-ва": "は", "во": "を", "-о": "を", // ん - особый случай, см. processText()
+            "ва": "わ", "-ва": "は", "во": "を", "-о": "を", "нъ": "ん", // ん - особый случай, см. processText()
 
             "га": "が", "ги": "ぎ", "гу": "ぐ", "гэ": "げ", "го": "ご", "ге": "げ",
             "дза": "ざ", "дзи": "じ", "дзу": "ず", "дзэ": "ぜ", "дзо": "ぞ", "дзе": "ぜ",
@@ -77,7 +77,7 @@ function Keyboard() {
             "фа": "ふぁ", "фи": "ふぃ", "фэ": "ふぇ", "фо": "ふぉ", "фе": "ふぇ",
 
             "--": "ー", "_": "ー", "~": "～",
-            " ": "　", ",": "、", ".": "。", "!": "！", "?": "？", "%": "％", "[": "【", "]": "】", "/" : "／",
+            " ": "　", ",": "、", ".": "。", "!": "！", "?": "？", "%": "％", "[": "【", "]": "】", "\\": "＼", "/" : "／",
 
             "0": "０", "1": "１", "2": "２", "3": "３", "4": "４", "5": "５", "6": "６", "7": "７", "8": "８", "9": "９"
         };
@@ -313,12 +313,7 @@ function Keyboard() {
 
         // on click rikaichan-window removes before the "click" event, so we use "mousedown"
         document.addEventListener("mousedown", function (e) {
-            var rikaichan = document.getElementById("rikaichan-window");
-
-            if (!rikaichan) {
-                rikaichan = document.getElementById("rikaichamp-window");
-            }
-
+            var rikaichan = document.getElementById("rikaichan-window") || document.getElementById("rikaichamp-window");
             if (rikaichan && rikaichan.innerHTML && (e.button === 0 || e.button === 1) && kanji) {
                 e.preventDefault();
                 addSymbol(e.button ? kanjiOnly(kanji) : kanji);
