@@ -6,14 +6,23 @@ window.addEventListener("load", onLoad);
 window.debug = document.getElementById("debug");
 
 function onLoad() {
-    var panels = new Panels();
+    var panels = new Panels(),
+        numberLoading = 0;
 
     JTOOLS.showLoader = function () {
+        if (numberLoading === 0) {
+            console.log("Loading started: " + Date.now());
+        }
+        numberLoading++;
         document.getElementById("footer").classList.add("loading");
     };
 
     JTOOLS.hideLoader = function () {
-        document.getElementById("footer").classList.remove("loading");
+        numberLoading--;
+        if (numberLoading === 0) {
+            document.getElementById("footer").classList.remove("loading");
+            console.log("Loading ended: " + Date.now());
+        }
     };
 
     JTOOLS.createPicker = panels.createPicker;
