@@ -530,6 +530,7 @@ function Recognition(loadingProgressCallback, recognizedKanjiClickHandler) {
     };
 
     this.getKanji = function (symbol) {
-        return kanjis[kanjisStrokesNumber[symbol]][symbol];
+        var strokesNumber = kanjisStrokesNumber[symbol]; 
+        return strokesNumber ? kanjis[strokesNumber][symbol] : "";
     }
 }
