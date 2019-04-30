@@ -146,4 +146,10 @@ function Kakijun() {
             }
         })();
     };
+
+    return {
+        drawPath: function (path) {
+            currentKanjiStrokes.push(elem(paper, "path").attrs(brushAttrs).attrs({d: path, transform: "scale(2.629)"}));
+        }
+    };
 }
