@@ -9,10 +9,8 @@ function onLoad() {
     var panels = new Panels(),
         numberLoading = 0;
 
+
     JTOOLS.showLoader = function () {
-        if (numberLoading === 0) {
-            console.log("Loading started: " + Date.now());
-        }
         numberLoading++;
         document.getElementById("footer").classList.add("loading");
     };
@@ -21,11 +19,11 @@ function onLoad() {
         numberLoading--;
         if (numberLoading === 0) {
             document.getElementById("footer").classList.remove("loading");
-            console.log("Loading ended: " + Date.now());
         }
     };
 
     JTOOLS.createPicker = panels.createPicker;
+    JTOOLS.utils = new Utils();
 
     panels.initPanel("kb", function () {
         JTOOLS.showLoader();
@@ -74,7 +72,7 @@ function onLoad() {
         });
     });
 
-    if (!panels.hasSavedPanes()) {
+    if (!panels.hasSavedPanels()) {
         panels.loadPanel("kb");
         panels.loadPanel("recog");
     }

@@ -11,6 +11,7 @@ function Kakijun() {
         canvas = document.getElementById("kakijunPaper"),
         canvasWidth = canvas.clientWidth,
         canvasHeight = canvas.clientHeight,
+        svgElem = JTOOLS.utils.svgElem,
         backgrounds = ["bg-none", "bg-paper", "bg-blackboard"],
         randomStrokesColors = storedColor && storedColor === "random",
         brushColor = !randomStrokesColors && storedColor ? storedColor : "#444",
@@ -24,27 +25,7 @@ function Kakijun() {
         useContour = storedUseContour ? storedUseContour === "true" : false, // true = calligraphic brush, false = simple path
         strokeThickness = storedThickness ? +storedThickness : 3.81,
 
-        drawGrid = function () {
-            var gridLines = [];
-            for (var i = gridSubdivideLevel; i >= 1; i--) {
-                var factor = Math.pow(2, i),
-                    wSeg = canvasWidth / factor,
-                    hSeg = canvasHeight / factor,
-                    gridPathStr = "";
-                for (var j = 1; j < factor; j++) {
-                    var x = Math.floor(wSeg * j) + .5, // 0.5 - to sharpen the grid
-                        y = Math.floor(hSeg * j) + .5;
-                    gridPathStr += "M" + x + " 0V" + canvasHeight + "M0 " + y + "H" + canvasWidth;
-                }
-                var gridPath = elem(paper, "path", true).attrs({
-                    d: gridPathStr,
-                    fill: "none", stroke: gridColor, "stroke-width": 1,
-                    "stroke-opacity": (1 / (factor * gridContrast))
-                });
-                gridLines.push(gridPath);
-            }
-            return gridLines;
-        },
+        drawGrid = () => JTOOLS.utils.drawGrid(paper, canvasWidth, canvasHeight),
         getRandomColor = function () {
             // not too bright, not too dark
             var r = Math.floor(30 + 140 * Math.random()),
@@ -64,41 +45,10 @@ function Kakijun() {
             brushAttrs["stroke-width"] = useContour ? strokeThickness / 2 : strokeThickness;
             return brushAttrs;
         },
-        elem = function (parent, name, prepend) {
-            var elem = document.createElementNS("http://www.w3.org/2000/svg", name);
-            prepend ? parent.insertBefore(elem, parent.firstChild) : parent.appendChild(elem);
-
-            elem.attrs = function (attributes) {
-                for (var key in attributes) {
-                    if (attributes.hasOwnProperty(key)) {
-                        elem.setAttribute(key, attributes[key]);
-                    }
-                }
-                return elem;
-            };
-            elem.child = function (name, content) {
-                var child = document.createElementNS("http://www.w3.org/2000/svg", name);
-                content && (child.innerHTML = content);
-                elem.appendChild(child);
-                return elem;
-            };
-            elem.toFront = function () {
-                parent.removeChild(elem);
-                parent.appendChild(elem);
-                return elem;
-
-            };
-            elem.remove = function () {
-                elem && parent.removeChild(elem);
-                elem = null;
-                return null;
-            };
-            return elem;
-        },
         inpSymbol = document.getElementById("kakijunSymbol"),
         btnShow = document.getElementById("kakijunShow"),
         btnClear = document.getElementById("kakijunClear"),
-        paper = elem(canvas, "svg", false).attrs({
+        paper = svgElem(canvas, "svg", false).attrs({
             width: canvasWidth,
             height: canvasHeight,
             version: "1.1",
@@ -140,7 +90,7 @@ function Kakijun() {
         }
 
         (function drawPath() {
-            currentKanjiStrokes.push(elem(paper, "path").attrs(brushAttrs).attrs({d: paths[i++], transform: "scale(2.629)"}));
+            currentKanjiStrokes.push(svgElem(paper, "path").attrs(brushAttrs).attrs({d: paths[i++], transform: "scale(2.629)"}));
             if (i < paths.length) {
                 timeoutId = setTimeout(drawPath, 750);
             }
@@ -149,7 +99,7 @@ function Kakijun() {
 
     return {
         drawPath: function (path) {
-            currentKanjiStrokes.push(elem(paper, "path").attrs(brushAttrs).attrs({d: path, transform: "scale(2.629)"}));
+            currentKanjiStrokes.push(svgElem(paper, "path").attrs(brushAttrs).attrs({d: path, transform: "scale(2.629)"}));
         }
     };
 }
