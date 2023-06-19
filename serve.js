@@ -1,5 +1,5 @@
 var express = require('express');
 var app = express();
-app.use(express.static('./build/development'));
-app.listen(5555);
+app.use(express.static('./build/dev'));
+app.listen(8080);
 
