@@ -57,23 +57,30 @@ function Kakijun() {
         grid = showGrid ? drawGrid() : [],
         bColor = randomStrokesColors ? getRandomColor() : brushColor,
         brushAttrs = updateBrushAttrs(),
-        timeoutId,
         currentKanjiStrokes = [],
         clearCurrentKanji = function () {
             for (var i = currentKanjiStrokes.length - 1; i >= 0 ; i--) {
                 currentKanjiStrokes.pop().remove();
             }
-        };
+        },
+        strokeDrawTimeoutId,
+        animFrameId;
 
     btnClear.onclick = function () {
-        clearTimeout(timeoutId);
+        clearTimeout(strokeDrawTimeoutId);
+        cancelAnimationFrame(animFrameId);
         clearCurrentKanji();
     };
 
     btnShow.onclick = function () {
-        var symbol, kanji, paths, i = 0;
+        const PIXELS_PER_SECOND = 150; // Скорость рисования (пикселей/сек)
+        const DELAY_BETWEEN_PATHS = 250;
 
-        clearTimeout(timeoutId);
+        let symbol, kanji, paths, currentPathIndex = 0,
+            isAnimating = false;
+
+        clearTimeout(strokeDrawTimeoutId);
+        cancelAnimationFrame(animFrameId);
         clearCurrentKanji();
         symbol = inpSymbol.value;
 
@@ -89,17 +96,41 @@ function Kakijun() {
             return;
         }
 
-        (function drawPath() {
-            currentKanjiStrokes.push(svgElem(paper, "path").attrs(brushAttrs).attrs({d: paths[i++], transform: "scale(2.629)"}));
-            if (i < paths.length) {
-                timeoutId = setTimeout(drawPath, 750);
-            }
-        })();
-    };
+        (function startDrawing() {
+            if (currentPathIndex >= paths.length || isAnimating) return;
 
-    return {
-        drawPath: function (path) {
-            currentKanjiStrokes.push(svgElem(paper, "path").attrs(brushAttrs).attrs({d: path, transform: "scale(2.629)"}));
-        }
+            isAnimating = true;
+            const path = svgElem(paper, "path")
+                .attrs(brushAttrs)
+                .attrs({d: paths[currentPathIndex], transform: "scale(2.629)"});
+            currentKanjiStrokes.push(path);
+
+            const length = path.getTotalLength();
+            path.style.strokeDasharray = length + 1;
+            path.style.strokeDashoffset = length;
+
+            const duration = (length / PIXELS_PER_SECOND) * 1000;
+            const startTime = performance.now();
+
+            function animate(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+
+                path.style.strokeDashoffset = length * (1 - progress);
+
+                if (progress < 1) {
+                    animFrameId = requestAnimationFrame(animate);
+                } else {
+                    currentPathIndex++;
+                    isAnimating = false;
+
+                    if (currentPathIndex < paths.length) {
+                        strokeDrawTimeoutId = setTimeout(startDrawing, DELAY_BETWEEN_PATHS);
+                    }
+                }
+            }
+
+            animFrameId = requestAnimationFrame(animate);
+        })();
     };
 }
