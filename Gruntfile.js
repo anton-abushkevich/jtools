@@ -1,20 +1,23 @@
 module.exports = function (grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
+        devDest: 'build/dev',
+        prodDest: 'deploy',
+        tmpDest: 'build/tmp',
         concat: {
             js: {
                 options: {
                     separator: ';\n\n'
                 },
                 src: ['src/js/**/*.js'],
-                dest: 'tmp/<%= pkg.name %>.js'
+                dest: '<%=tmpDest%>/<%= pkg.name %>.js'
             },
             less: {
                 options: {
                     separator: '\n'
                 },
                 src: ['src/less/**/*.less'],
-                dest: 'tmp/style.less'
+                dest: '<%=tmpDest%>/style.less'
             }
         },
         uglify: {
@@ -22,8 +25,8 @@ module.exports = function (grunt) {
                 banner: '/* <%= pkg.desc %>. <%= grunt.template.today("yyyy-mm-dd") %> */\n'
             },
             build: {
-                src: 'tmp/<%= pkg.name %>.js',
-                dest: 'build/release/js/<%= pkg.name %>-<%= pkg.version %>.js'
+                src: '<%=tmpDest%>/<%= pkg.name %>.js',
+                dest: '<%=prodDest%>/js/<%= pkg.name %>-<%= pkg.version %>.js'
             }
         },
         template: {
@@ -31,13 +34,16 @@ module.exports = function (grunt) {
                 options: {
                     data: {
                         scripts: '<script src="js/app.js"></script>' +
+                            '<script src="js/utils.js"></script>' +
                             '<script src="js/panels.js"></script>' +
                             '<script src="js/dnd.js"></script>' +
                             '<script src="js/ajax.js"></script>' +
                             '<script src="js/keyboard.js"></script>' +
                             '<script src="js/handwriting.js"></script>' +
                             '<script src="js/recognition.js"></script>' +
+                            '<script src="js/kakijun.js"></script>' +
                             '<script src="js/slider.js"></script>' +
+                            '<script src="js/compressor.js"></script>' +
                             '<script src="js/colorpicker.js"></script>',
                         css: '<link type="text/css" rel="stylesheet" href="css/common.css">' +
                             '<link type="text/css" rel="stylesheet" href="css/keyboard.css">' +
@@ -50,10 +56,7 @@ module.exports = function (grunt) {
                     }
                 },
                 files: {
-                    'build/development/index.html': ['src/index.html'],
-                    'build/development/keyboard.html': ['src/keyboard.html'],
-                    'build/development/recognition.html': ['src/recognition.html'],
-                    'build/development/kakijun.html': ['src/kakijun.html']
+                    '<%=devDest%>/index.html': ['src/index.html']
                 }
             },
             prod: {
@@ -67,46 +70,47 @@ module.exports = function (grunt) {
                     }
                 },
                 files: {
-                    'build/release/index.html': ['src/index.html'],
-                    'build/release/keyboard.html': ['src/keyboard.html'],
-                    'build/release/recognition.html': ['src/recognition.html'],
-                    'build/release/kakijun.html': ['src/kakijun.html']
+                    '<%=prodDest%>/index.html': ['src/index.html']
                 }
             }
         },
         less: {
             dev: {
                 files: {
-                    "build/development/css/common.css": "src/less/common.less",
-                    "build/development/css/keyboard.css": "src/less/keyboard.less",
-                    "build/development/css/recognition.css": "src/less/recognition.less",
-                    "build/development/css/colorpicker.css": "src/less/colorpicker.less",
-                    "build/development/css/kakijun.css": "src/less/kakijun.less"
+                    "<%=devDest%>/css/common.css": "src/less/common.less",
+                    "<%=devDest%>/css/keyboard.css": "src/less/keyboard.less",
+                    "<%=devDest%>/css/recognition.css": "src/less/recognition.less",
+                    "<%=devDest%>/css/colorpicker.css": "src/less/colorpicker.less",
+                    "<%=devDest%>/css/kakijun.css": "src/less/kakijun.less"
                 }
             },
             prod: {
                 options: {
-                    yuicompress: true
+                    compress: true
                 },
                 files: {
-                    "build/release/css/<%= pkg.name %>-<%= pkg.version %>.css": "tmp/style.less"
+                    "<%=prodDest%>/css/<%= pkg.name %>-<%= pkg.version %>.css": "<%=tmpDest%>/style.less"
                 }
             }
+        },
+        clean: {
+            dev: ['<%=devDest%>'],
+            prod: ['<%=tmpDest%>', '<%=prodDest%>']
         },
         copy: {
             dev: {
                 files: [
-                    {expand: true, cwd: 'src/assets/', src: ['**'], dest: 'build/development/'},
-                    {expand: true, cwd: 'src/data/', src: ['**'], dest: 'build/development/data/'},
-                    {expand: true, cwd: 'src/js/', src: ['**'], dest: 'build/development/js/'},
-                    {expand: true, cwd: 'src/lib/', src: ['**'], dest: 'build/development/lib/'}
+                    {expand: true, cwd: 'src/', src: ['**/*.html'], dest: '<%=devDest%>/'},
+                    {expand: true, cwd: 'src/assets/', src: ['**'], dest: '<%=devDest%>/'},
+                    {expand: true, cwd: 'src/data/', src: ['**'], dest: '<%=devDest%>/data/'},
+                    {expand: true, cwd: 'src/js/', src: ['**'], dest: '<%=devDest%>/js/'}
                 ]
             },
             prod: {
                 files: [
-                    {expand: true, cwd: 'src/data/', src: ['**'], dest: 'build/release/data/'},
-                    {expand: true, cwd: 'src/assets/', src: ['**'], dest: 'build/release/'},
-                    {expand: true, cwd: 'src/lib/', src: ['**'], dest: 'build/release/lib/'}
+                    {expand: true, cwd: 'src/', src: ['**/*.html'], dest: '<%=prodDest%>/'},
+                    {expand: true, cwd: 'src/data/', src: ['**'], dest: '<%=prodDest%>/data/'},
+                    {expand: true, cwd: 'src/assets/', src: ['**'], dest: '<%=prodDest%>/'}
                 ]
             }
         }
@@ -115,7 +119,8 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-template');
     grunt.loadNpmTasks('grunt-contrib-less');
+    grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-copy');
-    grunt.registerTask('default', ['template:dev', 'less:dev', 'copy:dev']);
-    grunt.registerTask('prod', ['concat:js', 'uglify', 'concat:less', 'less:prod', 'template:prod', 'copy:prod']);
+    grunt.registerTask('default', ['clean:dev', 'less:dev', 'copy:dev', 'template:dev']);
+    grunt.registerTask('prod', ['clean:prod', 'concat:js', 'uglify', 'concat:less', 'less:prod', 'copy:prod', 'template:prod']);
 };

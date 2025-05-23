@@ -1,0 +1,27 @@
+<div id="recog-input">
+    <div id="recogPaper" class="paper"></div>
+    <div class="sliders-block">
+        <input id="sldThickness" type="slider" min="1" max="20" step="0" title="Stroke thickness">
+        <input id="sldBrushMass" type="slider" min="1" max="20" step="0" title="Smoothing">
+    </div>
+    <div class="buttons-block">
+        <button id="btnClear" class="icon disabled" title="Remove all"></button>
+        <button id="btnUndo" class="icon disabled" title="Remove last stroke"></button>
+        <button id="btnRedo" class="icon disabled" title="Restore deleted stroke"></button>
+        <button id="tglGrid" class="icon" title="Toggle grid"></button>
+        <button id="tglCalligraphy" class="icon" title="Calligraphic brush"></button>
+        <button id="tglNumbers" class="icon" title="Show stroke numbers"></button>
+        <button id="btnColor" title="Stroke color"></button>
+        <button id="btnBg" title="Background"></button>
+    </div>
+</div>
+<div id="recog-output">
+    <div class="recog-output-label"><b>Strict</b> - exact match</div>
+    <div id="output-strict" class="output"></div>
+    <div class="recog-output-label"><b>Fuzzy</b> - strokes order doesn't matter</div>
+    <div id="output-fuzzy" class="output not-yet-implemented"></div>
+    <div class="recog-output-label"><b>±1 stroke</b> - fuzzy match ±1 stroke</div>
+    <div id="output-plus-minus-1" class="output not-yet-implemented"></div>
+    <div class="recog-output-label"><b>±2 stroke</b> - fuzzy match ±2 strokes</div>
+    <div id="output-plus-minus-2" class="output not-yet-implemented"></div>
+</div>
