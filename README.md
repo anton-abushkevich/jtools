@@ -1,4 +1,4 @@
 jtools
 ======
 
-https://leeward-shard-feels.glitch.me/
+https://anton-abushkevich.github.io/jtools
