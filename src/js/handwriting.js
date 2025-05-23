@@ -14,6 +14,7 @@ function Handwriting(strokeDrawnHandler) {
         canvasWidth = canvas.clientWidth,
         canvasHeight = canvas.clientHeight,
         svgElem = JTOOLS.utils.svgElem,
+        setActive = JTOOLS.utils.setActive,
         backgrounds = ["bg-none", "bg-paper", "bg-blackboard"],
         randomStrokesColors = storedColor && storedColor === "random",
         brushColor = !randomStrokesColors && storedColor ? storedColor : "#444",
@@ -151,18 +152,6 @@ function Handwriting(strokeDrawnHandler) {
             }
             btnBg.className = className;
             localStorage.setItem("hw.bg", className);
-        },
-        setActive = function (elem, active) {
-            var classes = elem.classList;
-            if (active) {
-                if (!classes.contains("active")) {
-                    classes.add("active");
-                }
-            } else {
-                if (classes.contains("active")) {
-                    classes.remove("active");
-                }
-            }
         },
         changeThickness = function () {
             strokeThickness = sldThickness.value;

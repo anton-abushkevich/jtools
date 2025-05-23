@@ -1,18 +1,68 @@
 .kakijun {
   .input {
-    margin-bottom: 10px;
-    input {
-      font-size: 30px;
-      width: 40px;
-      height: 36px;
-      border: solid 1px #cacaca;
-      text-align: center;
+    display: grid;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  #kakijunInput {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    width: 56px;
+    height: 56px;
+    font-size: 46px;
+    text-align: center;
+    padding: 0;
+    border: 1px solid #ccc;
+  }
+
+  #kakijunInput::placeholder {
+    font-size: 16px;
+    opacity: 0.5;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    line-height: 1;
+  }
+
+  #kakijunInput:focus::placeholder {
+    opacity: 0;
+  }
+
+  #kakijunProgress {
+    grid-column: 2;
+    grid-row: 1;
+    width: 222px;
+    height: 16px;
+  }
+
+  .buttons-block {
+    grid-column: 2;
+    grid-row: 2;
+
+    button + button {
+      margin-left: 3px;
     }
-    button {
-      margin-left: 10px;
-      padding: 0 10px;
-      vertical-align: top;
-      height: 40px;
-    }
+  }
+
+  #btnKakijunClear {
+    background-position: 0 0;
+  }
+
+  #btnKakijunPlay {
+    background-position: -224px 0;
+  }
+
+  #btnKakijunPause {
+    background-position: -256px 0;
+  }
+
+  #tglKakijunGrid {
+    background-position: -96px 0;
+  }
+
+  #tglKakijunNumbers {
+    background-position: -160px 0;
   }
 }

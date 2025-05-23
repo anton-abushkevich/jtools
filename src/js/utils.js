@@ -56,8 +56,22 @@ function Utils() {
         return elem;
     }
 
+    const setActive = (elem, active) => {
+        var classes = elem.classList;
+        if (active) {
+            if (!classes.contains("active")) {
+                classes.add("active");
+            }
+        } else {
+            if (classes.contains("active")) {
+                classes.remove("active");
+            }
+        }
+    }
+
     return {
         drawGrid: drawGrid,
         svgElem: svgElem,
+        setActive: setActive,
     };
 }
