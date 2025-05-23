@@ -8,26 +8,24 @@ function Sliders() {
         defaultHeight = 16,
         defaultKnobWidth = 19,
         defaultKnobHeight = 16,
-        defaultSlitImage = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIwAAAAQAQMAAAD+qgVFAAAAAXNSR0IArs4c6QAAAAZQTFRFmZmZ5+fnAKzB3gAAABRJREFUGNNjYMAE9f/RwIORKoQJAL0q8lNkiT1EAAAAAElFTkSuQmCC)",
         defaultKnobImage = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAQBAMAAAAG6llRAAAAAXNSR0IArs4c6QAAABVQTFRFlJSU1tbe1tbWzs7W9/f3tbW1597nN/SE2wAAADFJREFUCNdjCIWBAIYQFyhwYAhJg4IAKjMFoQDIVIICIFNZyQiElIFMYyhAYQYwwAAAVWUuIsQq8ZQAAAAASUVORK5CYII=)",
         defaultFontSize = "10px",
         defaultAngle = 0, // horizontal by default
         defaultOrigin = "50% 50%",
         defaultShowValueOnKnob = 1;
 
+    return {
+        initSlider: (id) => {
+            const element = document.getElementById(id);
+            const elemSlider = new _Slider(element);
 
-    (function init() {
-        var inputs = document.querySelectorAll("input[type=slider]");
-        for (var i = 0; i < inputs.length; i++) {
-            var element = inputs[i],
-                elemSlider = new Slider(element);
             element.setValue = elemSlider.setValue;
             element.valueUp = elemSlider.valueUp;
             element.valueDown = elemSlider.valueDown;
         }
-    }());
+    }
 
-    function Slider(element) {
+    function _Slider(element) {
         var id = element.id,
             slit = document.createElement("div"),
             knob = document.createElement("div");
@@ -37,28 +35,17 @@ function Sliders() {
         slit.className = "no-drag slit " + id + "-slit";
         knob.className = "no-drag knob " + id + "-knob";
 
-        var slitStyle = getStyle(slit),
-            knobStyle = getStyle(knob),
-            width = strToInt(slitStyle.width, defaultWidth),
-            height = strToInt(slitStyle.height, defaultHeight),
-            knobWidth = strToInt(knobStyle.width, defaultKnobWidth),
-            knobHeight = strToInt(knobStyle.height, defaultKnobHeight),
-            slitImage = slitStyle.backgroundImage !== "none" ? slitStyle.backgroundImage : defaultSlitImage,
-            knobImage = knobStyle.backgroundImage !== "none" ? knobStyle.backgroundImage : defaultKnobImage,
-            cursor = slitStyle.cursor !== "auto" ? slitStyle.cursor : "pointer",
-            fontSize = parseInt(knobStyle.fontSize),
+        var style = getStyle(element),
+            width = strToInt(style.width, defaultWidth),
+            height = strToInt(style.height, defaultHeight),
+            knobWidth = defaultKnobWidth,
+            cursor = "pointer",
+            fontSize = parseInt(element.fontSize),
             min = parseFloat(element.getAttribute("min")),
             max = parseFloat(element.getAttribute("max")),
             step = parseFloat(element.getAttribute("step")),
             angle = (parseInt(element.getAttribute("angle")) % 360) * Math.PI / 180,
             showValueOnKnob = parseInt(element.getAttribute("showvalue"));
-
-        if (width <= knobWidth) {
-            width = defaultWidth;
-            slit.style.width = width + "px";
-            knobWidth = defaultKnobWidth;
-            knob.style.width = knobWidth + "px";
-        }
 
         this.setValue = setValue;
         this.valueUp = valueUp;
@@ -85,7 +72,7 @@ function Sliders() {
         if (isNaN(showValueOnKnob)) {
             showValueOnKnob = defaultShowValueOnKnob;
         }
-        if(showValueOnKnob && (fontSize == 0 || fontSize < knobHeight || isNaN(fontSize))) {
+        if (showValueOnKnob && (fontSize === 0 || isNaN(fontSize))) {
             fontSize = defaultFontSize;
         }
 
@@ -94,20 +81,22 @@ function Sliders() {
 
         element.style.display = "none";
 
-        slit.style.backgroundImage = slitImage;
+        slit.style.width = width + "px";
+        slit.style.height = height + "px";
+        slit.style.backgroundColor = "#f1f1f1";
+        slit.style.boxShadow = "inset 0 0 0 1px #ccc";
         slit.style.display = "inline-block";
         slit.style.cursor = cursor;
         slit.title = element.title;
         changeCssProperty(slit, cssTransform, "rotate(" + angle + "rad)");
         changeCssProperty(slit, cssTransformOrigin, defaultOrigin);
 
-
-        knob.style.backgroundImage = knobImage;
+        knob.style.backgroundImage = defaultKnobImage;
+        knob.style.width = knobWidth + "px";
         knob.style.position = "relative";
-        knob.style.lineHeight = knobHeight + "px";
+        knob.style.lineHeight = defaultHeight + "px";
         knob.style.textAlign = "center";
         knob.style.fontSize = fontSize;
-
 
         if (element.defaultValue && element.defaultValue >= min && element.defaultValue <= max) {
             setValue(element.defaultValue);

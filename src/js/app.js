@@ -23,6 +23,7 @@ function onLoad() {
     };
 
     JTOOLS.createPicker = panels.createPicker;
+    JTOOLS.sliders = new Sliders();
     JTOOLS.utils = new Utils();
 
     panels.initPanel("kb", function () {
@@ -47,7 +48,8 @@ function onLoad() {
 
             panel.innerHTML = html;
             panel.style.display = "block";
-            new Sliders();
+            JTOOLS.sliders.initSlider("sldThickness");
+            JTOOLS.sliders.initSlider("sldBrushMass");
             JTOOLS.recognition = new Recognition(null, function (kanji) {
                 if (JTOOLS.keyboard) {
                     JTOOLS.keyboard.addSymbol(kanji);
@@ -67,6 +69,7 @@ function onLoad() {
 
             panel.innerHTML = html;
             panel.style.display = "block";
+            JTOOLS.sliders.initSlider("kakijunProgress");
             JTOOLS.kakijun = new Kakijun();
             JTOOLS.hideLoader();
         });

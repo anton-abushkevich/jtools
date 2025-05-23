@@ -11,46 +11,9 @@
   margin-right: 8px;
 }
 
-.buttons-block {
-  display: table;
-
-  button {
-    width: 34px;
-    height: 34px;
-    border: 1px solid transparent;
-    padding: 0;
-    background-color: transparent;
-    opacity: .8;
-    cursor: pointer;
-    vertical-align: top;
-  }
-  button.icon {
-    background-image: url(icons.png);
-    background-repeat: no-repeat;
-    background-clip: padding-box;
-    background-origin: content-box;
-  }
-  button + button {
-    margin-left: 2px;
-  }
-  button:hover {
-    opacity: 1;
-  }
-  button:active {
-    padding: 1px 0;
-  }
-  button.active {
-    border-radius: 3px;
-    border: 1px solid #D2D2D2;
-    background-color: #EAE9FF;
-  }
-  button.disabled {
-    opacity: .3;
-  }
-  button.disabled:active {
-    box-shadow: none;
-    padding: 0;
-  }
+#sldThickness, #sldBrushMass {
+  width: 140px;
+  height: 16px;
 }
 
 #btnClear {
@@ -78,7 +41,6 @@
 }
 
 #btnColor, #btnBg {
-  background-color: #444;
   background-origin: content-box;
   background-clip: content-box;
   padding: 4px;
@@ -96,6 +58,8 @@
 .randomColorIcon {
   background-image: url(icons.png);
   background-position: -192px 0;
+  background-origin: padding-box;
+  background-clip: padding-box;
 }
 
 .btn-bg {

@@ -12,6 +12,7 @@ function Kakijun() {
         canvasWidth = canvas.clientWidth,
         canvasHeight = canvas.clientHeight,
         svgElem = JTOOLS.utils.svgElem,
+        setActive = JTOOLS.utils.setActive,
         backgrounds = ["bg-none", "bg-paper", "bg-blackboard"],
         randomStrokesColors = storedColor && storedColor === "random",
         brushColor = !randomStrokesColors && storedColor ? storedColor : "#444",
@@ -26,6 +27,18 @@ function Kakijun() {
         strokeThickness = storedThickness ? +storedThickness : 3.81,
 
         drawGrid = () => JTOOLS.utils.drawGrid(paper, canvasWidth, canvasHeight),
+        toggleGrid = function () {
+            if (showGrid) {
+                for (var i = grid.length - 1; i >= 0; i--) {
+                    grid.pop().remove();
+                }
+            } else {
+                grid = drawGrid();
+            }
+            showGrid = !showGrid;
+            setActive(this, showGrid);
+            localStorage.setItem("kj.grid", showGrid);
+        },
         getRandomColor = function () {
             // not too bright, not too dark
             var r = Math.floor(30 + 140 * Math.random()),
@@ -45,9 +58,10 @@ function Kakijun() {
             brushAttrs["stroke-width"] = useContour ? strokeThickness / 2 : strokeThickness;
             return brushAttrs;
         },
-        inpSymbol = document.getElementById("kakijunSymbol"),
-        btnShow = document.getElementById("kakijunShow"),
-        btnClear = document.getElementById("kakijunClear"),
+        inpSymbol = document.getElementById("kakijunInput"),
+        btnPlay = document.getElementById("btnKakijunPlay"),
+        btnClear = document.getElementById("btnKakijunClear"),
+        tglGrid = document.getElementById("tglKakijunGrid"),
         paper = svgElem(canvas, "svg", false).attrs({
             width: canvasWidth,
             height: canvasHeight,
@@ -66,13 +80,16 @@ function Kakijun() {
         strokeDrawTimeoutId,
         animFrameId;
 
+    tglGrid.onclick = toggleGrid;
+    setActive(tglGrid, showGrid);
+
     btnClear.onclick = function () {
         clearTimeout(strokeDrawTimeoutId);
         cancelAnimationFrame(animFrameId);
         clearCurrentKanji();
     };
 
-    btnShow.onclick = function () {
+    btnPlay.onclick = function () {
         const PIXELS_PER_SECOND = 150; // Скорость рисования (пикселей/сек)
         const DELAY_BETWEEN_PATHS = 250;
 
@@ -106,7 +123,7 @@ function Kakijun() {
             currentKanjiStrokes.push(path);
 
             const length = path.getTotalLength();
-            path.style.strokeDasharray = length + 1;
+            path.style.strokeDasharray = length + 5;
             path.style.strokeDashoffset = length;
 
             const duration = (length / PIXELS_PER_SECOND) * 1000;
