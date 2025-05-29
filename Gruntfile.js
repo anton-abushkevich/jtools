@@ -50,7 +50,6 @@ module.exports = function (grunt) {
                             '<link type="text/css" rel="stylesheet" href="css/recognition.css">' +
                             '<link type="text/css" rel="stylesheet" href="css/kakijun.css">' +
                             '<link type="text/css" rel="stylesheet" href="css/colorpicker.css">',
-                        year: '<%= grunt.template.today("yyyy") %>',
                         pkgname: '<%= pkg.name %>',
                         version: "DEBUG"
                     }
@@ -64,7 +63,6 @@ module.exports = function (grunt) {
                     data: {
                         scripts: '<script src="js/<%= pkg.name %>-<%= pkg.version %>.js"></script>',
                         css: '<link type="text/css" rel="stylesheet" href="css/<%= pkg.name %>-<%= pkg.version %>.css">',
-                        year: '<%= grunt.template.today("yyyy") %>',
                         pkgname: '<%= pkg.name %>',
                         version: '<%= pkg.version %>'
                     }
