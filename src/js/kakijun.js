@@ -2,6 +2,7 @@
 
 function Kakijun() {
 
+    const SCALE = 2.629;
     const PIXELS_PER_SECOND = 150;
     const DELAY_BETWEEN_PATHS = 250;
 
@@ -19,9 +20,6 @@ function Kakijun() {
             style: "overflow: hidden; position: relative;"
         }).child("desc", "JTOOLS").child("defs"),
         backgrounds = ["bg-none", "bg-paper", "bg-blackboard"],
-        gridColor = "#000",
-        gridSubdivideLevel = 3,
-        gridContrast = 3,
         strokeNumberOffset = 20,
         numberFontSize = 16,
         inpSymbol = document.getElementById("kakijunInput"),
@@ -29,7 +27,8 @@ function Kakijun() {
         btnPlay = document.getElementById("btnKakijunPlay"),
         btnClear = document.getElementById("btnKakijunClear"),
         tglGrid = document.getElementById("tglKakijunGrid"),
-        animationSegments = [];
+        tglNumbers = document.getElementById("tglKakijunNumbers"),
+        strokesAndDelays = [];
 
     let storedGrid = localStorage.getItem("kj.grid"),
         storedNumbers = localStorage.getItem("kj.numbers"),
@@ -71,6 +70,23 @@ function Kakijun() {
         localStorage.setItem("kj.grid", showGrid);
     });
 
+    setActive(tglNumbers, showStrokesNumbers);
+    tglNumbers.addEventListener("click",function () {
+        showStrokesNumbers = !showStrokesNumbers;
+        strokesAndDelays.forEach(segment => {
+            if (segment.type === "stroke") {
+                if (showStrokesNumbers &&
+                    segment.path.style.strokeDashoffset !== segment.length + "") {
+                    segment.numberElem.style.display = "block";
+                } else {
+                    segment.numberElem.style.display = "none";
+                }
+            }
+        });
+        setActive(this, showStrokesNumbers);
+        localStorage.setItem("kj.numbers", showStrokesNumbers);
+    });
+
     slider.onchange = function () {
         stopAnimation();
         let currentTime = parseInt(this.value);
@@ -88,10 +104,11 @@ function Kakijun() {
         clear();
         btnPlay.classList.add("disabled");
         slider.setDisabled(true);
-        animationSegments.forEach((segment) => {
+        strokesAndDelays.forEach((segment) => {
             segment.path?.remove();
+            segment.numberElem?.remove();
         });
-        animationSegments.length = 0;
+        strokesAndDelays.length = 0;
         totalDuration = 0;
 
         const symbol = inpSymbol.value,
@@ -105,26 +122,28 @@ function Kakijun() {
         paths.forEach((pathData, index) => {
             const path = svgElem(paper, "path").attrs({
                 d: pathData,
-                transform: "scale(2.629)",
+                transform: "scale(" + SCALE + ")",
                 ...brushAttrs,
             });
-            const length = path.getTotalLength();
+            const length = Math.ceil(path.getTotalLength());
             path.style.strokeDasharray = length;
             path.style.strokeDashoffset = length;
-            const duration = Math.ceil((length / PIXELS_PER_SECOND) * 1000);
+            const duration = 1000 * length / PIXELS_PER_SECOND;
 
-            animationSegments.push({
-                type: "path",
+            strokesAndDelays.push({
+                type: "stroke",
                 start: totalDuration,
                 end: totalDuration + duration,
                 length,
-                path: path
+                path: path,
+                numberElem: prepareNumber(path, index + 1, bColor),
+                color: brushColor
             });
 
             totalDuration += duration;
 
             if (index < paths.length - 1) {
-                animationSegments.push({
+                strokesAndDelays.push({
                     type: "delay",
                     start: totalDuration,
                     end: totalDuration + DELAY_BETWEEN_PATHS,
@@ -169,17 +188,26 @@ function Kakijun() {
     }
 
     function updateAnimation(currentTime) {
-        animationSegments.forEach(segment => {
-            if (segment.type !== "path") return;
+        strokesAndDelays.forEach(segment => {
+            if (segment.type !== "stroke") return;
 
             const path = segment.path;
             if (currentTime >= segment.end) {
                 path.style.strokeDashoffset = 0;
+                if (showStrokesNumbers) {
+                    segment.numberElem.style.display = "block";
+                }
             } else if (currentTime >= segment.start) {
                 const progress = (currentTime - segment.start) / (segment.end - segment.start);
                 path.style.strokeDashoffset = segment.length * (1 - progress);
+                if (showStrokesNumbers && currentTime > segment.start) {
+                    segment.numberElem.style.display = "block";
+                } else {
+                    segment.numberElem.style.display = "none";
+                }
             } else {
                 path.style.strokeDashoffset = segment.length;
+                segment.numberElem.style.display = "none";
             }
         });
     }
@@ -219,7 +247,7 @@ function Kakijun() {
     function handleWheel(e) {
         e.preventDefault();
         const currentTime = parseInt(slider.value);
-        const direction = Math.sign(e.deltaY) * -1;
+        const direction = Math.sign(e.deltaY);
 
         if (currentTime === 0 && direction === -1 ||
             currentTime === totalDuration && direction === 1) {
@@ -227,23 +255,23 @@ function Kakijun() {
         }
 
         let targetTime;
-        let currentIndex = currentTime === totalDuration ? animationSegments.length - 1 :
-            animationSegments.findIndex(s =>
+        let currentIndex = currentTime === totalDuration ? strokesAndDelays.length - 1 :
+            strokesAndDelays.findIndex(s =>
                 currentTime >= s.start && currentTime < s.end
             );
 
-        if (animationSegments[currentIndex].type === "delay") {
+        if (strokesAndDelays[currentIndex].type === "delay") {
             currentIndex += 1;
         }
 
-        if (direction > 0 && currentIndex < animationSegments.length - 1) {
-            targetTime = animationSegments[currentIndex + 2].start;
-        } else if (direction < 0 && currentTime > animationSegments[currentIndex].start) {
-            targetTime = animationSegments[currentIndex].start;
+        if (direction > 0 && currentIndex < strokesAndDelays.length - 1) {
+            targetTime = strokesAndDelays[currentIndex + 2].start;
+        } else if (direction < 0 && currentTime > strokesAndDelays[currentIndex].start) {
+            targetTime = strokesAndDelays[currentIndex].start;
         } else if (direction < 0 && currentIndex > 0) {
-            targetTime = animationSegments[currentIndex - 2].start;
+            targetTime = strokesAndDelays[currentIndex - 2].start;
         } else if (direction > 0) {
-            targetTime = animationSegments[currentIndex].end;
+            targetTime = strokesAndDelays[currentIndex].end;
         } else {
             return;
         }
@@ -251,6 +279,20 @@ function Kakijun() {
         slider.setValue(targetTime);
         updateAnimation(targetTime);
         stopAnimation();
+    }
+
+    function prepareNumber(path, number, color) {
+        const start = path.getPointAtLength(0);
+        const next = path.getPointAtLength(5);
+        const atan = Math.atan2(next.y - start.y, next.x - start.x);
+        const x = start.x * SCALE - strokeNumberOffset * Math.cos(atan);
+        const y = start.y * SCALE - strokeNumberOffset * Math.sin(atan);
+
+        return svgElem(paper, "text")
+            .attrs({x: x, y: y, stroke: "none", fill: color,
+                "font-size": numberFontSize,
+                style: "text-anchor: middle; font: " + numberFontSize + "px Arial; display: none"})
+            .child("tspan", number);
     }
 
     function setSymbol(symbol) {
