@@ -19,9 +19,13 @@ function Sliders() {
             const element = document.getElementById(id);
             const elemSlider = new _Slider(element);
 
+            element.setMinValue = elemSlider.setMinValue;
+            element.setMaxValue = elemSlider.setMaxValue;
             element.setValue = elemSlider.setValue;
             element.valueUp = elemSlider.valueUp;
             element.valueDown = elemSlider.valueDown;
+            element.setScrollListener = elemSlider.setScrollListener;
+            element.setDisabled = elemSlider.setDisabled;
         }
     }
 
@@ -48,8 +52,12 @@ function Sliders() {
             showValueOnKnob = parseInt(element.getAttribute("showvalue"));
 
         this.setValue = setValue;
+        this.setMinValue = setMinValue;
+        this.setMaxValue = setMaxValue;
         this.valueUp = valueUp;
         this.valueDown = valueDown;
+        this.setScrollListener = setScrollListener;
+        this.setDisabled = setDisabled;
 
         if (isNaN(min)) {
             min = defaultMin;
@@ -107,9 +115,25 @@ function Sliders() {
         slit.addEventListener("mousewheel", mouseScroll, false);
         slit.addEventListener("DOMMouseScroll", mouseScroll, false);
 
+        function setScrollListener(listener) {
+            slit.removeEventListener("mousewheel", mouseScroll, false);
+            slit.addEventListener("mousewheel", listener, false);
+        }
+
+        function setDisabled(disabled) {
+            if (disabled) {
+                slit.classList.add("disabled");
+            } else {
+                slit.classList.remove("disabled");
+            }
+        }
+
         slit.onmousedown = start;
 
         function start(e) {
+            if (slit.classList.contains("disabled")) {
+                return;
+            }
             move(e);
             document.addEventListener("mousemove", move);
             document.addEventListener("mouseup", stop);
@@ -144,7 +168,15 @@ function Sliders() {
             return x * cos + y * sin;
         }
 
-        function setValue(value) {
+        function setMinValue(value) {
+            min = value;
+        }
+
+        function setMaxValue(value) {
+            max = value;
+        }
+
+        function setValue(value, fireOnCahnge = true) {
             if (value > max) {
                 value = max;
             } else if (value < min) {
@@ -154,7 +186,7 @@ function Sliders() {
             knob.style.left = (value - min) * (width - knobWidth) / (max - min) + "px";
             element.value = value;
             knob.innerHTML = showValueOnKnob ? Math.round(value) : "&nbsp;";
-            if (element.onchange) {
+            if (fireOnCahnge && element.onchange) {
                 element.onchange();
             }
         }
@@ -193,6 +225,7 @@ function Sliders() {
         }
 
         function mouseScroll(e) {
+            e.preventDefault();
             var rolled = 0;
             if ('wheelDelta' in e) {
                 rolled = e.wheelDelta;
@@ -205,7 +238,6 @@ function Sliders() {
             } else {
                 valueDown();
             }
-            e.preventDefault();
             return false;
         }
     }

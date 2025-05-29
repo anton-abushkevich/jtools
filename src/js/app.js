@@ -50,11 +50,17 @@ function onLoad() {
             panel.style.display = "block";
             JTOOLS.sliders.initSlider("sldThickness");
             JTOOLS.sliders.initSlider("sldBrushMass");
-            JTOOLS.recognition = new Recognition(null, function (kanji) {
-                if (JTOOLS.keyboard) {
-                    JTOOLS.keyboard.addSymbol(kanji);
-                }
-            });
+            JTOOLS.recognition = new Recognition(null,
+                function (kanji) {
+                    if (JTOOLS.keyboard) {
+                        JTOOLS.keyboard.addSymbol(kanji);
+                    }
+                },
+                function (kanji) {
+                    if (JTOOLS.kakijun) {
+                        JTOOLS.kakijun.setSymbol(kanji);
+                    }
+                });
             JTOOLS.handwriting = new Handwriting(JTOOLS.recognition.recognize);
             JTOOLS.hideLoader();
         });

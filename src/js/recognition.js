@@ -1,6 +1,6 @@
 "use strict";
 
-function Recognition(loadingProgressCallback, recognizedKanjiClickHandler) {
+function Recognition(loadingProgressCallback, recognizedKanjiClickHandler, recognizedKanjiMmbHandler) {
 
     var VERSION = "0.4",
         kanjis = {},
@@ -286,6 +286,12 @@ function Recognition(loadingProgressCallback, recognizedKanjiClickHandler) {
             item.onclick = function (e) {
                 e.preventDefault();
                 recognizedKanjiClickHandler(this.innerHTML);
+            };
+            item.onmouseup = function (e) {
+                if (e.button === 1) {
+                    e.preventDefault();
+                    recognizedKanjiMmbHandler(this.innerHTML);
+                }
             };
             outputBlock.appendChild(item);
         }

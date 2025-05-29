@@ -69,9 +69,18 @@ function Utils() {
         }
     }
 
+    const getRandomColor = () => {
+        // not too bright, not too dark
+        var r = Math.floor(30 + 140 * Math.random()),
+            g = Math.floor(30 + 140 * Math.random()),
+            b = Math.floor(30 + 140 * Math.random());
+        return "rgb(" + r + "," + g + "," + b + ")";
+    }
+
     return {
         drawGrid: drawGrid,
         svgElem: svgElem,
         setActive: setActive,
+        getRandomColor: getRandomColor,
     };
 }
