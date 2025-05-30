@@ -38,6 +38,7 @@ module.exports = function (grunt) {
                             '<script src="js/panels.js"></script>' +
                             '<script src="js/dnd.js"></script>' +
                             '<script src="js/ajax.js"></script>' +
+                            '<script src="js/kanjidata.js"></script>' +
                             '<script src="js/keyboard.js"></script>' +
                             '<script src="js/handwriting.js"></script>' +
                             '<script src="js/recognition.js"></script>' +

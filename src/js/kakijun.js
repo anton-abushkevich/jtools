@@ -136,7 +136,7 @@ function Kakijun() {
     };
 
     inpSymbol.addEventListener("input", onSymbolSet);
-    function onSymbolSet() {
+    async function onSymbolSet() {
         clear();
         btnPlay.classList.add("disabled");
         slider.setDisabled(true);
@@ -148,12 +148,11 @@ function Kakijun() {
         totalDuration = 0;
 
         const symbol = inpSymbol.value,
-              kanji = JTOOLS.recognition.getKanji(symbol);
+              paths = await JTOOLS.kanjiData.getKanjiPaths(symbol);
 
-        if (!kanji) {
+        if (!paths) {
             return;
         }
-        const paths = kanji.paths;
 
         paths.forEach((pathData, index) => {
             if (randomStrokesColors) {

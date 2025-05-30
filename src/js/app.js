@@ -22,6 +22,7 @@ function onLoad() {
         }
     };
 
+    JTOOLS.kanjiData = new KanjiData();
     JTOOLS.createPicker = panels.createPicker;
     JTOOLS.sliders = new Sliders();
     JTOOLS.utils = new Utils();

@@ -2,8 +2,7 @@
 
 function Recognition(loadingProgressCallback, recognizedKanjiClickHandler, recognizedKanjiMmbHandler) {
 
-    var VERSION = "0.4",
-        kanjis = {},
+    var kanjis = {},
         kanjisStrokesNumber = {},
         locations = {
             N: [1, 0],
@@ -54,59 +53,34 @@ function Recognition(loadingProgressCallback, recognizedKanjiClickHandler, recog
     fillOutputs(plusMinusOneOutputs);
     fillOutputs(plusMinusTwoOutputs);
 
-    (function initData() {
-        var data = localStorage.getItem("recog"),
-            version = localStorage.getItem("recog_version");
+    (async function initData() {
+        const pathData = await JTOOLS.kanjiData.getAllPathData(),
+            fullLength = Object.keys(pathData).length,
+            tickEvery = 5;
 
-        if (data !== null) {
-            if (version !== VERSION) {
-                downloadData();
-            } else {
-                try {
-                    doInit(JSON.parse(LZString.decompress(data)));
-                } catch (e) {
-                    downloadData();
-                }
+        let count = 0,        // call progress cb on every tickEvery%
+            percentTick = (fullLength / (100 / tickEvery)) ^ 0;
+
+        for (let k in pathData) {
+            if (!pathData.hasOwnProperty(k)) {
+                continue;
             }
-        } else {
-            downloadData();
-        }
 
-        function downloadData() {
-            sendRequest("data/recog-" + VERSION + ".json", function (data) {
-                localStorage.setItem("recog", LZString.compress(data));
-                localStorage.setItem("recog_version", VERSION);
-                doInit(JSON.parse(data));
-            });
-        }
+            let paths = pathData[k],
+                kanji = new Kanji(k, normalize(parsePaths(paths)), paths),
+                sub = kanjis[kanji.strokes.length];
 
-        function doInit(recog) {
-            var count = 0,
-                fullLength = Object.keys(recog).length,
-                tickEvery = 5,                                      // call progress cb on every tickEvery%
-                percentTick = (fullLength / (100 / tickEvery)) ^ 0;
+            kanjisStrokesNumber[k] = paths.length;
 
-            for (var k in recog) {
-                if (!recog.hasOwnProperty(k)) {
-                    continue;
-                }
-
-                var paths = recog[k],
-                    kanji = new Kanji(k, normalize(parsePaths(paths)), paths),
-                    sub = kanjis[kanji.strokes.length];
-
-                kanjisStrokesNumber[k] = paths.length;
-
-                if (!sub) {
-                    sub = {};
-                    kanjis[kanji.strokes.length] = sub;
-                }
-                sub[kanji.symbol] = kanji;
-                if (loadingProgressCallback && count % percentTick === 0) {
-                    loadingProgressCallback(tickEvery * count / percentTick ^ 0);
-                }
-                count++;
+            if (!sub) {
+                sub = {};
+                kanjis[kanji.strokes.length] = sub;
             }
+            sub[kanji.symbol] = kanji;
+            if (loadingProgressCallback && count % percentTick === 0) {
+                loadingProgressCallback(tickEvery * count / percentTick ^ 0);
+            }
+            count++;
         }
     }());
 
