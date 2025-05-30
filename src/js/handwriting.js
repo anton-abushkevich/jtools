@@ -13,13 +13,11 @@ function Handwriting(strokeDrawnHandler) {
         canvas = document.getElementById("recogPaper"),
         canvasWidth = canvas.clientWidth,
         canvasHeight = canvas.clientHeight,
-        backgrounds = ["bg-none", "bg-paper", "bg-blackboard"],
+        svgElem = JTOOLS.utils.svgElem,
+        setActive = JTOOLS.utils.setActive,
         randomStrokesColors = storedColor && storedColor === "random",
         brushColor = !randomStrokesColors && storedColor ? storedColor : "#444",
         showGrid = storedGrid ? storedGrid === "true" : true,
-        gridColor = "#000",
-        gridSubdivideLevel = 3,
-        gridContrast = 3,
         showStrokesNumbers = storedNumbers === "true",
         strokeNumberOffset = 20,
         numberFontSize = 16,
@@ -27,25 +25,7 @@ function Handwriting(strokeDrawnHandler) {
         strokeThickness = storedThickness ? +storedThickness : 10,
         brushMass = storedSmoothing ? +storedSmoothing : 5,   // mass of brush. define brush inertia for smoothing
 
-        drawGrid = function () {
-            var gridLines = [];
-            for (var i = gridSubdivideLevel; i >= 1; i--) {
-                var factor = Math.pow(2, i),
-                    wSeg = canvasWidth / factor,
-                    hSeg = canvasHeight / factor,
-                    gridPathStr = "";
-                for (var j = 1; j < factor; j++) {
-                    var x = Math.floor(wSeg * j) + .5, // 0.5 - to sharpen the grid
-                        y = Math.floor(hSeg * j) + .5;
-                    gridPathStr += "M" + x + " 0V" + canvasHeight + "M0 " + y + "H" + canvasWidth;
-                }
-                var gridPath = elem(paper, "path", true).attrs({d: gridPathStr,
-                    fill: "none", stroke: gridColor, "stroke-width": 1,
-                    "stroke-opacity": (1 / (factor * gridContrast))});
-                gridLines.push(gridPath);
-            }
-            return gridLines;
-        },
+        drawGrid = () => JTOOLS.utils.drawGrid(paper, canvasWidth, canvasHeight),
         undoStroke = function () {
             if (strokeIndex < 0 || stroke) return;
 
@@ -138,52 +118,8 @@ function Handwriting(strokeDrawnHandler) {
             updateBrushAttrs();
             localStorage.setItem("hw.color", color);
         },
-        showBgPicker = function () {
-            var bounds = this.getBoundingClientRect(),
-                bgPicker = JTOOLS.createPicker("bgPicker", bounds.left, this.offsetHeight + bounds.top);
-
-            for (var i = 0; i < backgrounds.length; i++) {
-                createBgButton(backgrounds[i]);
-            }
-
-            function createBgButton(id) {
-                var btn = document.createElement("button");
-                btn.className = "btn-bg " + id;
-                btn.onclick = function () {
-                    bgPicker.removePicker();
-                    setBg(id);
-                };
-                bgPicker.appendChild(btn);
-            }
-        },
-        setBg = function (className) {
-            if (!className || backgrounds.indexOf(className) < 0) {
-                className = backgrounds[0];
-            }
-            var BG_CLASS = /^bg-.*/;
-            for (var i = 0; i < canvas.classList.length; i++) {
-                if (canvas.classList[i].match(BG_CLASS)) {
-                    canvas.classList.remove(canvas.classList[i]);
-                }
-            }
-            if (className !== "bg-none") {
-                canvas.classList.add(className);
-            }
-            btnBg.className = className;
-            localStorage.setItem("hw.bg", className);
-        },
-        setActive = function (elem, active) {
-            var classes = elem.classList;
-            if (active) {
-                if (!classes.contains("active")) {
-                    classes.add("active");
-                }
-            } else {
-                if (classes.contains("active")) {
-                    classes.remove("active");
-                }
-            }
-        },
+        showBgPicker = () => JTOOLS.utils.showBgPicker(btnBg, setBg),
+        setBg = (className) => JTOOLS.utils.setBg(canvas, className, btnBg, "hw.bg"),
         changeThickness = function () {
             strokeThickness = sldThickness.value;
             brushAttrs = updateBrushAttrs();
@@ -193,13 +129,7 @@ function Handwriting(strokeDrawnHandler) {
             brushMass = sldBrushMass.value;
             localStorage.setItem("hw.smoothing", brushMass);
         },
-        getRandomColor = function () {
-            // not too bright, not too dark
-            var r = Math.floor(30 + 140 * Math.random()),
-                g = Math.floor(30 + 140 * Math.random()),
-                b = Math.floor(30 + 140 * Math.random());
-            return "rgb(" + r + "," + g + "," + b + ")";
-        },
+        getRandomColor = JTOOLS.utils.getRandomColor,
         updateBrushAttrs = function () {
             if (!brushAttrs) {
                 brushAttrs = {
@@ -224,86 +154,18 @@ function Handwriting(strokeDrawnHandler) {
             return clone;
         },
         assembleStrokesData = function () {
-            var dots,
-                minX = Number.MAX_VALUE,
-                minY = Number.MAX_VALUE,
-                maxX = Number.MIN_VALUE,
-                maxY = Number.MIN_VALUE,
-                i,
-                out = "";
-            for (i = 0; i <= strokeIndex; i++) {
+            var dots, strokesData = [];
+            for (var i = 0; i <= strokeIndex; i++) {
                 dots = strokes[i].dots;
-                if (dots[0].x < minX) {
-                    minX = dots[0].x;
-                }
-                if (dots[0].y < minY) {
-                    minY = dots[0].y;
-                }
-                if (dots[0].x > maxX) {
-                    maxX = dots[0].x;
-                }
-                if (dots[0].y > maxY) {
-                    maxY = dots[0].y;
-                }
-                if (dots[dots.length - 1].x < minX) {
-                    minX = dots[dots.length - 1].x;
-                }
-                if (dots[dots.length - 1].y < minY) {
-                    minY = dots[dots.length - 1].y;
-                }
-                if (dots[dots.length - 1].x > maxX) {
-                    maxX = dots[dots.length - 1].x;
-                }
-                if (dots[dots.length - 1].y > maxY) {
-                    maxY = dots[dots.length - 1].y;
-                }
+                strokesData.push([dots[0].x, dots[0].y, dots[dots.length - 1].x, dots[dots.length - 1].y]);
             }
-
-            // prevent division by zero
-            if (minX - maxX === 0) {
-                minX += .01;
-                maxX -= .01;
-            }
-            if (minY - maxY === 0) {
-                minY += .01;
-                maxY -= .01;
-            }
-
-            var xRange = Math.abs(minX - maxX),
-                yRange = Math.abs(minY - maxY),
-                adjust;
-            if (xRange > 5 * yRange) {
-                adjust = (xRange - yRange) / 2;
-                minY -= adjust;
-                maxY += adjust;
-            } else if (yRange > 5 * xRange) {
-                adjust = (yRange - xRange) / 2;
-                minX -= adjust;
-                maxX += adjust;
-            }
-
-            var startX, startY, endX, endY;
-            for (i = 0; i <= strokeIndex; i++) {
-                dots = strokes[i].dots;
-                startX = 255 * (dots[0].x - minX) / (maxX - minX);
-                startY = 255 * (dots[0].y - minY) / (maxY - minY);
-                endX = 255 * (dots[dots.length - 1].x - minX) / (maxX - minX);
-                endY = 255 * (dots[dots.length - 1].y - minY) / (maxY - minY);
-                out += toHex(startX) + toHex(startY) + toHex(endX) + toHex(endY);
-            }
-
-            return out;
-
-            function toHex(d) {
-                var s = (d ^ 0).toString(16);
-                return s.length === 1 ? '0' + s : s;
-            }
+            return strokesData;
         },
         onStrokeDrawn = function () {
             strokeDrawnHandler(assembleStrokesData());
         },
 
-        paper = elem(canvas, "svg", false).attrs({width: canvasWidth, height: canvasHeight, version: "1.1",
+        paper = svgElem(canvas, "svg").attrs({width: canvasWidth, height: canvasHeight, version: "1.1",
             style: "overflow: hidden; position: relative;"}).child("desc", "JTOOLS").child("defs"),
         grid = showGrid ? drawGrid() : [],
         bColor = randomStrokesColors ? getRandomColor() : brushColor,
@@ -311,7 +173,7 @@ function Handwriting(strokeDrawnHandler) {
         strokes = [],
         stroke,            // now drawing stroke (on mouseup it must be pushed to strokes[] and assign to null)
         strokeIndex = -1,  // current stroke index (in strokes[])
-        cel = elem(paper, "rect").attrs({width: canvasWidth, height: canvasHeight, 	// front element, for all mousedrags
+        cel = svgElem(paper, "rect").attrs({width: canvasWidth, height: canvasHeight, 	// front element, for all mousedrags
             fill: "#000", stroke: "none", "fill-opacity": 0, "stroke-width": 0}),
 
         btnUndo = document.getElementById("btnUndo"),
@@ -429,38 +291,6 @@ function Handwriting(strokeDrawnHandler) {
         return false;
     }
 
-    function elem(parent, name, prepend) {
-        var elem = document.createElementNS("http://www.w3.org/2000/svg", name);
-        prepend ? parent.insertBefore(elem, parent.firstChild) : parent.appendChild(elem);
-
-        elem.attrs = function (attributes) {
-            for (var key in attributes) {
-                if (attributes.hasOwnProperty(key)) {
-                    elem.setAttribute(key, attributes[key]);
-                }
-            }
-            return elem;
-        };
-        elem.child = function (name, content) {
-            var child = document.createElementNS("http://www.w3.org/2000/svg", name);
-            content && (child.innerHTML = content);
-            elem.appendChild(child);
-            return elem;
-        };
-        elem.toFront = function () {
-            parent.removeChild(elem);
-            parent.appendChild(elem);
-            return elem;
-
-        };
-        elem.remove = function () {
-            elem && parent.removeChild(elem);
-            elem = null;
-            return null;
-        };
-        return elem;
-    }
-
     function Stroke(dot) {
         var dots = [dot],
             curr = dot,	        // current dot
@@ -475,7 +305,7 @@ function Handwriting(strokeDrawnHandler) {
 
         // for contour (calligraphic brush)
             contour = null,
-            nibSegment = useContour ? elem(paper, "path").attrs(ba) : null,
+            nibSegment = useContour ? svgElem(paper, "path").attrs(ba) : null,
             cDots1 = [],		// contour dots
             cDots2 = [],
             edgeCurve,
@@ -590,7 +420,7 @@ function Handwriting(strokeDrawnHandler) {
                 tail = t;
             }
             nibSegment.attrs({d: "M" + e1.x + "," + e1.y + edgeCurve + "z"});
-            segments.push(elem(paper, "path").attrs(ba).attrs({d: segment}));
+            segments.push(svgElem(paper, "path").attrs(ba).attrs({d: segment}));
             cDots1.push(e1);
             cDots2.push(e2);
         }
@@ -599,7 +429,7 @@ function Handwriting(strokeDrawnHandler) {
             var segment = "M" + prev.x + "," + prev.y + "L" + curr.x + "," + curr.y;
 
             pathStr += curr.x + "," + curr.y + " ";
-            segments.push(elem(paper, "path").attrs(ba).attrs({d: segment}));
+            segments.push(svgElem(paper, "path").attrs(ba).attrs({d: segment}));
         }
 
         function drawContour() {
@@ -615,11 +445,11 @@ function Handwriting(strokeDrawnHandler) {
                 path += d2[i].x + "," + d2[i].y + " ";
             }
             path += tail;
-            contour = elem(paper, "path").attrs(ba).attrs({d: path});
+            contour = svgElem(paper, "path").attrs(ba).attrs({d: path});
         }
 
         function drawPath() {
-            path = elem(paper, "path").attrs(ba).attrs({d: pathStr});
+            path = svgElem(paper, "path").attrs(ba).attrs({d: pathStr});
         }
 
         function drawNumber(num) {
@@ -628,7 +458,7 @@ function Handwriting(strokeDrawnHandler) {
                 nx = dot.x - strokeNumberOffset * Math.cos(atan),
                 ny = dot.y - strokeNumberOffset * Math.sin(atan);
 
-            number = elem(paper, "text")
+            number = svgElem(paper, "text")
                 .attrs({x: nx, y: ny, stroke: "none", fill: ba.stroke, "font-size": numberFontSize,
                     style: "text-anchor: middle; font: " + numberFontSize + "px Arial"})
                 .child("tspan", num);

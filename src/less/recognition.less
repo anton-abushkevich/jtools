@@ -11,46 +11,13 @@
   margin-right: 8px;
 }
 
-.buttons-block {
-  display: table;
+.buttons-block button + button {
+  margin-left: 2.3px;
+}
 
-  button {
-    width: 34px;
-    height: 34px;
-    border: 1px solid transparent;
-    padding: 0;
-    background-color: transparent;
-    opacity: .8;
-    cursor: pointer;
-    vertical-align: top;
-  }
-  button.icon {
-    background-image: url(icons.png);
-    background-repeat: no-repeat;
-    background-clip: padding-box;
-    background-origin: content-box;
-  }
-  button + button {
-    margin-left: 2px;
-  }
-  button:hover {
-    opacity: 1;
-  }
-  button:active {
-    padding: 1px 0;
-  }
-  button.active {
-    border-radius: 3px;
-    border: 1px solid #D2D2D2;
-    background-color: #EAE9FF;
-  }
-  button.disabled {
-    opacity: .3;
-  }
-  button.disabled:active {
-    box-shadow: none;
-    padding: 0;
-  }
+#sldThickness, #sldBrushMass {
+  width: 140px;
+  height: 16px;
 }
 
 #btnClear {
@@ -78,10 +45,10 @@
 }
 
 #btnColor, #btnBg {
-  background-color: #444;
+  background-repeat: no-repeat;
   background-origin: content-box;
   background-clip: content-box;
-  padding: 4px;
+  padding: 4px 5px 5px 4px;
   opacity: 1;
 }
 
@@ -89,35 +56,12 @@
   padding: 5px 4px 3px;
 }
 
-#btnBg {
-  background-repeat: no-repeat;
-}
-
-.randomColorIcon {
+#btnColor.randomColorIcon {
   background-image: url(icons.png);
   background-position: -192px 0;
-}
-
-.btn-bg {
-  width: 66px;
-  height: 66px;
-  border: 1px solid #dfdfdf;
-}
-
-.btn-bg + .btn-bg {
-  margin-left: 5px;
-}
-
-.bg-none {
-  background-image: url(checkers.png);
-}
-
-.bg-paper {
-  background-image: url(paper.jpg);
-}
-
-.bg-blackboard {
-  background-image: url(blackboard.jpg);
+  background-origin: padding-box;
+  background-clip: padding-box;
+  padding: 0;
 }
 
 #recog-output {

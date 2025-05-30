@@ -43,7 +43,7 @@ function Panels() {
             });
         },
 
-        hasSavedPanes: function () {
+        hasSavedPanels: function () {
             return hasSavedPanels;
         },
 

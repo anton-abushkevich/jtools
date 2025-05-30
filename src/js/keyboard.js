@@ -97,14 +97,14 @@ function Keyboard() {
     str = document.getElementById('str');
     str.oninput = processText;
     var strHeight = localStorage.getItem("kb.out.height");
-    if(strHeight && !(navigator.userAgent.lastIndexOf('Chrome/') > 0)) {   // http://code.google.com/p/chromium/issues/detail?id=94583
+    if (strHeight) {
         str.style.height = strHeight;
     }
     str.addEventListener("mousedown", function() {
         strHeight = str.style.height;
     });
     document.addEventListener("mouseup", function() {
-        if(str.style.height !== strHeight) {
+        if (str.style.height !== strHeight) {
             localStorage.setItem("kb.out.height", str.style.height);
         }
     });
@@ -303,6 +303,16 @@ function Keyboard() {
             str.selectionStart = str.selectionEnd = s;
         }
     }
+
+    str.addEventListener('mousedown', (e) => {
+        if (e.button !== 1) { // mmb
+            return;
+        }
+        e.preventDefault();
+        if (JTOOLS.kakijun) {
+            JTOOLS.kakijun.setSymbol(str.value.charAt(str.selectionStart));
+        }
+    });
 
     /** various behavior definitions concerning Rikaichan (Firefox) and Rikaikun (Chrome) addons
      */

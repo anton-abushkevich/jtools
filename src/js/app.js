@@ -6,17 +6,26 @@ window.addEventListener("load", onLoad);
 window.debug = document.getElementById("debug");
 
 function onLoad() {
-    var panels = new Panels();
+    var panels = new Panels(),
+        numberLoading = 0;
+
 
     JTOOLS.showLoader = function () {
+        numberLoading++;
         document.getElementById("footer").classList.add("loading");
     };
 
     JTOOLS.hideLoader = function () {
-        document.getElementById("footer").classList.remove("loading");
+        numberLoading--;
+        if (numberLoading === 0) {
+            document.getElementById("footer").classList.remove("loading");
+        }
     };
 
+    JTOOLS.kanjiData = new KanjiData();
     JTOOLS.createPicker = panels.createPicker;
+    JTOOLS.sliders = new Sliders();
+    JTOOLS.utils = new Utils();
 
     panels.initPanel("kb", function () {
         JTOOLS.showLoader();
@@ -40,12 +49,19 @@ function onLoad() {
 
             panel.innerHTML = html;
             panel.style.display = "block";
-            new Sliders();
-            JTOOLS.recognition = new Recognition(null, function (kanji) {
-                if (JTOOLS.keyboard) {
-                    JTOOLS.keyboard.addSymbol(kanji);
-                }
-            });
+            JTOOLS.sliders.initSlider("sldThickness");
+            JTOOLS.sliders.initSlider("sldBrushMass");
+            JTOOLS.recognition = new Recognition(null,
+                function (kanji) {
+                    if (JTOOLS.keyboard) {
+                        JTOOLS.keyboard.addSymbol(kanji);
+                    }
+                },
+                function (kanji) {
+                    if (JTOOLS.kakijun) {
+                        JTOOLS.kakijun.setSymbol(kanji);
+                    }
+                });
             JTOOLS.handwriting = new Handwriting(JTOOLS.recognition.recognize);
             JTOOLS.hideLoader();
         });
@@ -60,12 +76,13 @@ function onLoad() {
 
             panel.innerHTML = html;
             panel.style.display = "block";
-            //JTOOLS.kanjitest = new KanjiTest();
+            JTOOLS.sliders.initSlider("kakijunProgress");
+            JTOOLS.kakijun = new Kakijun();
             JTOOLS.hideLoader();
         });
     });
 
-    if (!panels.hasSavedPanes()) {
+    if (!panels.hasSavedPanels()) {
         panels.loadPanel("kb");
         panels.loadPanel("recog");
     }
