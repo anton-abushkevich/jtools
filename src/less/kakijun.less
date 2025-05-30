@@ -61,12 +61,31 @@
     }
   }
 
-
   #tglKakijunGrid {
     background-position: -96px 0;
   }
 
   #tglKakijunNumbers {
     background-position: -160px 0;
+  }
+
+  #btnKakijunColor, #btnKakijunBg {
+    background-repeat: no-repeat;
+    background-origin: content-box;
+    background-clip: content-box;
+    padding: 4px 5px 5px 4px;
+    opacity: 1;
+  }
+
+  #btnKakijunColor:active, #btnKakijunBg:active {
+    padding: 5px 4px 3px;
+  }
+
+  #btnKakijunColor.randomColorIcon {
+    background-image: url(icons.png);
+    background-position: -192px 0;
+    background-origin: padding-box;
+    background-clip: padding-box;
+    padding: 0;
   }
 }

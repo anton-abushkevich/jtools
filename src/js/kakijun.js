@@ -28,6 +28,7 @@ function Kakijun() {
         btnClear = document.getElementById("btnKakijunClear"),
         tglGrid = document.getElementById("tglKakijunGrid"),
         tglNumbers = document.getElementById("tglKakijunNumbers"),
+        btnColor = document.getElementById("btnKakijunColor"),
         strokesAndDelays = [];
 
     let storedGrid = localStorage.getItem("kj.grid"),
@@ -36,19 +37,17 @@ function Kakijun() {
         storedBg = localStorage.getItem("kj.bg"),
         storedThickness = localStorage.getItem("kj.thickness"),
         randomStrokesColors = storedColor && storedColor === "random",
-        brushColor = !randomStrokesColors && storedColor ? storedColor : "#444",
+        brushColor = randomStrokesColors ? getRandomColor() : (storedColor || "#555"),
         showGrid = storedGrid ? storedGrid === "true" : true,
         showStrokesNumbers = storedNumbers === "true",
         strokeThickness = storedThickness ? +storedThickness : 4.5,
         totalDuration = 0,
         grid = showGrid ? drawGrid() : [],
-        bColor = randomStrokesColors ? getRandomColor() : brushColor,
         brushAttrs = {
             "stroke-linecap": "round",
             "stroke-linejoin": "round",
             "stroke-width": strokeThickness,
             fill: "none",
-            stroke: bColor,
         },
         animationId;
 
@@ -87,6 +86,38 @@ function Kakijun() {
         localStorage.setItem("kj.numbers", showStrokesNumbers);
     });
 
+    if (randomStrokesColors) {
+        btnColor.classList.add("randomColorIcon");
+    } else {
+        btnColor.style.backgroundColor = brushColor;
+    }
+    btnColor.addEventListener("click", function () {
+        new ColorPicker().showAtElement(this, (color) => {
+            if (!color) return;
+
+            if (color === "random") {
+                btnColor.classList.add("randomColorIcon");
+                btnColor.style.backgroundColor = "transparent";
+                randomStrokesColors = true;
+            } else {
+                btnColor.classList.remove("randomColorIcon");
+                btnColor.style.backgroundColor = color;
+                randomStrokesColors = false;
+                brushColor = color;
+            }
+            strokesAndDelays.forEach(segment => {
+                if (segment.type === "stroke") {
+                    if (randomStrokesColors) {
+                        brushColor = getRandomColor();
+                    }
+                    segment.path.attrs({stroke: brushColor});
+                    segment.numberElem.attrs({fill: brushColor});
+                }
+            });
+            localStorage.setItem("kj.color", color);
+        });
+    });
+
     slider.onchange = function () {
         stopAnimation();
         let currentTime = parseInt(this.value);
@@ -120,24 +151,26 @@ function Kakijun() {
         const paths = kanji.paths;
 
         paths.forEach((pathData, index) => {
+            if (randomStrokesColors) {
+                brushColor = getRandomColor();
+            }
             const path = svgElem(paper, "path").attrs({
                 d: pathData,
                 transform: "scale(" + SCALE + ")",
+                stroke: brushColor,
                 ...brushAttrs,
             });
             const length = Math.ceil(path.getTotalLength());
             path.style.strokeDasharray = length;
             path.style.strokeDashoffset = length;
             const duration = 1000 * length / PIXELS_PER_SECOND;
-
             strokesAndDelays.push({
                 type: "stroke",
                 start: totalDuration,
                 end: totalDuration + duration,
                 length,
                 path: path,
-                numberElem: prepareNumber(path, index + 1, bColor),
-                color: brushColor
+                numberElem: prepareNumber(path, index + 1, brushColor)
             });
 
             totalDuration += duration;
