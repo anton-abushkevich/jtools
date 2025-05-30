@@ -263,7 +263,11 @@ function Handwriting(strokeDrawnHandler) {
     setActive(tglGrid, showGrid);
     setActive(tglCalligraphy, useContour);
     setActive(tglNumbers, showStrokesNumbers);
-    setBrushColor(storedColor);
+    if (randomStrokesColors) {
+        btnColor.classList.add("randomColorIcon");
+    } else {
+        setBrushColor(brushColor);
+    }
     setBg(storedBg);
 
     canvas.addEventListener('contextmenu', function (e) {
