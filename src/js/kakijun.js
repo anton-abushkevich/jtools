@@ -19,7 +19,6 @@ function Kakijun() {
             version: "1.1",
             style: "overflow: hidden; position: relative;"
         }).child("desc", "JTOOLS").child("defs"),
-        backgrounds = ["bg-none", "bg-paper", "bg-blackboard"],
         strokeNumberOffset = 20,
         numberFontSize = 16,
         inpSymbol = document.getElementById("kakijunInput"),
@@ -29,6 +28,7 @@ function Kakijun() {
         tglGrid = document.getElementById("tglKakijunGrid"),
         tglNumbers = document.getElementById("tglKakijunNumbers"),
         btnColor = document.getElementById("btnKakijunColor"),
+        btnBg = document.getElementById("btnKakijunBg"),
         strokesAndDelays = [];
 
     let storedGrid = localStorage.getItem("kj.grid"),
@@ -40,6 +40,8 @@ function Kakijun() {
         brushColor = randomStrokesColors ? getRandomColor() : (storedColor || "#555"),
         showGrid = storedGrid ? storedGrid === "true" : true,
         showStrokesNumbers = storedNumbers === "true",
+        setBg = (className) => JTOOLS.utils.setBg(canvas, className, btnBg, "kj.bg"),
+        showBgPicker = () => JTOOLS.utils.showBgPicker(btnBg, setBg),
         strokeThickness = storedThickness ? +storedThickness : 4.5,
         totalDuration = 0,
         grid = showGrid ? drawGrid() : [],
@@ -117,6 +119,9 @@ function Kakijun() {
             localStorage.setItem("kj.color", color);
         });
     });
+
+    setBg(storedBg);
+    btnBg.addEventListener("click", showBgPicker);
 
     slider.onchange = function () {
         stopAnimation();

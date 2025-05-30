@@ -54,7 +54,7 @@ function Utils() {
             return null;
         };
         return elem;
-    }
+    };
 
     const setActive = (elem, active) => {
         var classes = elem.classList;
@@ -75,6 +75,44 @@ function Utils() {
             g = Math.floor(30 + 140 * Math.random()),
             b = Math.floor(30 + 140 * Math.random());
         return "rgb(" + r + "," + g + "," + b + ")";
+    };
+
+    const backgrounds = ["bg-none", "bg-paper", "bg-blackboard"];
+
+    const showBPicker = function (atElem, callback) {
+        var bounds = atElem.getBoundingClientRect(),
+            bgPicker = JTOOLS.createPicker("bgPicker", bounds.left, atElem.offsetHeight + bounds.top);
+
+        for (var i = 0; i < backgrounds.length; i++) {
+            createBgButton(backgrounds[i]);
+        }
+
+        function createBgButton(id) {
+            var btn = document.createElement("button");
+            btn.className = "btn-bg " + id;
+            btn.onclick = function () {
+                bgPicker.removePicker();
+                callback(id);
+            };
+            bgPicker.appendChild(btn);
+        }
+    };
+
+    const setBg = function (canvas, className, btn, lsName) {
+        if (!className || backgrounds.indexOf(className) < 0) {
+            className = backgrounds[0];
+        }
+        var BG_CLASS = /^bg-.*/;
+        for (var i = 0; i < canvas.classList.length; i++) {
+            if (canvas.classList[i].match(BG_CLASS)) {
+                canvas.classList.remove(canvas.classList[i]);
+            }
+        }
+        if (className !== "bg-none") {
+            canvas.classList.add(className);
+        }
+        btn.className = className;
+        localStorage.setItem(lsName, className);
     }
 
     return {
@@ -82,5 +120,8 @@ function Utils() {
         svgElem: svgElem,
         setActive: setActive,
         getRandomColor: getRandomColor,
+        backgrounds: backgrounds,
+        showBgPicker: showBPicker,
+        setBg: setBg,
     };
 }

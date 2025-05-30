@@ -49,7 +49,8 @@ module.exports = function (grunt) {
                             '<link type="text/css" rel="stylesheet" href="css/keyboard.css">' +
                             '<link type="text/css" rel="stylesheet" href="css/recognition.css">' +
                             '<link type="text/css" rel="stylesheet" href="css/kakijun.css">' +
-                            '<link type="text/css" rel="stylesheet" href="css/colorpicker.css">',
+                            '<link type="text/css" rel="stylesheet" href="css/colorpicker.css">' +
+                            '<link type="text/css" rel="stylesheet" href="css/bgpicker.css">',
                         pkgname: '<%= pkg.name %>',
                         version: "DEBUG"
                     }
@@ -79,6 +80,7 @@ module.exports = function (grunt) {
                     "<%=devDest%>/css/keyboard.css": "src/less/keyboard.less",
                     "<%=devDest%>/css/recognition.css": "src/less/recognition.less",
                     "<%=devDest%>/css/colorpicker.css": "src/less/colorpicker.less",
+                    "<%=devDest%>/css/bgpicker.css": "src/less/bgpicker.less",
                     "<%=devDest%>/css/kakijun.css": "src/less/kakijun.less"
                 }
             },

@@ -15,7 +15,6 @@ function Handwriting(strokeDrawnHandler) {
         canvasHeight = canvas.clientHeight,
         svgElem = JTOOLS.utils.svgElem,
         setActive = JTOOLS.utils.setActive,
-        backgrounds = ["bg-none", "bg-paper", "bg-blackboard"],
         randomStrokesColors = storedColor && storedColor === "random",
         brushColor = !randomStrokesColors && storedColor ? storedColor : "#444",
         showGrid = storedGrid ? storedGrid === "true" : true,
@@ -119,40 +118,8 @@ function Handwriting(strokeDrawnHandler) {
             updateBrushAttrs();
             localStorage.setItem("hw.color", color);
         },
-        showBgPicker = function () {
-            var bounds = this.getBoundingClientRect(),
-                bgPicker = JTOOLS.createPicker("bgPicker", bounds.left, this.offsetHeight + bounds.top);
-
-            for (var i = 0; i < backgrounds.length; i++) {
-                createBgButton(backgrounds[i]);
-            }
-
-            function createBgButton(id) {
-                var btn = document.createElement("button");
-                btn.className = "btn-bg " + id;
-                btn.onclick = function () {
-                    bgPicker.removePicker();
-                    setBg(id);
-                };
-                bgPicker.appendChild(btn);
-            }
-        },
-        setBg = function (className) {
-            if (!className || backgrounds.indexOf(className) < 0) {
-                className = backgrounds[0];
-            }
-            var BG_CLASS = /^bg-.*/;
-            for (var i = 0; i < canvas.classList.length; i++) {
-                if (canvas.classList[i].match(BG_CLASS)) {
-                    canvas.classList.remove(canvas.classList[i]);
-                }
-            }
-            if (className !== "bg-none") {
-                canvas.classList.add(className);
-            }
-            btnBg.className = className;
-            localStorage.setItem("hw.bg", className);
-        },
+        showBgPicker = () => JTOOLS.utils.showBgPicker(btnBg, setBg),
+        setBg = (className) => JTOOLS.utils.setBg(canvas, className, btnBg, "hw.bg"),
         changeThickness = function () {
             strokeThickness = sldThickness.value;
             brushAttrs = updateBrushAttrs();
@@ -162,13 +129,7 @@ function Handwriting(strokeDrawnHandler) {
             brushMass = sldBrushMass.value;
             localStorage.setItem("hw.smoothing", brushMass);
         },
-        getRandomColor = function () {
-            // not too bright, not too dark
-            var r = Math.floor(30 + 140 * Math.random()),
-                g = Math.floor(30 + 140 * Math.random()),
-                b = Math.floor(30 + 140 * Math.random());
-            return "rgb(" + r + "," + g + "," + b + ")";
-        },
+        getRandomColor = JTOOLS.utils.getRandomColor,
         updateBrushAttrs = function () {
             if (!brushAttrs) {
                 brushAttrs = {
