@@ -112,12 +112,11 @@ function Sliders() {
             setValue(min);
         }
 
-        slit.addEventListener("mousewheel", mouseScroll, false);
-        slit.addEventListener("DOMMouseScroll", mouseScroll, false);
+        slit.addEventListener("wheel", mouseScroll, false);
 
         function setScrollListener(listener) {
-            slit.removeEventListener("mousewheel", mouseScroll, false);
-            slit.addEventListener("mousewheel", listener, false);
+            slit.removeEventListener("wheel", mouseScroll, false);
+            slit.addEventListener("wheel", listener, false);
         }
 
         function setDisabled(disabled) {

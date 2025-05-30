@@ -304,7 +304,7 @@ function Keyboard() {
         }
     }
 
-    str.addEventListener('mousedown', (e) => {
+    str.addEventListener("mousedown", (e) => {
         if (e.button !== 1) { // mmb
             return;
         }
@@ -333,8 +333,7 @@ function Keyboard() {
         });
 
         // mousewheel - select a kanji to paste
-        document.addEventListener("DOMMouseScroll", onmousewheel, false);
-        document.addEventListener("mousewheel", onmousewheel, false);
+        document.addEventListener("wheel", onmousewheel, false);
 
         document.addEventListener("DOMNodeInserted", function (e) {
             if (kanji && (e.relatedNode.id === "rikaichan-window" || e.relatedNode.id === "rikaichamp-window")) {

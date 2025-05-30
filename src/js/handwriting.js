@@ -270,15 +270,15 @@ function Handwriting(strokeDrawnHandler) {
     }
     setBg(storedBg);
 
-    canvas.addEventListener('contextmenu', function (e) {
+    canvas.addEventListener("contextmenu", function (e) {
         e.preventDefault();
         undoStroke();
         return false;
     }, false);
 
-    canvas.addEventListener("mousewheel", mouseScroll, false);
-    canvas.addEventListener("DOMMouseScroll", mouseScroll, false);
+    canvas.addEventListener("wheel", mouseScroll);
     function mouseScroll(e) {
+        e.preventDefault();
         var rolled = 0;
         if ('wheelDelta' in e) {
             rolled = e.wheelDelta;
@@ -291,7 +291,6 @@ function Handwriting(strokeDrawnHandler) {
         } else {
             sldThickness.valueDown();
         }
-        e.preventDefault();
         return false;
     }
 

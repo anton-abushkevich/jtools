@@ -53,7 +53,7 @@ function Kakijun() {
         },
         animationId;
 
-    paper.addEventListener('wheel', handleWheel);
+    paper.addEventListener("wheel", handleWheel);
     slider.setScrollListener(handleWheel);
     slider.setDisabled(true);
 
