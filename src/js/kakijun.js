@@ -77,7 +77,7 @@ function Kakijun() {
         strokesAndDelays.forEach(segment => {
             if (segment.type === "stroke") {
                 if (showStrokesNumbers &&
-                    segment.path.style.strokeDashoffset !== segment.length + "") {
+                    parseInt(segment.path.style.strokeDashoffset) !== segment.length) {
                     segment.numberElem.style.display = "block";
                 } else {
                     segment.numberElem.style.display = "none";
