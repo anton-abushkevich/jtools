@@ -317,79 +317,59 @@ function Keyboard() {
     /** various behavior definitions concerning Rikaichan (Firefox) and Rikaikun (Chrome) addons
      */
     function rikaichanSupport() {
-        // selected kanji and its index. see mouse scroll event handler
-        let kanji,
-            index;
-
-        // on click rikaichan-window removes before the "click" event, so we use "mousedown"
         document.addEventListener("mousedown", function (e) {
-            if ((e.button === 0 || e.button === 1) && kanji) {
-                e.preventDefault();
-                addSymbol(e.button ? kanjiOnly(kanji) : kanji);
-                clear();
-                (document.getElementById("rikaichan-window") ||
-                    document.getElementById("tenten-ja-window")).remove();
-                return false;
+            if ((e.button === 0 || e.button === 1)) {
+                const shadow = getShadow();
+                if (!shadow) {
+                    return;
+                }
+
+                const container = shadow.querySelectorAll(".container");
+                if (container.length > 0 && container[0].classList.contains("hidden")) {
+                    return;
+                }
+
+                const kanjis = shadow.querySelectorAll(".jtools-selected");
+                if (kanjis.length > 0) {
+                    addSymbol(e.button ? kanjis[0].innerText : kanjiOnly(kanjis[0].innerText));
+                }
             }
+            return false;
         });
 
-        // mousewheel - select a kanji to paste
         document.addEventListener("wheel", onmousewheel, false);
 
-        new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                if (mutation.removedNodes.length > 0 &&
-                    (mutation.removedNodes[0].id === "rikaichan-window" ||
-                    mutation.removedNodes[0].id === "tenten-ja-window")) {
-                    document.getElementById("str").focus();
-                    clear();
-                }
-            });
-        }).observe(document.body, {
-            childList: true
-        });
-
         function onmousewheel(e) {
-            const pluginContainer =
-                document.getElementById("tenten-ja-window") ||
-                document.getElementById("rikaichan-window");
-            if (!pluginContainer || !pluginContainer.shadowRoot) {
-                return;
-            }
+            const shadow = getShadow();
+            if (!shadow) return;
 
-            const shadow = pluginContainer.shadowRoot;
             const kanjis = shadow.querySelectorAll(".w-kanji");
-
             if (kanjis.length > 0) {
-                //e.preventDefault();
-                if (kanji === undefined) {
+                let index = Array.from(kanjis)
+                    .findIndex(kanji => kanji.classList.contains("jtools-selected"));
+
+                index += Math.sign(e.deltaY);
+                if (index >= kanjis.length) {
                     index = 0;
-                    kanji = selectKanji();
-                } else {
-                    index += Math.sign(e.deltaY);
-                    if (index >= kanjis.length) {
-                        index = 0;
-                    }
-                    if (index < 0) {
-                        index = kanjis.length - 1;
-                    }
-                    kanji = selectKanji();
+                } else if (index < 0) {
+                    index = kanjis.length - 1;
                 }
+                selectKanji(index);
             }
 
             return false;
 
-            function selectKanji() {
+            function selectKanji(index) {
                 for (let i = 0; i < kanjis.length; i++) {
-                    kanjis[i].style = (i === index) ? "background-color: #EEE; color: #5C73B8" : "";
+                    if (i === index) {
+                        kanjis[i].style = "background-color: #EEE; color: #5C73B8";
+                        kanjis[i].classList.add("jtools-selected");
+                    } else {
+                        kanjis[i].style = "";
+                        kanjis[i].classList.remove("jtools-selected");
+                    }
                 }
-                return kanjis[index].innerText;
             }
-        }
-
-        function clear() {
-            kanji = undefined;
-            index = 0;
         }
 
         function kanjiOnly(kanji) {
@@ -401,6 +381,18 @@ function Keyboard() {
                 }
             }
             return kanji.substring(0, i + 1);
+        }
+
+        function getShadow() {
+            const pluginContainer =
+                document.getElementById("tenten-ja-window") ||
+                document.getElementById("rikaichan-window");
+
+            if (!pluginContainer || !pluginContainer.shadowRoot) {
+                return;
+            }
+
+            return pluginContainer.shadowRoot;
         }
     }
 }
