@@ -318,16 +318,17 @@ function Keyboard() {
      */
     function rikaichanSupport() {
         // selected kanji and its index. see mouse scroll event handler
-        var kanji,
+        let kanji,
             index;
 
         // on click rikaichan-window removes before the "click" event, so we use "mousedown"
         document.addEventListener("mousedown", function (e) {
-            var rikaichan = document.getElementById("rikaichan-window") || document.getElementById("rikaichamp-window");
-            if (rikaichan && rikaichan.innerHTML && (e.button === 0 || e.button === 1) && kanji) {
+            if ((e.button === 0 || e.button === 1) && kanji) {
                 e.preventDefault();
                 addSymbol(e.button ? kanjiOnly(kanji) : kanji);
                 clear();
+                (document.getElementById("rikaichan-window") ||
+                    document.getElementById("tenten-ja-window")).remove();
                 return false;
             }
         });
@@ -335,46 +336,54 @@ function Keyboard() {
         // mousewheel - select a kanji to paste
         document.addEventListener("wheel", onmousewheel, false);
 
-        document.addEventListener("DOMNodeInserted", function (e) {
-            if (kanji && (e.relatedNode.id === "rikaichan-window" || e.relatedNode.id === "rikaichamp-window")) {
-                clear();
-            }
-        });
-
-        document.addEventListener("DOMNodeRemoved", function (e) {
-            if (e.relatedNode.id === "rikaichan-window" || e.relatedNode.id === "rikaichamp-window") {
-                document.getElementById("str").focus();
-            }
+        new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.removedNodes.length > 0 &&
+                    (mutation.removedNodes[0].id === "rikaichan-window" ||
+                    mutation.removedNodes[0].id === "tenten-ja-window")) {
+                    document.getElementById("str").focus();
+                    clear();
+                }
+            });
+        }).observe(document.body, {
+            childList: true
         });
 
         function onmousewheel(e) {
-            var kanjis = document.getElementsByClassName("w-kanji");
+            const pluginContainer =
+                document.getElementById("tenten-ja-window") ||
+                document.getElementById("rikaichan-window");
+            if (!pluginContainer || !pluginContainer.shadowRoot) {
+                return;
+            }
+
+            const shadow = pluginContainer.shadowRoot;
+            const kanjis = shadow.querySelectorAll(".w-kanji");
 
             if (kanjis.length > 0) {
-                e.preventDefault();
+                //e.preventDefault();
                 if (kanji === undefined) {
                     index = 0;
-                    selectKanji();
-                    kanji = kanjis[0].innerHTML;
+                    kanji = selectKanji();
                 } else {
-                    index += (('wheelDelta' in e) ? e.wheelDelta : -e.detail) < 0 ? 1 : -1;
+                    index += Math.sign(e.deltaY);
                     if (index >= kanjis.length) {
                         index = 0;
                     }
                     if (index < 0) {
                         index = kanjis.length - 1;
                     }
-                    selectKanji();
-                    kanji = kanjis[index].innerHTML;
+                    kanji = selectKanji();
                 }
             }
 
             return false;
 
             function selectKanji() {
-                for (var i = 0; i < kanjis.length; i++) {
-                    kanjis[i].className = "w-kanji" + (i === index ? " selected" : "");
+                for (let i = 0; i < kanjis.length; i++) {
+                    kanjis[i].style = (i === index) ? "background-color: #EEE; color: #5C73B8" : "";
                 }
+                return kanjis[index].innerText;
             }
         }
 
@@ -391,7 +400,7 @@ function Keyboard() {
                     break;
                 }
             }
-            return kanji.substr(0, i + 1);
+            return kanji.substring(0, i + 1);
         }
     }
 }
