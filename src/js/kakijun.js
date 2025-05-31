@@ -151,6 +151,7 @@ function Kakijun() {
               paths = await JTOOLS.kanjiData.getKanjiPaths(symbol);
 
         if (!paths) {
+            inpSymbol.value = "";
             return;
         }
 
@@ -339,7 +340,5 @@ function Kakijun() {
         }
     }
 
-    return {
-        setSymbol: setSymbol
-    }
+    return { setSymbol }
 }
