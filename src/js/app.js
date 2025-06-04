@@ -77,6 +77,8 @@ function onLoad() {
             panel.innerHTML = html;
             panel.style.display = "block";
             JTOOLS.sliders.initSlider("kakijunProgress");
+            JTOOLS.sliders.initSlider("kakijunThickness");
+            JTOOLS.sliders.initSlider("kakijunSpeed");
             JTOOLS.kakijun = new Kakijun();
             JTOOLS.hideLoader();
         });

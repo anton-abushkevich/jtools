@@ -1,49 +1,71 @@
 .kakijun {
-  .input {
-    display: grid;
-    gap: 8px;
-    margin-top: 8px;
+  display: grid;
+  gap: 8px;
+
+  #kakijunPaper {
+    grid-column: 1 / span 2;
+    grid-row: 2;
+  }
+
+  .progress-block {
+    grid-column: 1 / span 2;
+    grid-row: 1;
+
+    #kakijunProgress {
+      width: 287px;
+      height: 16px;
+    }
+
+    .slit.disabled {
+      opacity: .5;
+    }
   }
 
   #kakijunInput {
     grid-column: 1;
-    grid-row: 1 / span 2;
+    grid-row: 3 / span 2;
     width: 56px;
     height: 56px;
+    line-height: 56px;
     font-size: 46px;
     text-align: center;
     padding: 0;
     border: 1px solid #ccc;
+
+    &::-webkit-input-placeholder {
+      position: relative;
+      top: -9px;
+    }
+
+    &::placeholder {
+      font-size: 16px;
+      opacity: 0.5;
+      text-align: center;
+    }
+
+    &:focus::placeholder {
+      opacity: 0;
+    }
   }
 
-  #kakijunInput::placeholder {
-    font-size: 16px;
-    opacity: 0.5;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    line-height: 1;
-  }
-
-  #kakijunInput:focus::placeholder {
-    opacity: 0;
-  }
-
-  #kakijunProgress {
+  .sliders-block {
+    margin: 0;
     grid-column: 2;
-    grid-row: 1;
-    width: 222px;
-    height: 16px;
-  }
+    grid-row: 3;
 
-  .slit.disabled {
-    opacity: .5;
+    #kakijunThickness, #kakijunSpeed {
+      width: 107px;
+      height: 16px;
+    }
+
+    & > .slit:first-child {
+      margin-right: 8px;
+    }
   }
 
   .buttons-block {
     grid-column: 2;
-    grid-row: 2;
+    grid-row: 4;
 
     button + button {
       margin-left: 3.6px;

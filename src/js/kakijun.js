@@ -3,8 +3,10 @@
 function Kakijun() {
 
     const SCALE = 2.629;
-    const PIXELS_PER_SECOND = 150;
-    const DELAY_BETWEEN_PATHS = 250;
+    const DEFAULT_THICKNESS = 4.5;
+    const DEFAULT_SPEED = 5;
+    const SPEED_MULTIPLIER = 18;
+    const DELAY_BASE = 20; // delay between paths ~ speed of 20px-length stroke
 
     const canvas = document.getElementById("kakijunPaper"),
         canvasWidth = canvas.clientWidth,
@@ -22,7 +24,9 @@ function Kakijun() {
         strokeNumberOffset = 20,
         numberFontSize = 16,
         inpSymbol = document.getElementById("kakijunInput"),
-        slider = document.getElementById("kakijunProgress"),
+        sldProgress = document.getElementById("kakijunProgress"),
+        sldThickness = document.getElementById("kakijunThickness"),
+        sldSpeed = document.getElementById("kakijunSpeed"),
         btnPlay = document.getElementById("btnKakijunPlay"),
         btnClear = document.getElementById("btnKakijunClear"),
         tglGrid = document.getElementById("tglKakijunGrid"),
@@ -36,13 +40,15 @@ function Kakijun() {
         storedColor = localStorage.getItem("kj.color"),
         storedBg = localStorage.getItem("kj.bg"),
         storedThickness = localStorage.getItem("kj.thickness"),
+        storedSpeed = localStorage.getItem("kj.speed"),
         randomStrokesColors = storedColor && storedColor === "random",
         brushColor = randomStrokesColors ? getRandomColor() : (storedColor || "#555"),
         showGrid = storedGrid ? storedGrid === "true" : true,
         showStrokesNumbers = storedNumbers === "true",
         setBg = (className) => JTOOLS.utils.setBg(canvas, className, btnBg, "kj.bg"),
         showBgPicker = () => JTOOLS.utils.showBgPicker(btnBg, setBg),
-        strokeThickness = storedThickness ? +storedThickness : 4.5,
+        strokeThickness = storedThickness ? +storedThickness : DEFAULT_THICKNESS,
+        speed = storedSpeed ? +storedSpeed : DEFAULT_SPEED,
         totalDuration = 0,
         grid = showGrid ? drawGrid() : [],
         brushAttrs = {
@@ -54,8 +60,26 @@ function Kakijun() {
         animationId;
 
     paper.addEventListener("wheel", handleWheel);
-    slider.setScrollListener(handleWheel);
-    slider.setDisabled(true);
+    sldProgress.setScrollListener(handleWheel);
+    sldProgress.setDisabled(true);
+
+    sldThickness.setValue(strokeThickness);
+    sldThickness.onchange = function () {
+        strokeThickness = sldThickness.value;
+        brushAttrs["stroke-width"] = strokeThickness;
+        strokesAndDelays.forEach(segment => {
+            if (segment.type === "stroke") {
+                segment.path.attrs({"stroke-width": strokeThickness});
+            }
+        });
+        localStorage.setItem("kj.thickness", strokeThickness);
+    };
+
+    sldSpeed.setValue(speed);
+    sldSpeed.onchange = function () {
+        speed = sldSpeed.value;
+        localStorage.setItem("kj.speed", speed);
+    };
 
     setActive(tglGrid, showGrid);
     tglGrid.addEventListener("click", function () {
@@ -123,7 +147,7 @@ function Kakijun() {
     setBg(storedBg);
     btnBg.addEventListener("click", showBgPicker);
 
-    slider.onchange = function () {
+    sldProgress.onchange = function () {
         stopAnimation();
         let currentTime = parseInt(this.value);
         updateAnimation(currentTime);
@@ -139,7 +163,7 @@ function Kakijun() {
     async function onSymbolSet() {
         clear();
         btnPlay.classList.add("disabled");
-        slider.setDisabled(true);
+        sldProgress.setDisabled(true);
         strokesAndDelays.forEach((segment) => {
             segment.path?.remove();
             segment.numberElem?.remove();
@@ -168,7 +192,7 @@ function Kakijun() {
             const length = Math.ceil(path.getTotalLength());
             path.style.strokeDasharray = length;
             path.style.strokeDashoffset = length;
-            const duration = 1000 * length / PIXELS_PER_SECOND;
+            const duration = 1000 * length;
             strokesAndDelays.push({
                 type: "stroke",
                 start: totalDuration,
@@ -179,21 +203,21 @@ function Kakijun() {
             });
 
             totalDuration += duration;
+            let delay = 1000 * DELAY_BASE;
 
             if (index < paths.length - 1) {
                 strokesAndDelays.push({
                     type: "delay",
                     start: totalDuration,
-                    end: totalDuration + DELAY_BETWEEN_PATHS,
-                    duration: DELAY_BETWEEN_PATHS
+                    end: totalDuration + delay
                 });
-                totalDuration += DELAY_BETWEEN_PATHS;
+                totalDuration += delay;
             }
         });
 
-        slider.setMaxValue(totalDuration);
+        sldProgress.setMaxValue(totalDuration);
         btnPlay.classList.remove("disabled");
-        slider.setDisabled(false);
+        sldProgress.setDisabled(false);
     }
 
     btnPlay.addEventListener("click", function () {
@@ -201,7 +225,7 @@ function Kakijun() {
             stopAnimation();
             this.classList.remove("pause");
             btnClear.classList.remove("disabled");
-        } else if (slider.value > 0 && slider.value < totalDuration) {
+        } else if (sldProgress.value > 0 && sldProgress.value < totalDuration) {
             playAnimation();
             this.classList.add("pause");
             btnClear.classList.remove("disabled");
@@ -220,7 +244,7 @@ function Kakijun() {
     function clear() {
         stopAnimation();
         updateAnimation(0);
-        slider.setValue(0, false);
+        sldProgress.setValue(0, false);
         btnClear.classList.add("disabled");
         btnPlay.classList.remove("pause");
     }
@@ -254,15 +278,15 @@ function Kakijun() {
         let lastTimestamp = performance.now();
 
         function frame(timestamp) {
-            const delta = timestamp - lastTimestamp;
+            const delta = (timestamp - lastTimestamp) * speed * SPEED_MULTIPLIER;
             lastTimestamp = timestamp;
 
-            let newValue = parseInt(slider.value) + delta;
+            let newValue = parseInt(sldProgress.value) + delta;
             if (newValue >= totalDuration) {
                 newValue = totalDuration;
             }
 
-            slider.setValue(newValue, false);
+            sldProgress.setValue(newValue, false);
             updateAnimation(newValue);
 
             if (newValue < totalDuration) {
@@ -284,7 +308,7 @@ function Kakijun() {
 
     function handleWheel(e) {
         e.preventDefault();
-        const currentTime = parseInt(slider.value);
+        const currentTime = parseInt(sldProgress.value);
         const direction = Math.sign(e.deltaY);
 
         if (currentTime === 0 && direction === -1 ||
@@ -314,7 +338,7 @@ function Kakijun() {
             return;
         }
 
-        slider.setValue(targetTime);
+        sldProgress.setValue(targetTime);
         updateAnimation(targetTime);
         stopAnimation();
     }

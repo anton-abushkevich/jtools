@@ -1,15 +1,19 @@
 <div class="kakijun">
-    <div id="kakijunPaper" class="paper"></div>
-    <div class="input">
-        <input id="kakijunInput" type="text" placeholder="漢字" maxlength="1">
+    <div class="progress-block">
         <input id="kakijunProgress" min="0" max="10" step="0" showvalue="0">
-        <div class="buttons-block">
-            <button id="btnKakijunPlay" class="icon disabled" title="Play"></button>
-            <button id="btnKakijunClear" class="icon disabled" title="Clear"></button>
-            <button id="tglKakijunGrid" class="icon" title="Toggle grid"></button>
-            <button id="tglKakijunNumbers" class="icon" title="Show stroke numbers"></button>
-            <button id="btnKakijunColor" title="Stroke color"></button>
-            <button id="btnKakijunBg" title="Background"></button>
-        </div>
+    </div>
+    <div id="kakijunPaper" class="paper"></div>
+    <input id="kakijunInput" type="text" placeholder="漢字" maxlength="1">
+    <div class="sliders-block">
+        <input id="kakijunThickness" min="1" max="10" step="0" title="Stroke thickness">
+        <input id="kakijunSpeed" min="1" max="10" step="0" title="Animation speed">
+    </div>
+    <div class="buttons-block">
+        <button id="btnKakijunPlay" class="icon disabled" title="Play"></button>
+        <button id="btnKakijunClear" class="icon disabled" title="Clear"></button>
+        <button id="tglKakijunGrid" class="icon" title="Toggle grid"></button>
+        <button id="tglKakijunNumbers" class="icon" title="Show stroke numbers"></button>
+        <button id="btnKakijunColor" title="Stroke color"></button>
+        <button id="btnKakijunBg" title="Background"></button>
     </div>
 </div>
