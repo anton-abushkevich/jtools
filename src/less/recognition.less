@@ -1,119 +1,136 @@
-#recog-input {
-  display: inline-block;
-}
+.recog {
+  display: grid;
+  gap: 8px;
 
-.sliders-block {
-  display: table;
-  margin: 8px 0;
-}
-
-.sliders-block > .slit:first-child {
-  margin-right: 8px;
-}
-
-.buttons-block button + button {
-  margin-left: 2.3px;
-}
-
-#sldThickness, #sldBrushMass {
-  width: 140px;
-  height: 16px;
-}
-
-#btnClear {
-  background-position: 0 0;
-}
-
-#btnUndo {
-  background-position: -32px 0;
-}
-
-#btnRedo {
-  background-position: -64px 0;
-}
-
-#tglGrid {
-  background-position: -96px 0;
-}
-
-#tglCalligraphy {
-  background-position: -128px 0;
-}
-
-#tglNumbers {
-  background-position: -160px 0;
-}
-
-#btnColor, #btnBg {
-  background-repeat: no-repeat;
-  background-origin: content-box;
-  background-clip: content-box;
-  padding: 4px;
-  opacity: 1;
-}
-
-#btnColor:active, #btnBg:active {
-  padding: 5px 4px 3px;
-}
-
-#btnColor.randomColorIcon {
-  background-image: url(icons-0.4.png);
-  background-position: -192px 0;
-  background-origin: padding-box;
-  background-clip: padding-box;
-  padding: 0;
-}
-
-#recog-output {
-  display: inline-block;
-  vertical-align: top;
-  margin-left: 10px;
-
-  .output {
-    white-space: nowrap;
-    position: relative;
+  #recogPaper {
+    grid-column: 1;
+    grid-row: 1;
   }
-  .output-item {
-    display: inline-block;
-    border: 1px solid #ddd;
-    border-radius: 2px;
-    background-color: white;
-    font-size: 30px;
-    width: 40px;
-    height: 40px;
+
+  .sliders-block {
+    grid-column: 1;
+    grid-row: 2;
+
+    #sldThickness, #sldBrushMass {
+      width: 140px;
+      height: 16px;
+    }
+
+    & > .slit:first-child {
+      margin-right: 8px;
+    }
+  }
+
+  .buttons-block {
+    grid-column: 1;
+    grid-row: 3;
+
+    button + button {
+      margin-left: 2.3px;
+    }
+  }
+
+  #btnClear {
+    background-position: 0 0;
+  }
+
+  #btnUndo {
+    background-position: -32px 0;
+  }
+
+  #btnRedo {
+    background-position: -64px 0;
+  }
+
+  #tglGrid {
+    background-position: -96px 0;
+  }
+
+  #tglCalligraphy {
+    background-position: -128px 0;
+  }
+
+  #tglNumbers {
+    background-position: -160px 0;
+  }
+
+  #btnColor, #btnBg {
+    background-repeat: no-repeat;
+    background-origin: content-box;
+    background-clip: content-box;
+    padding: 4px;
+    opacity: 1;
+  }
+
+  #btnColor:active, #btnBg:active {
+    padding: 5px 4px 3px;
+  }
+
+  #btnColor.randomColorIcon {
+    background-image: url(icons-0.4.png);
+    background-position: -192px 0;
+    background-origin: padding-box;
+    background-clip: padding-box;
+    padding: 0;
+  }
+
+  .recog-output {
+    grid-column: 2;
+    grid-row: 1 / span 3;
     vertical-align: top;
-    text-align: center;
-    cursor: pointer;
-    padding: 0 0 1px;
-  }
-  .output-item:hover {
-    border: 1px solid #bbb;
-  }
-  .output-item:active {
-    padding: 1px 0 0;
-  }
-  .output-item + .output-item {
-    margin-left: 4px;
-  }
-  .output.not-yet-implemented:after {
-    content: "Not yet implemented";
-    color: #bababa;
-    font-weight: bold;
-    font-size: 18px;
-    position: absolute;
-    top: 8px;
-    left: 70px;
-  }
-}
+    padding-left: 2px;
 
-.recog-output-label {
-  font-size: 10px;
-}
+    .output {
+      white-space: nowrap;
+      position: relative;
+    }
 
-.recog-output-label > b {
-  font-size: 14px;
-}
+    .output-item {
+      display: inline-block;
+      border: 1px solid #ddd;
+      border-radius: 2px;
+      background-color: white;
+      font-size: 30px;
+      width: 40px;
+      height: 40px;
+      vertical-align: top;
+      text-align: center;
+      cursor: pointer;
+      padding: 0 0 1px;
+    }
 
-.recog-output-label:not(:first-child) {
-  margin-top: 7px;
+    .output-item:hover {
+      border: 1px solid #bbb;
+    }
+
+    .output-item:active {
+      padding: 1px 0 0;
+    }
+
+    .output-item + .output-item {
+      margin-left: 4px;
+    }
+
+    .output.not-yet-implemented:after {
+      content: "Not yet implemented";
+      color: #bababa;
+      font-weight: bold;
+      font-size: 18px;
+      position: absolute;
+      top: 8px;
+      left: 70px;
+    }
+  }
+
+  .recog-output-label {
+    font-size: 10px;
+  }
+
+  .recog-output-label > b {
+    font-size: 14px;
+  }
+
+  .recog-output-label:not(:first-child) {
+    margin-top: 7px;
+  }
 }
