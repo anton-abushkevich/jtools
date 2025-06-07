@@ -4,6 +4,7 @@ module.exports = function (grunt) {
         devDest: 'build/dev',
         prodDest: 'build/prod',
         tmpDest: 'build/tmp',
+        timestamp: grunt.template.today("yyyymmddHHMM"),
         concat: {
             js: {
                 options: {
@@ -26,7 +27,7 @@ module.exports = function (grunt) {
             },
             build: {
                 src: '<%=tmpDest%>/<%= pkg.name %>.js',
-                dest: '<%=prodDest%>/js/<%= pkg.name %>-<%= pkg.version %>.js'
+                dest: '<%=prodDest%>/js/<%= pkg.name %>-<%= pkg.version %>-<%= timestamp %>.js'
             }
         },
         template: {
@@ -63,8 +64,8 @@ module.exports = function (grunt) {
             prod: {
                 options: {
                     data: {
-                        scripts: '<script src="js/<%= pkg.name %>-<%= pkg.version %>.js"></script>',
-                        css: '<link type="text/css" rel="stylesheet" href="css/<%= pkg.name %>-<%= pkg.version %>.css">',
+                        scripts: '<script src="js/<%= pkg.name %>-<%= pkg.version %>-<%= timestamp %>.js"></script>',
+                        css: '<link type="text/css" rel="stylesheet" href="css/<%= pkg.name %>-<%= pkg.version %>-<%= timestamp %>.css">',
                         pkgname: '<%= pkg.name %>',
                         version: '<%= pkg.version %>'
                     }
@@ -90,7 +91,7 @@ module.exports = function (grunt) {
                     compress: true
                 },
                 files: {
-                    "<%=prodDest%>/css/<%= pkg.name %>-<%= pkg.version %>.css": "<%=tmpDest%>/style.less"
+                    "<%=prodDest%>/css/<%= pkg.name %>-<%= pkg.version %>-<%= timestamp %>.css": "<%=tmpDest%>/style.less"
                 }
             }
         },
